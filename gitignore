@@ -1,0 +1,48 @@
+# Секреты / окружение
+.env
+.env.local
+.env.production
+*.env
+
+# Service role key (НИКОГДА не коммитить!)
+service-role-key.txt
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+.next/
+.cache/
+
+# Логи
+*.log
+logs/
+
+# Тестовые файлы
+test-*.sql
+sandbox.html
+
+# Supabase локальный (если используешь Supabase CLI)
+.supabase/
+supabase/.branches/
+supabase/.temp/
+
+# Backup схем БД
+*.dump
+*.backup
