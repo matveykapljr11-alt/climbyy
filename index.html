@@ -5555,7 +5555,7 @@
 <script>
   // ⚠️ ПОДМЕНИ НА СВОИ КЛЮЧИ (Project Settings → API в Supabase)
   const SUPABASE_URL      = 'https://tgxhagytnjfrjjptngbj.supabase.co';
-  const SUPABASE_ANON_KEY = 'tgxhagytnjfrjjptngbj';
+  const SUPABASE_ANON_KEY = 'PASTE_YOUR_ANON_KEY_HERE';
 
   // Создаём клиент только если ключи валидные
   let supabaseClient = null;
@@ -10515,7 +10515,7 @@
         <!-- ========== STEP: LOGIN ========== -->
         <div class="step-content" data-step="0">
           <div class="login-options">
-            <button class="login-btn primary">
+            <button class="login-btn primary" onclick="loginWithTelegram()" id="tgLoginBtn">
               <div class="login-btn-icon">T</div>
               <div class="login-btn-info">
                 <div class="login-btn-title">Войти через Telegram</div>
@@ -10525,7 +10525,7 @@
               <span class="login-btn-arrow">→</span>
             </button>
 
-            <button class="login-btn">
+            <button class="login-btn" onclick="showToast('Google-логин скоро будет', 'default')">
               <div class="login-btn-icon">🅖</div>
               <div class="login-btn-info">
                 <div class="login-btn-title">Войти через Google</div>
@@ -10533,6 +10533,14 @@
               </div>
               <span class="login-btn-arrow">→</span>
             </button>
+          </div>
+
+          <!-- Контейнер куда вставится официальный Telegram Login Widget -->
+          <div id="tgWidgetContainer" style="display: none; text-align: center; padding: 16px; background: var(--card-2); border-radius: 14px; margin-top: 12px;">
+            <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px; font-weight: 600;">
+              👇 Нажми синюю кнопку Telegram чтобы войти
+            </div>
+            <div id="tgWidgetMount"></div>
           </div>
 
           <div class="login-divider"><span>или по email</span></div>
@@ -13069,7 +13077,123 @@
   // Если goPage переключает страницу — можно перезагружать данные
   // (необязательно, т.к. данные уже в DOM)
 
-  console.log('🧗 Climby — Supabase integration loaded');
+  // ============================================
+  // TELEGRAM LOGIN — авторизация через TG
+  // ============================================
+
+  // Имя бота без @ (важно: точно как в @BotFather)
+  const TELEGRAM_BOT_USERNAME = 'ClimbyVf_bot';
+
+  // Глобальный callback который вызывает Telegram Login Widget
+  // после успешной авторизации в TG
+  window.onTelegramAuth = async function(tgUser) {
+    console.log('📨 TG auth callback received:', tgUser);
+    showToast('Проверяем подпись...', 'default');
+
+    if (!supabaseClient) {
+      showToast('Supabase не настроен', 'error');
+      return;
+    }
+
+    try {
+      // Отправляем данные в нашу Edge Function для проверки HMAC
+      const { data, error } = await supabaseClient.functions.invoke('telegram-auth', {
+        body: tgUser,
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        showToast('Ошибка авторизации: ' + (error.message || 'unknown'), 'error');
+        return;
+      }
+
+      if (!data?.success || !data?.token_hash) {
+        console.error('Bad response from edge function:', data);
+        showToast('Не удалось войти: ' + (data?.error || 'unknown'), 'error');
+        return;
+      }
+
+      // Используем token_hash чтобы получить сессию
+      const { data: sessionData, error: verifyError } = await supabaseClient.auth.verifyOtp({
+        email: data.email,
+        token_hash: data.token_hash,
+        type: 'magiclink',
+      });
+
+      if (verifyError) {
+        console.error('Verify OTP error:', verifyError);
+        showToast('Не удалось войти: ' + verifyError.message, 'error');
+        return;
+      }
+
+      // ✅ Успех!
+      console.log('✅ Logged in:', sessionData.user);
+      showToast('🎉 Привет, ' + (tgUser.first_name || 'игрок') + '!', 'success', 4000);
+
+      // Меняем состояние и закрываем модалку
+      isLoggedIn = true;
+      applyAuthState();
+      closeModal();
+
+      // Конфетти для приятного эффекта
+      if (typeof fireConfetti === 'function') {
+        setTimeout(() => fireConfetti(0.5), 200);
+      }
+
+    } catch (e) {
+      console.error('Unexpected login error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
+  };
+
+  // Кнопка "Войти через Telegram" — динамически вставляет официальный TG widget
+  function loginWithTelegram() {
+    const container = document.getElementById('tgWidgetContainer');
+    const mount = document.getElementById('tgWidgetMount');
+    const btn = document.getElementById('tgLoginBtn');
+
+    if (!container || !mount) return;
+
+    // Если виджет уже вставлен — просто показываем
+    if (container.style.display !== 'none') {
+      container.style.display = 'none';
+      btn.style.opacity = '1';
+      return;
+    }
+
+    // Чистим контейнер
+    mount.innerHTML = '';
+
+    // Вставляем официальный Telegram Login Widget
+    // см. https://core.telegram.org/widgets/login
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-login', TELEGRAM_BOT_USERNAME);
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-radius', '10');
+    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+    script.setAttribute('data-request-access', 'write');
+    mount.appendChild(script);
+
+    container.style.display = 'block';
+    btn.style.opacity = '0.5';
+    btn.disabled = true;
+
+    // Через 5 сек если виджет не загрузился — показываем подсказку
+    setTimeout(() => {
+      if (mount.children.length === 0 || !mount.querySelector('iframe')) {
+        mount.innerHTML = `
+          <div style="font-size: 12.5px; color: var(--hot-pink); padding: 12px;">
+            ⚠️ Не удалось загрузить Telegram-виджет.<br>
+            Возможно домен не привязан к боту: проверь <b>/setdomain</b> в @BotFather.
+          </div>
+        `;
+      }
+    }, 5000);
+  }
+
+  console.log('🤖 Telegram auth ready, bot: @' + TELEGRAM_BOT_USERNAME);
 </script>
 
 </body>
