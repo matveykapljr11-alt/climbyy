@@ -5632,10 +5632,10 @@
     <!-- Профиль юзера -->
     <div class="profile-wrap">
       <button class="profile-btn" onclick="toggleProfile(event)">
-        <div class="profile-avatar">YO<span class="profile-status"></span></div>
+        <div class="profile-avatar">??<span class="profile-status"></span></div>
         <div class="profile-meta">
-          <div class="profile-name">your_nick</div>
-          <div class="profile-role">★ Verified · кэп</div>
+          <div class="profile-name">игрок</div>
+          <div class="profile-role">D1 Rookie</div>
         </div>
         <span class="profile-arrow">▾</span>
       </button>
@@ -5644,13 +5644,12 @@
       <div class="profile-menu" id="profileMenu">
         <!-- Шапка профиля -->
         <div class="pm-head">
-          <div class="pm-avatar">YO</div>
+          <div class="pm-avatar">??</div>
           <div class="pm-info">
-            <div class="pm-name">your_nick <span class="pm-verified">★</span></div>
-            <div class="pm-handle">@your_handle</div>
+            <div class="pm-name">игрок <span class="pm-verified" data-user-verified style="display: none;">★</span></div>
+            <div class="pm-handle">@—</div>
             <div class="pm-badges">
-              <a href="#" class="pm-badge mint" onclick="goPage('settings'); closeProfile(); return false;" title="настройки аккаунта">Verified</a>
-              <a href="#" class="pm-badge peach" onclick="goPage('team'); closeProfile(); return false;" title="моя команда">Captain</a>
+              <a href="#" class="pm-badge muted" onclick="goPage('settings'); closeProfile(); return false;" title="настройки аккаунта">Аккаунт</a>
               <a href="#" class="pm-badge muted" onclick="goPage('teams'); closeProfile(); return false;" title="все команды D1 Rookie">D1 Rookie</a>
             </div>
           </div>
@@ -5659,19 +5658,19 @@
         <!-- Мини-стата -->
         <div class="pm-stats">
           <div class="pm-stat">
-            <div class="pm-stat-val">1.72</div>
+            <div class="pm-stat-val">—</div>
             <div class="pm-stat-lbl">KD</div>
           </div>
           <div class="pm-stat">
-            <div class="pm-stat-val pos">68%</div>
+            <div class="pm-stat-val">—</div>
             <div class="pm-stat-lbl">WR</div>
           </div>
           <div class="pm-stat">
-            <div class="pm-stat-val">7</div>
+            <div class="pm-stat-val">0</div>
             <div class="pm-stat-lbl">MVP</div>
           </div>
           <div class="pm-stat">
-            <div class="pm-stat-val points">2 184</div>
+            <div class="pm-stat-val points">2 000</div>
             <div class="pm-stat-lbl">ELO</div>
           </div>
         </div>
@@ -5680,10 +5679,10 @@
         <div class="pm-section">
           <div class="pm-section-label">моя тима</div>
           <a href="#" class="pm-team" onclick="goPage('team'); closeProfile(); return false;">
-            <div class="pm-team-logo" style="background: var(--peach)">VR</div>
+            <div class="pm-team-logo" style="background: var(--accent)">??</div>
             <div class="pm-team-info">
-              <div class="pm-team-name">Vortex Renegades</div>
-              <div class="pm-team-sub">5/5 · #04 в D1 · WR 62%</div>
+              <div class="pm-team-name">Без команды</div>
+              <div class="pm-team-sub">создай или присоединись</div>
             </div>
             <span class="pm-team-arrow">→</span>
           </a>
@@ -5734,45 +5733,13 @@
           <a href="#" class="nm-read" onclick="markAllNotifsRead(); return false;">отметить все ✓</a>
         </div>
 
-        <div class="nm-list">
-          <a href="#" class="nm-item unread" onclick="goPage('match'); switchMatchState('prep'); closeNotif(); return false;">
-            <div class="nm-item-icon" style="background: rgba(196, 24, 32, 0.15); color: var(--hot-pink)">🔥</div>
-            <div class="nm-item-body">
-              <div class="nm-item-text"><b>Матч через 10 минут</b> — нажми Ready</div>
-              <div class="nm-item-time">только что</div>
-            </div>
-            <span class="nm-item-dot"></span>
-          </a>
-          <a href="#" class="nm-item unread" onclick="goPage('invites'); closeNotif(); return false;">
-            <div class="nm-item-icon" style="background: rgba(232, 38, 42, 0.15); color: var(--accent-2)">📨</div>
-            <div class="nm-item-body">
-              <div class="nm-item-text"><b>Foxy Crew</b> зовут тебя саппортом</div>
-              <div class="nm-item-time">2 часа назад</div>
-            </div>
-            <span class="nm-item-dot"></span>
-          </a>
-          <a href="#" class="nm-item unread" onclick="goPage('match'); switchMatchState('result'); closeNotif(); return false;">
-            <div class="nm-item-icon" style="background: rgba(255, 138, 60, 0.15); color: var(--mint)">🏆</div>
-            <div class="nm-item-body">
-              <div class="nm-item-text">Победа над <b>Pixel Riot</b> 13:9 · +10 PTS</div>
-              <div class="nm-item-time">вчера</div>
-            </div>
-            <span class="nm-item-dot"></span>
-          </a>
-          <a href="#" class="nm-item" onclick="goPage('match'); switchMatchState('prep'); closeNotif(); return false;">
-            <div class="nm-item-icon" style="background: rgba(42, 77, 140, 0.15); color: var(--sky)">📅</div>
-            <div class="nm-item-body">
-              <div class="nm-item-text">Матч против <b>Kazbek</b> назначен на 15 мая</div>
-              <div class="nm-item-time">3 дня назад</div>
-            </div>
-          </a>
-          <a href="#" class="nm-item" onclick="goPage('player'); closeNotif(); return false;">
-            <div class="nm-item-icon" style="background: rgba(255, 200, 66, 0.15); color: var(--peach)">⭐</div>
-            <div class="nm-item-body">
-              <div class="nm-item-text">Ты получил <b>Verified ★</b> — добро пожаловать!</div>
-              <div class="nm-item-time">неделю назад</div>
-            </div>
-          </a>
+        <div class="nm-list" id="notifDropdownList">
+          <!-- Карточки уведомлений рендерятся через loadNotificationsDropdown() -->
+          <div style="padding: 30px 16px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔕</div>
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">Тихо</div>
+            <div style="font-size: 11.5px; color: var(--muted); font-weight: 600;">Новые уведомления появятся здесь</div>
+          </div>
         </div>
 
         <a href="#" class="nm-foot" onclick="goPage('notifications'); closeNotif(); return false;">показать все →</a>
@@ -5800,46 +5767,45 @@
       Climby — кэжуальная лига по Standoff 2. Собирай тиму, играй сезон,
       апай рейтинг и забирайся в топ-дивизион. Без душнил.
     </p>
-    <!-- IN TEAM: карточка команды со статами -->
+    <!-- IN TEAM: карточка команды со статами (данные подставляются через applyTeamData) -->
     <div class="my-team-card team-state active" data-team-state="in-team" onclick="goPage('team')">
       <div class="mtc-head">
-        <div class="mtc-logo" style="background: var(--peach)">VR</div>
+        <div class="mtc-logo" style="background: var(--accent)">??</div>
         <div class="mtc-info">
           <div class="mtc-name">
-            Vortex Renegades
-            <span class="mtc-tag-pill">VRN</span>
+            Моя команда
+            <span class="mtc-tag-pill">—</span>
           </div>
           <div class="mtc-sub">
-            <span class="mtc-pos">🏅 #04 в D1</span>
+            <span class="mtc-pos">🏅 — в D1</span>
             <span>·</span>
-            <span>winstreak 2 🔥</span>
+            <span>играй чтобы апать</span>
           </div>
         </div>
         <span class="mtc-arrow">→</span>
       </div>
       <div class="mtc-stats">
         <div class="mtc-stat">
-          <div class="mtc-stat-val pos">62%</div>
+          <div class="mtc-stat-val">—</div>
           <div class="mtc-stat-lbl">WR</div>
         </div>
         <div class="mtc-stat">
-          <div class="mtc-stat-val">5-3</div>
+          <div class="mtc-stat-val">0-0</div>
           <div class="mtc-stat-lbl">W-L</div>
         </div>
         <div class="mtc-stat">
-          <div class="mtc-stat-val pos">+24</div>
+          <div class="mtc-stat-val">0</div>
           <div class="mtc-stat-lbl">Δ</div>
         </div>
         <div class="mtc-stat">
-          <div class="mtc-stat-val points">39</div>
+          <div class="mtc-stat-val points">0</div>
           <div class="mtc-stat-lbl">PTS</div>
         </div>
       </div>
       <div class="mtc-roster">
         <span class="mtc-roster-label">ростер</span>
         <div class="mtc-avatars">
-          <div class="mtc-mini-avatar" style="background: var(--peach)">YO</div>
-          <div class="mtc-mini-avatar" style="background: var(--accent-2)">ZK</div>
+          <div class="mtc-mini-avatar" style="background: var(--accent)">??</div>
           <div class="mtc-mini-avatar" style="background: var(--mint)">M1</div>
           <div class="mtc-mini-avatar" style="background: var(--accent)">RS</div>
           <div class="mtc-mini-avatar" style="background: var(--sky)">SM</div>
@@ -5978,12 +5944,12 @@
       <button class="btn">Погнали</button>
     </div>
 
-    <div class="join-cta in-team-cta team-state" data-team-state="in-team" onclick="goPage('match')">
+    <div class="join-cta in-team-cta team-state" data-team-state="in-team" onclick="goPage('matches')">
       <div class="cta-text">
-        <div class="cta-title">⚔️ Следующий матч сегодня в 21:00</div>
-        <div class="cta-sub">vs Shadow Ops · через 1ч 23м · готовь команду</div>
+        <div class="cta-title">⚔️ Жди начала сезона</div>
+        <div class="cta-sub">Матчи начнутся когда D1 заполнится командами</div>
       </div>
-      <button class="btn">К матчу →</button>
+      <button class="btn">К матчам →</button>
     </div>
   </div>
 </main>
@@ -6017,209 +5983,17 @@
       </div>
 
       <div class="matches-grid" id="matchesGrid">
-        <!-- Live матчи -->
-        <div class="match-card-lg" data-status="live">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>DUST · Bo3 · W2</span>
-            </div>
-            <div class="match-status live">LIVE 31:24</div>
+        <div style="grid-column: 1 / -1; padding: 60px 30px; text-align: center; background: var(--card); border-radius: 18px; border: 2px dashed var(--line);">
+          <div style="font-size: 64px; line-height: 1; margin-bottom: 16px;">🎮</div>
+          <div style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Матчей пока нет</div>
+          <div style="font-size: 14px; color: var(--muted); font-weight: 600; line-height: 1.55; max-width: 480px; margin: 0 auto 20px;">
+            Когда D1 заполнится командами — здесь появятся первые матчи сезона.<br>
+            Создай свою команду и зови игроков!
           </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--mint)">VX</div>
-              <div class="ml-team-name">Vortex</div>
-            </div>
-            <div class="ml-score"><span>13</span><span class="sep">:</span><span>11</span></div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--sky)">NX</div>
-              <div class="ml-team-name">Nexus5</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>1 442 зрителя</span>
-            <a href="#" class="ml-action ml-watch" onclick="watchMatch(event)">▶ смотреть</a>
-          </div>
-        </div>
-
-        <div class="match-card-lg" data-status="live">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>SAKURA · Bo1</span>
-            </div>
-            <div class="match-status live">LIVE 18:02</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--hot-pink)">FY</div>
-              <div class="ml-team-name">Foxy Crew</div>
-            </div>
-            <div class="ml-score"><span>7</span><span class="sep">:</span><span>9</span></div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--peach)">RB</div>
-              <div class="ml-team-name">Rebels.</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>318 зрителей</span>
-            <a href="#" class="ml-action ml-watch" onclick="watchMatch(event)">▶ смотреть</a>
-          </div>
-        </div>
-
-        <!-- Upcoming -->
-        <div class="match-card-lg" data-status="upcoming">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>PROVINCE · Bo3</span>
-            </div>
-            <div class="match-status upcoming">сегодня 21:00</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--accent-2)">SH</div>
-              <div class="ml-team-name">Shadow Ops</div>
-            </div>
-            <div class="ml-score upcoming">vs</div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--accent)">PX</div>
-              <div class="ml-team-name">Pixel Riot</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>через 3 ч</span>
-            <a href="#" class="ml-action ml-remind" onclick="remindMatch(event, this)">🔔 напомнить</a>
-          </div>
-        </div>
-
-        <div class="match-card-lg" data-status="upcoming">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>RUST · Bo1</span>
-            </div>
-            <div class="match-status upcoming">15 мая · 19:30</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--sky)">KZ</div>
-              <div class="ml-team-name">Kazbek</div>
-            </div>
-            <div class="ml-score upcoming">vs</div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--hot-pink)">NM</div>
-              <div class="ml-team-name">No Mercy</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>завтра</span>
-            <a href="#" class="ml-action ml-remind" onclick="remindMatch(event, this)">🔔 напомнить</a>
-          </div>
-        </div>
-
-        <div class="match-card-lg" data-status="upcoming">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>ZONE9 · Bo3</span>
-            </div>
-            <div class="match-status upcoming">16 мая · 20:00</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--mint)">SP</div>
-              <div class="ml-team-name">Sparks</div>
-            </div>
-            <div class="ml-score upcoming">vs</div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--lemon)">9H</div>
-              <div class="ml-team-name">9th Hour</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>через 2 дня</span>
-            <a href="#" class="ml-action ml-remind" onclick="remindMatch(event, this)">🔔 напомнить</a>
-          </div>
-        </div>
-
-        <div class="match-card-lg" data-status="upcoming">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>DUST · Bo1</span>
-            </div>
-            <div class="match-status upcoming">17 мая · 18:00</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--accent)">KR</div>
-              <div class="ml-team-name">Krypto</div>
-            </div>
-            <div class="ml-score upcoming">vs</div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--peach)">DG</div>
-              <div class="ml-team-name">Dragons</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>через 3 дня</span>
-            <a href="#" class="ml-action ml-remind" onclick="remindMatch(event, this)">🔔 напомнить</a>
-          </div>
-        </div>
-
-        <!-- Прошедшие -->
-        <div class="match-card-lg" data-status="past">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>PROVINCE · Bo3 · W1</span>
-            </div>
-            <div class="match-status upcoming">12 мая</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--mint); opacity: 1">VX</div>
-              <div class="ml-team-name">Vortex</div>
-            </div>
-            <div class="ml-score" style="color: var(--mint)"><span>16</span><span class="sep">:</span><span>9</span></div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: var(--accent); opacity: 0.5">PX</div>
-              <div class="ml-team-name" style="opacity: 0.6">Pixel Riot</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>финиш 2 дня назад</span>
-            <a href="#" class="ml-action ml-watch" onclick="watchReplay(event)">📺 повтор</a>
-          </div>
-        </div>
-
-        <div class="match-card-lg" data-status="past">
-          <div class="match-lg-head">
-            <div class="match-lg-meta">
-              <span class="div-pill">D1</span>
-              <span>SAKURA · Bo1 · W1</span>
-            </div>
-            <div class="match-status upcoming">11 мая</div>
-          </div>
-          <div class="match-lg-body">
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: #d4d8e0; opacity: 0.5">NX</div>
-              <div class="ml-team-name" style="opacity: 0.6">Nexus5</div>
-            </div>
-            <div class="ml-score" style="color: var(--mint)"><span>10</span><span class="sep">:</span><span>13</span></div>
-            <div class="ml-team">
-              <div class="ml-team-logo" style="background: #b88a5f">RB</div>
-              <div class="ml-team-name">Rebels.</div>
-            </div>
-          </div>
-          <div class="ml-foot">
-            <span>финиш 3 дня назад</span>
-            <a href="#" class="ml-action ml-watch" onclick="watchReplay(event)">📺 повтор</a>
-          </div>
+          <button class="btn btn-primary" onclick="goPage('teams')">🚀 Перейти к командам</button>
         </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -7405,55 +7179,25 @@
           <div class="match-card" style="margin-bottom: 14px;">
             <div class="mc-head">
               <div class="mc-title">👥 Ростер</div>
-              <div class="mc-sub">5/5 игроков · средний KD <span style="color: var(--mint); font-weight: 800;">1.60</span></div>
+              <div class="mc-sub" id="rosterSub">загружаем...</div>
             </div>
-            <div class="roster-grid">
-              <div class="roster-card captain" data-player="your_nick" data-initials="YO" data-color="var(--peach)" data-role="🧠 Captain" data-kd="1.72" data-wr="68%" data-mvp="7" data-elo="2 184">
-                <span class="rc-cap-badge">★ кэп</span>
-                <div class="rc-avatar" style="background: var(--peach)">YO</div>
-                <div class="rc-name">your_nick</div>
-                <div class="rc-role-row">🧠 Captain</div>
-                <div class="rc-mini-stats">
-                  <div><div class="rc-mini-stat-val">1.72</div><div class="rc-mini-stat-lbl">KD</div></div>
-                  <div><div class="rc-mini-stat-val">68%</div><div class="rc-mini-stat-lbl">WR</div></div>
-                </div>
+            <div class="roster-grid" id="teamRosterGrid">
+              <!-- Карточки игроков рендерятся через loadTeamRoster() -->
+            </div>
+            <!-- Кнопка пригласить — видна только если это моя команда и я капитан -->
+            <div id="captainInvitePanel" style="display: none; margin-top: 14px; padding: 14px; background: var(--card-2); border-radius: 12px; border: 1px dashed var(--line);">
+              <div style="font-size: 13px; font-weight: 800; margin-bottom: 10px;">⭐ Пригласить игрока</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input id="invSearchInput" class="input" placeholder="Введи ник игрока..." style="flex: 1; min-width: 180px;">
+                <select id="invRoleSelect" class="input" style="max-width: 160px;">
+                  <option value="substitute">Substitute</option>
+                  <option value="sniper">🎯 Sniper</option>
+                  <option value="entry">⚡ Entry</option>
+                  <option value="support">🛡️ Support</option>
+                </select>
+                <button class="btn btn-primary" onclick="searchAndInvite()" style="white-space: nowrap;">Найти и позвать →</button>
               </div>
-              <div class="roster-card" data-player="zekko" data-initials="ZK" data-color="var(--accent-2)" data-role="🎯 Sniper" data-kd="2.14" data-wr="78%" data-mvp="14" data-elo="2 421">
-                <div class="rc-avatar" style="background: var(--accent-2)">ZK</div>
-                <div class="rc-name">zekko</div>
-                <div class="rc-role-row">🎯 Sniper</div>
-                <div class="rc-mini-stats">
-                  <div><div class="rc-mini-stat-val">2.14</div><div class="rc-mini-stat-lbl">KD</div></div>
-                  <div><div class="rc-mini-stat-val">14</div><div class="rc-mini-stat-lbl">MVP</div></div>
-                </div>
-              </div>
-              <div class="roster-card" data-player="m1key" data-initials="M1" data-color="var(--mint)" data-role="⚡ Entry" data-kd="1.92" data-wr="74%" data-mvp="9" data-elo="2 142">
-                <div class="rc-avatar" style="background: var(--mint)">M1</div>
-                <div class="rc-name">m1key</div>
-                <div class="rc-role-row">⚡ Entry</div>
-                <div class="rc-mini-stats">
-                  <div><div class="rc-mini-stat-val">1.92</div><div class="rc-mini-stat-lbl">KD</div></div>
-                  <div><div class="rc-mini-stat-val">9</div><div class="rc-mini-stat-lbl">MVP</div></div>
-                </div>
-              </div>
-              <div class="roster-card" data-player="rush_it" data-initials="RS" data-color="var(--accent)" data-role="⚡ Entry" data-kd="1.74" data-wr="61%" data-mvp="6" data-elo="1 987">
-                <div class="rc-avatar" style="background: var(--accent)">RS</div>
-                <div class="rc-name">rush_it</div>
-                <div class="rc-role-row">⚡ Entry</div>
-                <div class="rc-mini-stats">
-                  <div><div class="rc-mini-stat-val">1.74</div><div class="rc-mini-stat-lbl">KD</div></div>
-                  <div><div class="rc-mini-stat-val">6</div><div class="rc-mini-stat-lbl">MVP</div></div>
-                </div>
-              </div>
-              <div class="roster-card" data-player="smokes" data-initials="SM" data-color="var(--sky)" data-role="🛡️ Support" data-kd="1.21" data-wr="62%" data-mvp="3" data-elo="1 856">
-                <div class="rc-avatar" style="background: var(--sky)">SM</div>
-                <div class="rc-name">smokes</div>
-                <div class="rc-role-row">🛡️ Support</div>
-                <div class="rc-mini-stats">
-                  <div><div class="rc-mini-stat-val">1.21</div><div class="rc-mini-stat-lbl">KD</div></div>
-                  <div><div class="rc-mini-stat-val">35</div><div class="rc-mini-stat-lbl">ASST</div></div>
-                </div>
-              </div>
+              <div id="invSearchResults" style="margin-top: 10px;"></div>
             </div>
           </div>
 
@@ -8259,101 +8003,15 @@
         <div class="hub-tab" data-filter="declined">Отклонённые <span class="count">1</span></div>
       </div>
 
-      <!-- Приглашение от Foxy -->
-      <div class="invite-card new">
-        <div class="iv-head">
-          <div class="iv-from-logo" style="background: var(--hot-pink)">FY</div>
-          <div class="iv-from-info">
-            <div class="iv-from-name">Foxy Crew <span class="th-pill" style="font-size: 10px; padding: 2px 7px;">#05 D1</span></div>
-            <div class="iv-from-meta">
-              <span>🇧🇾 BY</span>
-              <span>· кэп <b style="color: var(--text)">foxxy</b></span>
-              <span>· WR 57%</span>
-            </div>
-          </div>
-          <div class="iv-time">2 часа назад</div>
-        </div>
-        <div class="iv-message">
-          <b>foxxy:</b> «Здарова, видел твою стату на DUST — это космос. Ищем 4-го саппорта, нашему утилу пора в отпуск. Играем по вечерам, без душнил.»
-        </div>
-        <div class="iv-role-block">
-          <div class="iv-role-emoji">🛡️</div>
-          <div class="iv-role-info">
-            <div class="iv-role-name">Тебя зовут на Support</div>
-            <div class="iv-role-sub">5-й слот · твой текущий KD как support: 1.21</div>
-          </div>
-        </div>
-        <div class="iv-actions">
-          <button class="iv-btn accept">✓ Принять</button>
-          <button class="iv-btn decline">✕ Отклонить</button>
-          <button class="iv-btn profile" onclick="goPage('team')">👀 Посмотреть тиму</button>
-        </div>
-      </div>
-
-      <!-- Приглашение от Sparks -->
-      <div class="invite-card new">
-        <div class="iv-head">
-          <div class="iv-from-logo" style="background: var(--mint)">SP</div>
-          <div class="iv-from-info">
-            <div class="iv-from-name">Sparks <span class="th-pill" style="font-size: 10px; padding: 2px 7px;">#09 D1</span></div>
-            <div class="iv-from-meta">
-              <span>🇷🇺 RU</span>
-              <span>· кэп <b style="color: var(--text)">spark_k</b></span>
-              <span>· WR 48%</span>
-            </div>
-          </div>
-          <div class="iv-time">вчера</div>
-        </div>
-        <div class="iv-message">
-          <b>spark_k:</b> «У нас вылетел снайпер, нужна замена на пару матчей. Если зайдёт — оставим в ростере. Завтра играем vs 9th Hour.»
-        </div>
-        <div class="iv-role-block">
-          <div class="iv-role-emoji">🎯</div>
-          <div class="iv-role-info">
-            <div class="iv-role-name">Тебя зовут на Sniper</div>
-            <div class="iv-role-sub">временная замена · 2 матча</div>
-          </div>
-        </div>
-        <div class="iv-actions">
-          <button class="iv-btn accept">✓ Принять</button>
-          <button class="iv-btn decline">✕ Отклонить</button>
-          <button class="iv-btn profile" onclick="goPage('team')">👀 Посмотреть тиму</button>
-        </div>
-      </div>
-
-      <!-- Просмотрено -->
-      <div class="invite-card" style="opacity: 0.75;">
-        <div class="iv-head">
-          <div class="iv-from-logo" style="background: var(--sky)">KZ</div>
-          <div class="iv-from-info">
-            <div class="iv-from-name">Kazbek <span class="th-pill" style="font-size: 10px; padding: 2px 7px;">#06 D1</span></div>
-            <div class="iv-from-meta">
-              <span>🇰🇿 KZ</span>
-              <span>· кэп <b style="color: var(--text)">qz_kz</b></span>
-            </div>
-          </div>
-          <div class="iv-time">3 дня назад</div>
-        </div>
-        <div class="iv-message">
-          <b>qz_kz:</b> «Привет, мы из Алматы, ищем пятого. Звоним по ТС. Зацени.»
-        </div>
-        <div class="iv-actions">
-          <button class="iv-btn accept">✓ Принять</button>
-          <button class="iv-btn decline">✕ Отклонить</button>
-          <button class="iv-btn profile" onclick="goPage('team')">👀 Посмотреть тиму</button>
-        </div>
-      </div>
-
-      <!-- Отклонённое -->
-      <div class="invite-card" style="opacity: 0.5;">
-        <div class="iv-head">
-          <div class="iv-from-logo" style="background: var(--hot-pink)">NM</div>
-          <div class="iv-from-info">
-            <div class="iv-from-name">No Mercy</div>
-            <div class="iv-from-meta">
-              <span style="color: var(--hot-pink); font-weight: 800;">✕ Отклонено вами</span>
-              <span>· 5 дней назад</span>
-            </div>
+      <!-- Список приглашений (рендерится из БД через loadInvites) -->
+      <div id="invitesList">
+        <!-- Empty state по умолчанию -->
+        <div id="invitesEmpty" style="padding: 48px 20px; text-align: center; background: var(--card); border-radius: 18px; border: 2px dashed var(--line);">
+          <div style="font-size: 56px; line-height: 1; margin-bottom: 14px;">📭</div>
+          <div style="font-size: 17px; font-weight: 800; margin-bottom: 8px;">Приглашений пока нет</div>
+          <div style="font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5; max-width: 360px; margin: 0 auto;">
+            Когда капитаны команд пригласят тебя — увидишь их здесь.<br>
+            Можешь сам подать заявку через страницу <a href="#" onclick="goPage('teams'); return false;" style="color: var(--accent); font-weight: 800;">Команды</a>.
           </div>
         </div>
       </div>
@@ -10364,20 +10022,20 @@
         <div class="step-content" data-step="0">
           <div class="login-options">
             <button class="login-btn primary" onclick="loginWithTelegram()" id="tgLoginBtn">
-              <div class="login-btn-icon">T</div>
+              <div class="login-btn-icon" style="background: #2AABEE;">T</div>
               <div class="login-btn-info">
                 <div class="login-btn-title">Войти через Telegram</div>
-                <div class="login-btn-sub">в один клик · быстрее всего</div>
+                <div class="login-btn-sub">в один клик · без смурфов · быстро</div>
               </div>
               <span class="login-btn-tag">⚡ топ</span>
               <span class="login-btn-arrow">→</span>
             </button>
 
-            <button class="login-btn" onclick="showToast('Google-логин скоро будет', 'default')">
-              <div class="login-btn-icon">🅖</div>
+            <button class="login-btn" onclick="loginWithGoogle()" id="googleLoginBtn">
+              <div class="login-btn-icon" style="background: white; color: #4285F4; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">G</div>
               <div class="login-btn-info">
                 <div class="login-btn-title">Войти через Google</div>
-                <div class="login-btn-sub">используй свой gmail</div>
+                <div class="login-btn-sub">альтернатива · быстрая регистрация</div>
               </div>
               <span class="login-btn-arrow">→</span>
             </button>
@@ -10407,69 +10065,41 @@
           </div>
         </div>
 
-        <!-- ========== STEP: VERIFY ========== -->
+        <!-- ========== STEP: SUBSCRIBE ========== -->
         <div class="step-content" data-step="1">
           <div class="verify-intro">
-            <div class="verify-intro-icon">🛡️</div>
+            <div class="verify-intro-icon">⭐</div>
             <div class="verify-intro-text">
-              Verify даёт титул <b>Verified ★</b>, доступ к лиге и защищает от смурфов и токсиков.
-            </div>
-          </div>
-
-          <div class="verify-card done">
-            <div class="vc-head with-body">
-              <div class="vc-num"><span>1</span></div>
-              <div class="vc-info">
-                <div class="vc-title"><span class="emoji">💬</span>Подключи Telegram</div>
-                <div class="vc-sub">Чтобы получать приглашения в матчи и общаться с капитанами.</div>
-              </div>
-              <div class="vc-status done">готово</div>
-            </div>
-            <div class="vc-body">
-              <div class="tg-connected">
-                <span class="check">✓</span>
-                <span>Привязан как</span>
-                <span class="uname">@your_handle</span>
-                <span class="swap">отвязать</span>
-              </div>
+              Подпишись на новости лиги — узнаешь когда откроются записи на сезон, расписание матчей и крупные турниры.
             </div>
           </div>
 
           <div class="verify-card active">
             <div class="vc-head with-body">
-              <div class="vc-num"><span>2</span></div>
+              <div class="vc-num"><span>1</span></div>
               <div class="vc-info">
-                <div class="vc-title"><span class="emoji">🎮</span>ID аккаунта Standoff 2</div>
-                <div class="vc-sub">В игре: Профиль → значок копирования рядом с ником.</div>
+                <div class="vc-title"><span class="emoji">📧</span>Твоя почта</div>
+                <div class="vc-sub">Шлём не чаще раза в неделю. Никакого спама.</div>
               </div>
-              <div class="vc-status active">щас</div>
             </div>
             <div class="vc-body">
               <div class="vc-input-row">
-                <input class="input" placeholder="например, 5432198765" style="font-family: 'JetBrains Mono', monospace;">
-                <button class="btn btn-primary">Проверить</button>
+                <input class="input" id="subscribeEmail" type="email" placeholder="твой@email.com" style="flex: 1;">
               </div>
             </div>
           </div>
 
           <div class="verify-card">
             <div class="vc-head with-body">
-              <div class="vc-num"><span>3</span></div>
+              <div class="vc-num"><span>2</span></div>
               <div class="vc-info">
-                <div class="vc-title"><span class="emoji">⏱️</span>Часы в игре</div>
-                <div class="vc-sub">Минимум 100 — отрезаем новичков и ботов.</div>
+                <div class="vc-title"><span class="emoji">💬</span>Telegram (опционально)</div>
+                <div class="vc-sub">Получишь приоритетный доступ когда откроется регистрация.</div>
               </div>
-              <div class="vc-status pending">авто</div>
             </div>
             <div class="vc-body">
-              <div class="hours-bar">
-                <div class="hours-track">
-                  <div class="hours-fill"></div>
-                </div>
-                <div class="hours-info">
-                  <span class="hours-current">проверим автоматом</span>
-                  <span class="hours-target">цель: 100 ч</span>
-                </div>
+              <div class="vc-input-row">
+                <input class="input" id="subscribeTg" placeholder="username (без @)" style="flex: 1; font-family: 'JetBrains Mono', monospace;">
               </div>
             </div>
           </div>
@@ -10477,8 +10107,8 @@
           <div class="verify-badge-final">
             <div class="vbf-icon">★</div>
             <div class="vbf-text">
-              <div class="vbf-title">После проверки: Verified ★</div>
-              <div class="vbf-sub">Открывается доступ к командам и лиге</div>
+              <div class="vbf-title">Будь среди первых</div>
+              <div class="vbf-sub">D2-D4 откроются после сезона 1 — успей зарегаться</div>
             </div>
           </div>
         </div>
@@ -10882,11 +10512,7 @@
     }
   }
 
-  function leaveTeam() {
-    if (confirm('Покинуть Vortex Renegades?\n\nТы потеряешь:\n• Место в текущей команде\n• Сезонные очки (PTS останутся у команды)\n• Все назначенные матчи\n\nЭто действие нельзя отменить.')) {
-      showToast('Заявка на выход отправлена капитану 👋', 'important');
-    }
-  }
+  // leaveTeam — определена ниже в Supabase-секции (async версия)
 
   function deleteAccount() {
     const word = prompt('Это удалит твой аккаунт навсегда:\n• Профиль\n• Стату\n• Достижения\n• Историю матчей\n\nЕсли уверен — введи слово УДАЛИТЬ:');
@@ -11256,7 +10882,7 @@
   // ============================================
   // ОТКРЫТЬ ПРОФИЛЬ ДРУГОЙ КОМАНДЫ С ПОДМЕНОЙ ДАННЫХ
   // ============================================
-  function openOpponentTeam(name, initials, color) {
+  async function openOpponentTeam(name, initials, color) {
     window._teamOverride = true;
     goPage('team');
 
@@ -11276,8 +10902,26 @@
     const heroBack = page.querySelector('.hub-back');
     if (heroBack) heroBack.innerHTML = '← к командам';
 
-    // Если это не Vortex — показываем заглушку для статы (ростер, история, путь, мапы)
-    const isMyTeam = name === 'Vortex Renegades';
+    // Подгружаем реальный ростер этой команды из БД
+    if (supabaseClient) {
+      try {
+        const { data: team } = await supabaseClient
+          .from('teams')
+          .select('id, created_by')
+          .eq('name', name)
+          .maybeSingle();
+
+        if (team) {
+          window._teamOverrideId = team.id;
+          await loadTeamRoster(team.id);
+        }
+      } catch (e) {
+        console.warn('Не удалось подгрузить ростер:', e);
+      }
+    }
+
+    // Если это моя команда — показываем actions для моей; иначе — actions для чужой
+    const isMyTeam = currentTeam && currentTeam.name === name;
     // прячем все блоки со статой: ростер, история, карты, расписание, ачивки, путь команды
     const sectionsToBlur = [];
     // селекторы блоков для скрытия
@@ -11383,11 +11027,19 @@
     }
   }
 
-  function markAllNotifsRead() {
+  async function markAllNotifsRead() {
+    if (supabaseClient && currentUser) {
+      await supabaseClient
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', currentUser.id)
+        .eq('is_read', false);
+      await applyNotificationsBadge();
+      await loadNotificationsDropdown();
+    }
     document.querySelectorAll('.nm-item.unread, .notif-row.unread').forEach(el => {
       el.classList.remove('unread');
     });
-    refreshNotifBadge();
     showToast('Все уведомления прочитаны ✓');
   }
 
@@ -11446,9 +11098,226 @@
   // СОСТОЯНИЕ ЮЗЕРА: в команде или нет
   // ============================================
   // В реальном проекте это придёт из бэка (Supabase). Меняй здесь для теста.
+  // ============================================
+  // ГЛОБАЛЬНОЕ СОСТОЯНИЕ ПОЛЬЗОВАТЕЛЯ
+  // ============================================
   // По умолчанию — гость (бета только запустилась, никто не зарегался)
   let userHasTeam = false;
   let isLoggedIn = false;
+  let currentUser = null;  // { id, nick, handle, telegram_id, telegram_username, avatar_emoji, avatar_color, ... }
+  let currentTeam = null;  // { id, name, tag, logo_initials, logo_color, points, wins, losses, ... }
+
+  // Загружает профиль текущего юзера из БД и применяет ко всему UI
+  async function refreshUserState() {
+    if (!supabaseClient) {
+      // Без Supabase — всегда гость
+      isLoggedIn = false;
+      userHasTeam = false;
+      currentUser = null;
+      currentTeam = null;
+      applyAuthState();
+      applyTeamState();
+      return;
+    }
+
+    try {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+
+      if (!user) {
+        // Нет сессии — гость
+        isLoggedIn = false;
+        userHasTeam = false;
+        currentUser = null;
+        currentTeam = null;
+        applyAuthState();
+        applyTeamState();
+        return;
+      }
+
+      // Есть сессия — загружаем профиль
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!profile) {
+        console.warn('⚠️ Юзер залогинен но profile не найден');
+        isLoggedIn = false;
+        applyAuthState();
+        return;
+      }
+
+      currentUser = profile;
+      isLoggedIn = true;
+
+      // Welcome toast при первом логине через Google
+      if (!window._welcomedThisSession) {
+        const isFirstTime = !profile.last_seen_at ||
+          (new Date() - new Date(profile.joined_at)) < 60000;
+        if (isFirstTime) {
+          setTimeout(() => {
+            showToast('🎉 Добро пожаловать в Climby, ' + profile.nick + '!', 'success', 4500);
+            if (typeof fireConfetti === 'function') fireConfetti(0.5);
+          }, 300);
+        } else {
+          setTimeout(() => {
+            showToast('👋 С возвращением, ' + profile.nick, 'default', 3000);
+          }, 200);
+        }
+        window._welcomedThisSession = true;
+      }
+
+      // Обновляем last_seen
+      supabaseClient
+        .from('profiles')
+        .update({ last_seen_at: new Date().toISOString() })
+        .eq('id', user.id)
+        .then(() => {});
+
+      // Загружаем команду где юзер активный member
+      const { data: membership } = await supabaseClient
+        .from('team_members')
+        .select(`
+          team_id, role, is_captain,
+          teams (*)
+        `)
+        .eq('player_id', user.id)
+        .is('left_at', null)
+        .maybeSingle();
+
+      if (membership?.teams) {
+        currentTeam = membership.teams;
+        currentTeam.my_role = membership.role;
+        currentTeam.my_is_captain = membership.is_captain;
+        userHasTeam = true;
+      } else {
+        currentTeam = null;
+        userHasTeam = false;
+      }
+
+      // Применяем ко всему UI
+      applyAuthState();
+      applyTeamState();
+      applyUserData();
+      applyTeamData();
+      applyNotificationsBadge();
+
+      // Подписываемся на realtime уведомления (один раз)
+      if (!window._notifsSubscribed) {
+        subscribeNotifications();
+        window._notifsSubscribed = true;
+      }
+
+      console.log('✅ Юзер:', currentUser.nick, '| Команда:', currentTeam?.name || 'нет');
+    } catch (e) {
+      console.error('refreshUserState error:', e);
+    }
+  }
+
+  // Применяет данные юзера к навбару и профиль-дропдауну
+  function applyUserData() {
+    if (!currentUser) return;
+    const nick = currentUser.nick || 'player';
+    const handle = currentUser.handle || '@' + nick;
+    const initials = (nick.substring(0, 2) || '??').toUpperCase();
+
+    // Аватарка в навбаре
+    document.querySelectorAll('.profile-avatar, .pd-avatar, .nb-avatar').forEach(el => {
+      el.textContent = initials;
+      if (currentUser.avatar_color) {
+        el.style.background = currentUser.avatar_color;
+      }
+    });
+
+    // Ник в навбаре
+    document.querySelectorAll('[data-user-nick]').forEach(el => {
+      el.textContent = nick;
+    });
+    // Все хардкод "your_nick" → реальный ник
+    document.querySelectorAll('.nb-nick, .pd-nick').forEach(el => {
+      el.textContent = nick;
+    });
+
+    // Handle
+    document.querySelectorAll('.pd-handle, [data-user-handle]').forEach(el => {
+      el.textContent = handle;
+    });
+
+    // Verified бейдж
+    const verifiedEls = document.querySelectorAll('[data-user-verified]');
+    verifiedEls.forEach(el => {
+      el.style.display = currentUser.is_verified ? '' : 'none';
+    });
+  }
+
+  // Применяет данные команды на главную (карточка моей команды)
+  function applyTeamData() {
+    if (!currentTeam) return;
+
+    const cards = document.querySelectorAll('.my-team-card, [data-my-team-card]');
+    cards.forEach(card => {
+      const logo = card.querySelector('.mtc-logo');
+      const name = card.querySelector('.mtc-name');
+      const tag = card.querySelector('.mtc-tag-pill');
+      const pos = card.querySelector('.mtc-pos');
+      const wr = card.querySelector('.mtc-stat .pos');
+
+      if (logo) {
+        logo.textContent = currentTeam.logo_initials || '??';
+        if (currentTeam.logo_color) logo.style.background = currentTeam.logo_color;
+      }
+      if (name) {
+        // сохраняем pill, меняем только текст
+        const pill = name.querySelector('.mtc-tag-pill');
+        const pillHtml = pill ? pill.outerHTML : '';
+        name.innerHTML = (currentTeam.name || 'My Team') + ' ' + pillHtml;
+      }
+      if (tag) tag.textContent = currentTeam.tag || '';
+      if (pos) {
+        const rank = currentTeam.rank ? `#${String(currentTeam.rank).padStart(2, '0')}` : '—';
+        pos.innerHTML = `🏅 ${rank} в D1`;
+      }
+
+      // Стата
+      const stats = card.querySelectorAll('.mtc-stat-val');
+      if (stats.length >= 4) {
+        const wrPct = Math.round((currentTeam.wr || 0) * 100);
+        stats[0].textContent = wrPct + '%';
+        stats[1].textContent = `${currentTeam.wins || 0}-${currentTeam.losses || 0}`;
+        stats[2].textContent = ((currentTeam.points || 0) >= 0 ? '+' : '') + (currentTeam.points || 0);
+        stats[3].textContent = currentTeam.points || 0;
+      }
+    });
+  }
+
+  // Обновляет счётчик уведомлений
+  async function applyNotificationsBadge() {
+    if (!supabaseClient || !currentUser) {
+      const dot = document.getElementById('notifDot');
+      if (dot) dot.style.display = 'none';
+      return;
+    }
+    try {
+      const { count } = await supabaseClient
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', currentUser.id)
+        .eq('is_read', false);
+
+      const dot = document.getElementById('notifDot');
+      if (dot) {
+        if (count && count > 0) {
+          dot.textContent = count > 9 ? '9+' : String(count);
+          dot.style.display = '';
+        } else {
+          dot.style.display = 'none';
+        }
+      }
+    } catch (e) {
+      console.warn('notif count error:', e);
+    }
+  }
 
   function applyAuthState() {
     const state = isLoggedIn ? 'logged-in' : 'guest';
@@ -11525,11 +11394,18 @@
     logoutModal.classList.remove('open');
     document.body.style.overflow = '';
   }
-  function confirmLogout() {
+  async function confirmLogout() {
     closeLogout();
     goPage('home');
+    if (supabaseClient) {
+      await supabaseClient.auth.signOut();
+    }
     isLoggedIn = false;
+    userHasTeam = false;
+    currentUser = null;
+    currentTeam = null;
     applyAuthState();
+    applyTeamState();
     showToast('Вышли из аккаунта 👋', 'important');
   }
 
@@ -12028,9 +11904,92 @@
     applyModal.classList.remove('open');
     document.body.style.overflow = '';
   }
-  function submitApply() {
+  // Применяется к команде на странице которую сейчас открыли (через openOpponentTeam)
+  // Получаем имя команды из hero на странице team
+  async function submitApply() {
+    if (!supabaseClient || !currentUser) {
+      showToast('Нужно войти в аккаунт', 'error');
+      return;
+    }
+    if (userHasTeam) {
+      showToast('Ты уже в команде — сначала покинь её', 'error');
+      return;
+    }
+
+    // Берём имя команды с открытого профиля
+    const teamName = document.querySelector('[data-page="team"] .th-name')?.textContent?.trim();
+    if (!teamName) {
+      showToast('Не удалось определить команду', 'error');
+      return;
+    }
+
     closeApplyModal();
-    showToast('Заявка отправлена · кэп получит уведомление 📨', 'success');
+    showToast('Подаём заявку...', 'default');
+
+    try {
+      // Находим команду по имени
+      const { data: team, error: findErr } = await supabaseClient
+        .from('teams')
+        .select('id, name, is_recruiting')
+        .eq('name', teamName)
+        .maybeSingle();
+
+      if (findErr || !team) {
+        showToast('Команда не найдена', 'error');
+        return;
+      }
+
+      if (!team.is_recruiting) {
+        showToast('Команда не набирает игроков', 'error');
+        return;
+      }
+
+      // Находим капитана команды
+      const { data: captain } = await supabaseClient
+        .from('team_members')
+        .select('player_id')
+        .eq('team_id', team.id)
+        .eq('is_captain', true)
+        .is('left_at', null)
+        .maybeSingle();
+
+      // Создаём приглашение (но от юзера к команде — это заявка)
+      const { error: inviteErr } = await supabaseClient
+        .from('team_invites')
+        .insert({
+          team_id: team.id,
+          inviter_id: currentUser.id,        // юзер сам себя номинирует
+          invitee_id: captain?.player_id || currentUser.id,
+          role: 'substitute',
+          message: `${currentUser.nick} хочет вступить в ${team.name}`,
+        });
+
+      if (inviteErr) {
+        if (inviteErr.code === '23505') {
+          showToast('Ты уже подал заявку в эту команду', 'error');
+        } else {
+          showToast('Ошибка: ' + inviteErr.message, 'error');
+        }
+        return;
+      }
+
+      // Создаём уведомление капитану
+      if (captain?.player_id) {
+        await supabaseClient.from('notifications').insert({
+          user_id: captain.player_id,
+          kind: 'invite',
+          title: 'Новая заявка в команду',
+          body: `${currentUser.nick} подал заявку на роль substitute`,
+          link: 'invites',
+          is_urgent: false,
+        });
+      }
+
+      showToast('Заявка отправлена капитану ' + team.name + ' 📨', 'success', 4000);
+    } catch (e) {
+      console.error('Apply error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
   }
 
   function openChallengeModal() {
@@ -12261,7 +12220,12 @@
   function toggleNotif(e) {
     if (e) e.stopPropagation();
     closeProfile();
+    const wasOpen = notifMenu.classList.contains('open');
     notifMenu.classList.toggle('open');
+    // При открытии дропдауна — подгружаем свежие уведомления
+    if (!wasOpen && typeof loadNotificationsDropdown === 'function') {
+      loadNotificationsDropdown();
+    }
   }
   function closeNotif() {
     notifMenu.classList.remove('open');
@@ -12282,6 +12246,31 @@
     document.querySelectorAll('.page').forEach(p => {
       p.classList.toggle('active', p.dataset.page === name);
     });
+
+    // Подгружаем данные при переходе на специальные страницы
+    if (name === 'invites' && typeof loadInvites === 'function') {
+      loadInvites();
+    }
+    if (name === 'teams' && typeof loadTeams === 'function') {
+      loadTeams();
+    }
+    if (name === 'home' && typeof loadLeaderboardHome === 'function') {
+      loadLeaderboardHome();
+    }
+    if (name === 'notifications' && typeof loadNotifications === 'function') {
+      loadNotifications();
+    }
+    if (name === 'players' && typeof loadPlayers === 'function') {
+      loadPlayers();
+    }
+    if (name === 'team' && typeof loadTeamRoster === 'function') {
+      // Если открыли через openOpponentTeam — она сама вызовет loadTeamRoster
+      // Иначе загружаем мою команду
+      if (!window._teamOverrideId && currentTeam && currentTeam.id) {
+        loadTeamRoster(currentTeam.id);
+      }
+    }
+
     // При прямом переходе на /team (например через навбар) сбрасываем профиль на мою команду
     // openOpponentTeam ставит другие данные — нужно вернуть назад
     if (name === 'team' && !window._teamOverride) {
@@ -12315,6 +12304,7 @@
       }
     }
     window._teamOverride = false;
+    window._teamOverrideId = null;
 
     // обновляем активную ссылку в навбаре
     document.querySelectorAll('.nav-links a').forEach(a => {
@@ -12429,12 +12419,12 @@
     verify: {
       steps: [{
         contentStep: 1,
-        tag: 'Verification 🛡️',
-        title: 'Verify <span class="accent">профиль</span>',
-        sub: 'Подтверди что ты не бот и не смурф. Займёт пару минут.',
-        nextLabel: 'Готово, апнуть до Verified ★',
+        tag: 'Подписка на лигу ⭐',
+        title: 'Будь <span class="accent">первым</span> в курсе',
+        sub: 'Когда лига официально откроется — пришлём ссылку и расписание.',
+        nextLabel: '⭐ Подписаться',
         prevLabel: 'Отмена',
-        labels: ['Verify'],
+        labels: ['Подписка'],
         activeIdx: 0
       }]
     },
@@ -12463,11 +12453,11 @@
         {
           contentStep: 2,
           tag: 'Создание тимы · шаг 3/3',
-          title: 'Готово, <span class="accent">оплачивай</span> 💸',
-          sub: 'Стартовый взнос — защита от спама. После оплаты погнал placement.',
-          nextLabel: 'Оплатить ₽499 →',
+          title: 'Финальный <span class="accent">штрих</span> ✨',
+          sub: 'Проверь название и логотип. После создания тебя пригласят как капитана.',
+          nextLabel: '🚀 Создать команду',
           prevLabel: '← Назад',
-          labels: ['Тима', 'Состав', 'Оплата'],
+          labels: ['Тима', 'Состав', 'Готово'],
           activeIdx: 2
         }
       ]
@@ -12587,13 +12577,201 @@
     document.querySelector('.preview-panel').scrollTop = 0;
   }
 
-  function nextStep() {
+  async function nextStep() {
     const flow = flows[currentFlow];
+
+    // Verify flow — подписка на новости лиги
+    if (currentFlow === 'verify') {
+      await submitSubscription();
+      return;
+    }
+
+    // Если это последний шаг wizard'а создания команды — реально создаём!
+    if (currentFlow === 'team' && currentIdx === flow.steps.length - 1) {
+      await submitTeamCreation();
+      return;
+    }
+
     if (currentIdx < flow.steps.length - 1) {
       currentIdx++;
       render();
     } else {
       closeModal();
+    }
+  }
+
+  // Подписка на лигу (гостевой режим)
+  async function submitSubscription() {
+    const emailInput = document.getElementById('subscribeEmail');
+    const tgInput = document.getElementById('subscribeTg');
+
+    const email = (emailInput?.value || '').trim().toLowerCase();
+    const telegram = (tgInput?.value || '').trim().replace(/^@/, '');
+
+    if (!email && !telegram) {
+      showToast('Введи email или Telegram', 'error');
+      return;
+    }
+
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      showToast('Email выглядит странно — проверь', 'error');
+      return;
+    }
+
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Подписываем...'; }
+
+    if (!supabaseClient) {
+      showToast('Сохранили локально, скоро подключим к БД', 'success');
+      closeModal();
+      return;
+    }
+
+    try {
+      const { error } = await supabaseClient
+        .from('subscribers')
+        .insert({
+          email: email || null,
+          telegram: telegram || null,
+          source: 'verify_modal',
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          showToast('Ты уже подписан 👌', 'default', 3500);
+          closeModal();
+          return;
+        }
+        // Если таблицы нет — silent fail
+        if (error.message?.includes('subscribers')) {
+          showToast('🎉 Спасибо за подписку!', 'success', 3500);
+          closeModal();
+          return;
+        }
+        showToast('Ошибка: ' + error.message, 'error');
+        if (nextBtn) { nextBtn.disabled = false; nextBtn.innerHTML = '⭐ Подписаться'; }
+        return;
+      }
+
+      showToast('🎉 Подписка оформлена! Жди новости.', 'success', 4000);
+      if (typeof fireConfetti === 'function') fireConfetti(0.4);
+      closeModal();
+    } catch (e) {
+      console.error('Subscribe error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+      if (nextBtn) { nextBtn.disabled = false; nextBtn.innerHTML = '⭐ Подписаться'; }
+    }
+  }
+
+  // Создание команды в БД через Supabase
+  async function submitTeamCreation() {
+    if (!supabaseClient || !currentUser) {
+      showToast('Нужно войти в аккаунт', 'error');
+      return;
+    }
+
+    if (userHasTeam) {
+      showToast('Ты уже в команде — сначала покинь её', 'error');
+      return;
+    }
+
+    const nameInput = document.getElementById('nameInput');
+    const tagInput = document.getElementById('tagInput');
+    const activeColor = document.querySelector('.color-dot.active');
+
+    const name = (nameInput?.value || '').trim();
+    const tag = (tagInput?.value || '').trim().toUpperCase();
+    const logoColor = activeColor?.style.background || 'var(--accent)';
+
+    // Валидация
+    if (name.length < 3 || name.length > 32) {
+      showToast('Название команды: 3-32 символа', 'error');
+      return;
+    }
+    if (tag.length < 2 || tag.length > 5) {
+      showToast('Тег команды: 2-5 символов (например VRN)', 'error');
+      return;
+    }
+
+    // Инициалы для логотипа
+    const words = name.split(/\s+/);
+    let initials = words.length >= 2
+      ? (words[0][0] + words[1][0])
+      : name.substring(0, 2);
+    initials = initials.toUpperCase();
+
+    showToast('Создаём команду...', 'default');
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Создаём...'; }
+
+    try {
+      // Получаем season_id
+      const { data: season } = await supabaseClient
+        .from('seasons')
+        .select('id')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      // Создаём команду
+      const { data: team, error: createErr } = await supabaseClient
+        .from('teams')
+        .insert({
+          name,
+          tag,
+          logo_initials: initials,
+          logo_color: logoColor,
+          division_id: 'd1',
+          season_id: season?.id,
+          region: currentUser.region || 'RU',
+          created_by: currentUser.id,
+          is_recruiting: true,  // Новая команда сразу открыта для приёма
+          points: 0,
+          wins: 0,
+          losses: 0,
+        })
+        .select()
+        .single();
+
+      if (createErr) {
+        if (createErr.code === '23505') {
+          showToast('Такое название или тег уже занято', 'error');
+        } else {
+          showToast('Ошибка: ' + createErr.message, 'error');
+        }
+        if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Оплатить ₽499 →'; }
+        return;
+      }
+
+      // Добавляем создателя как капитана
+      const { error: memberErr } = await supabaseClient
+        .from('team_members')
+        .insert({
+          team_id: team.id,
+          player_id: currentUser.id,
+          role: 'captain',
+          is_captain: true,
+        });
+
+      if (memberErr) {
+        console.error('Member add error:', memberErr);
+      }
+
+      // Обновляем состояние
+      await refreshUserState();
+      closeModal();
+
+      showToast('🎉 Команда ' + team.name + ' создана!', 'success', 4000);
+      if (typeof fireConfetti === 'function') {
+        setTimeout(() => fireConfetti(1), 200);
+      }
+
+      // Переходим на страницу команды
+      setTimeout(() => goPage('team'), 800);
+
+    } catch (e) {
+      console.error('Create team error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+      if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Оплатить ₽499 →'; }
     }
   }
   function prevStep() {
@@ -12676,8 +12854,8 @@
       .eq('division_id', 'd1')
       .order('points', { ascending: false })
     );
-    if (!data || data.length === 0) {
-      console.log('Не удалось загрузить команды, используется хардкод');
+    if (!data) {
+      console.log('Не удалось загрузить команды');
       return;
     }
 
@@ -12686,6 +12864,25 @@
     // Находим контейнер с карточками команд
     const grid = document.querySelector('[data-page="teams"] .teams-grid');
     if (!grid) return;
+
+    // Если команд нет — показываем empty state
+    if (data.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 60px 30px; text-align: center; background: var(--card); border-radius: 18px; border: 2px dashed var(--line);">
+          <div style="font-size: 64px; line-height: 1; margin-bottom: 16px;">🐣</div>
+          <div style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">D1 Rookie только открылся</div>
+          <div style="font-size: 14px; color: var(--muted); font-weight: 600; line-height: 1.55; max-width: 480px; margin: 0 auto 20px;">
+            50 мест свободны. Будь первым кто создаст команду — займёшь топ #1 в чистом сезоне.
+          </div>
+          ${isLoggedIn
+            ? `<button class="btn btn-primary" onclick="openModal('team')">🚀 Создать команду</button>`
+            : `<button class="btn btn-primary" onclick="openModal('login')">⭐ Войти и создать</button>`}
+        </div>
+      `;
+      const sub = document.querySelector('[data-page="teams"] .hub-sub');
+      if (sub) sub.textContent = 'D1 Rookie · 0/50 команд · ждём первых';
+      return;
+    }
 
     // Очищаем хардкод
     grid.innerHTML = '';
@@ -12699,6 +12896,7 @@
       const card = document.createElement('div');
       card.className = 'team-card-lg';
       card.style.cursor = 'pointer';
+      card.onclick = () => openOpponentTeam(team.name, team.logo_initials, team.logo_color);
       card.innerHTML = `
         <div class="tcl-rank" style="color: ${rankColor(rank)};">#${String(rank).padStart(2, '0')}</div>
         <div class="tcl-logo" style="background: ${team.logo_color};">${team.logo_initials}</div>
@@ -12913,14 +13111,934 @@
   }
 
   // =====================================
+  // NOTIFICATIONS — уведомления (минимум для беты)
+  // =====================================
+  // Рендерит уведомления в дропдауне колокольчика
+  async function loadNotificationsDropdown() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data: notifs } = await supabaseClient
+      .from('notifications')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const list = document.getElementById('notifDropdownList');
+    if (!list) return;
+
+    if (!notifs || notifs.length === 0) {
+      list.innerHTML = `
+        <div style="padding: 30px 16px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🔕</div>
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">Тихо</div>
+          <div style="font-size: 11.5px; color: var(--muted); font-weight: 600;">Новые уведомления появятся здесь</div>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = notifs.map(n => {
+      const time = formatTimeAgo(new Date(n.created_at));
+      const iconBg = {
+        invite: 'rgba(232, 38, 42, 0.15)',
+        match_soon: 'rgba(196, 24, 32, 0.15)',
+        match_result: 'rgba(255, 138, 60, 0.15)',
+        achievement: 'rgba(255, 200, 66, 0.15)',
+        system: 'rgba(42, 77, 140, 0.15)',
+      }[n.kind] || 'rgba(232, 38, 42, 0.15)';
+
+      const iconColor = {
+        invite: 'var(--accent-2)',
+        match_soon: 'var(--hot-pink)',
+        match_result: 'var(--mint)',
+        achievement: 'var(--peach)',
+        system: 'var(--sky)',
+      }[n.kind] || 'var(--accent)';
+
+      const icon = {
+        invite: '📨',
+        match_soon: '🔥',
+        match_result: '🏆',
+        achievement: '⭐',
+        system: '📅',
+      }[n.kind] || '🔔';
+
+      // Куда вести по клику
+      let link = "goPage('notifications')";
+      if (n.link === 'invites') link = "goPage('invites')";
+      else if (n.link === 'team') link = "goPage('team')";
+      else if (n.link?.startsWith('match:')) link = "goPage('match')";
+
+      return `
+        <a href="#" class="nm-item ${n.is_read ? '' : 'unread'}" onclick="${link}; closeNotif(); markOneNotifRead('${n.id}'); return false;">
+          <div class="nm-item-icon" style="background: ${iconBg}; color: ${iconColor}">${icon}</div>
+          <div class="nm-item-body">
+            <div class="nm-item-text"><b>${n.title}</b>${n.body ? ' — ' + n.body : ''}</div>
+            <div class="nm-item-time">${time}</div>
+          </div>
+          ${n.is_read ? '' : '<span class="nm-item-dot"></span>'}
+        </a>
+      `;
+    }).join('');
+  }
+
+  // Помечает одно уведомление прочитанным
+  async function markOneNotifRead(notifId) {
+    if (!supabaseClient || !notifId) return;
+    await supabaseClient
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('id', notifId);
+    await applyNotificationsBadge();
+  }
+
+  async function loadNotifications() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data: notifs } = await supabaseClient
+      .from('notifications')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    // Обновляем счётчик
+    await applyNotificationsBadge();
+
+    if (!notifs) return;
+
+    // Помечаем как прочитанные при открытии страницы
+    const unreadIds = notifs.filter(n => !n.is_read).map(n => n.id);
+    if (unreadIds.length > 0) {
+      setTimeout(async () => {
+        await supabaseClient
+          .from('notifications')
+          .update({ is_read: true })
+          .in('id', unreadIds);
+        await applyNotificationsBadge();
+      }, 1500);
+    }
+  }
+
+  // Realtime подписка на новые уведомления
+  function subscribeNotifications() {
+    if (!supabaseClient || !currentUser) return;
+
+    supabaseClient
+      .channel('user-notifs')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${currentUser.id}`,
+      }, ({ new: notif }) => {
+        console.log('🔔 New notif:', notif);
+        showToast('🔔 ' + notif.title, 'important', 4500);
+        if (typeof Sounds !== 'undefined' && Sounds.notif) Sounds.notif();
+        applyNotificationsBadge();
+        // Если дропдаун открыт — перезагрузим его
+        const notifMenu = document.getElementById('notifMenu');
+        if (notifMenu && notifMenu.classList.contains('open')) {
+          loadNotificationsDropdown();
+        }
+      })
+      .subscribe();
+  }
+
+  // =====================================
+  // INVITES — приглашения в команду
+  // =====================================
+  // =====================================
+  // TEAM ROSTER — состав команды на странице /team
+  // =====================================
+  function roleEmoji(role) {
+    return {
+      captain: '🧠', sniper: '🎯', entry: '⚡',
+      support: '🛡️', substitute: '🔄'
+    }[role] || '🎮';
+  }
+  function roleLabel(role) {
+    return {
+      captain: 'Captain', sniper: 'Sniper', entry: 'Entry',
+      support: 'Support', substitute: 'Substitute'
+    }[role] || role;
+  }
+
+  // Грузит и рендерит состав открытой сейчас команды
+  async function loadTeamRoster(teamId) {
+    if (!supabaseClient || !teamId) return;
+
+    const { data: members, error } = await supabaseClient
+      .from('team_members')
+      .select(`
+        role, is_captain, joined_at,
+        profile:profiles (id, nick, handle, avatar_emoji, avatar_color, total_kd, total_wr, total_mvp, current_elo, is_verified)
+      `)
+      .eq('team_id', teamId)
+      .is('left_at', null)
+      .order('is_captain', { ascending: false })
+      .order('joined_at', { ascending: true });
+
+    if (error) {
+      console.warn('loadTeamRoster error:', error);
+      return;
+    }
+
+    const grid = document.getElementById('teamRosterGrid');
+    const sub = document.getElementById('rosterSub');
+    if (!grid) return;
+
+    if (!members || members.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 32px 20px; text-align: center; background: var(--card-2); border-radius: 14px;">
+          <div style="font-size: 40px; line-height: 1; margin-bottom: 10px;">👥</div>
+          <div style="font-size: 14px; font-weight: 800; margin-bottom: 4px;">Ростер пустой</div>
+          <div style="font-size: 12px; color: var(--muted); font-weight: 600;">Капитан скоро пригласит игроков</div>
+        </div>
+      `;
+      if (sub) sub.textContent = '0/5 игроков';
+      return;
+    }
+
+    if (sub) {
+      const avgKD = members.reduce((s, m) => s + Number(m.profile?.total_kd || 1), 0) / members.length;
+      sub.innerHTML = `${members.length}/5 игроков · средний KD <span style="color: var(--mint); font-weight: 800;">${avgKD.toFixed(2)}</span>`;
+    }
+
+    grid.innerHTML = members.map(m => {
+      const p = m.profile || {};
+      const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
+      const color = p.avatar_color || (m.is_captain ? 'var(--peach)' : 'var(--accent)');
+      const kd = Number(p.total_kd || 1).toFixed(2);
+      const wr = Math.round((Number(p.total_wr || 0)) * 100);
+      const mvp = p.total_mvp || 0;
+
+      // Кнопка удаления — видна капитану на своих игроках (не на себе)
+      const showKick = currentTeam &&
+                       currentTeam.id === teamId &&
+                       currentTeam.my_is_captain &&
+                       !m.is_captain &&
+                       p.id !== currentUser?.id;
+
+      const kickBtn = showKick
+        ? `<button onclick="event.stopPropagation(); kickPlayer('${p.id}', '${(p.nick || '').replace(/'/g, "\\'")}')" style="position: absolute; top: 8px; right: 8px; background: var(--card-3); border: none; color: var(--hot-pink); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Удалить из команды">✕</button>`
+        : '';
+
+      const passCapBtn = (currentTeam && currentTeam.id === teamId && currentTeam.my_is_captain && !m.is_captain && p.id !== currentUser?.id)
+        ? `<button onclick="event.stopPropagation(); passCaptaincy('${p.id}', '${(p.nick || '').replace(/'/g, "\\'")}')" style="position: absolute; top: 8px; right: 36px; background: var(--card-3); border: none; color: var(--lemon); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Передать капитанство">👑</button>`
+        : '';
+
+      return `
+        <div class="roster-card ${m.is_captain ? 'captain' : ''}" data-player="${p.nick}" style="position: relative; cursor: pointer;" onclick="openPlayerProfile('${p.id}')">
+          ${m.is_captain ? '<span class="rc-cap-badge">★ кэп</span>' : ''}
+          ${passCapBtn}
+          ${kickBtn}
+          <div class="rc-avatar" style="background: ${color}">${initials}</div>
+          <div class="rc-name">${p.nick || 'player'}</div>
+          <div class="rc-role-row">${roleEmoji(m.role)} ${roleLabel(m.role)}</div>
+          <div class="rc-mini-stats">
+            <div><div class="rc-mini-stat-val">${kd}</div><div class="rc-mini-stat-lbl">KD</div></div>
+            <div><div class="rc-mini-stat-val">${mvp}</div><div class="rc-mini-stat-lbl">MVP</div></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Показываем панель приглашения только если я капитан этой команды
+    const invitePanel = document.getElementById('captainInvitePanel');
+    if (invitePanel) {
+      const isMyTeamAndCaptain = currentTeam &&
+                                  currentTeam.id === teamId &&
+                                  currentTeam.my_is_captain;
+      invitePanel.style.display = isMyTeamAndCaptain ? 'block' : 'none';
+    }
+  }
+
+  // Поиск игрока по нику и отправка приглашения
+  async function searchAndInvite() {
+    if (!supabaseClient || !currentUser || !currentTeam) {
+      showToast('Ошибка состояния', 'error');
+      return;
+    }
+    if (!currentTeam.my_is_captain) {
+      showToast('Только капитан может приглашать', 'error');
+      return;
+    }
+
+    const input = document.getElementById('invSearchInput');
+    const roleSelect = document.getElementById('invRoleSelect');
+    const results = document.getElementById('invSearchResults');
+
+    const query = (input?.value || '').trim();
+    if (query.length < 2) {
+      showToast('Минимум 2 символа', 'error');
+      return;
+    }
+
+    results.innerHTML = '<div style="font-size: 12px; color: var(--muted); padding: 8px;">Ищем...</div>';
+
+    try {
+      // Ищем игроков по нику или handle, исключая себя и уже в команде
+      const { data: players, error } = await supabaseClient
+        .from('profiles')
+        .select('id, nick, handle, avatar_color, total_kd, current_elo, is_verified')
+        .ilike('nick', `%${query}%`)
+        .neq('id', currentUser.id)
+        .limit(8);
+
+      if (error) {
+        results.innerHTML = '<div style="font-size: 12px; color: var(--hot-pink);">Ошибка поиска</div>';
+        return;
+      }
+
+      if (!players || players.length === 0) {
+        results.innerHTML = `<div style="font-size: 12px; color: var(--muted); padding: 12px; text-align: center;">😔 Игроки с ником "${query}" не найдены.<br>Они должны сначала зарегаться на сайте.</div>`;
+        return;
+      }
+
+      const role = roleSelect.value;
+
+      results.innerHTML = players.map(p => {
+        const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
+        const color = p.avatar_color || 'var(--accent)';
+        return `
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card-3); border-radius: 10px; margin-bottom: 6px;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: ${color}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">${initials}</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 13px; font-weight: 800;">${p.nick} ${p.is_verified ? '★' : ''}</div>
+              <div style="font-size: 11px; color: var(--muted); font-weight: 600;">KD ${Number(p.total_kd || 1).toFixed(2)} · ELO ${p.current_elo || 2000}</div>
+            </div>
+            <button class="btn btn-primary" style="font-size: 11px; padding: 6px 12px;" onclick="sendInvite('${p.id}', '${p.nick.replace(/'/g, "\\'")}', '${role}')">📨 Позвать</button>
+          </div>
+        `;
+      }).join('');
+
+    } catch (e) {
+      console.error('Search error:', e);
+      results.innerHTML = '<div style="font-size: 12px; color: var(--hot-pink);">Ошибка</div>';
+    }
+  }
+
+  // Отправка приглашения игроку
+  async function sendInvite(playerId, playerNick, role) {
+    if (!supabaseClient || !currentUser || !currentTeam) return;
+
+    try {
+      // Проверяем не в команде ли он уже
+      const { data: existing } = await supabaseClient
+        .from('team_members')
+        .select('team_id, teams (name)')
+        .eq('player_id', playerId)
+        .is('left_at', null)
+        .maybeSingle();
+
+      if (existing) {
+        showToast(playerNick + ' уже в команде ' + (existing.teams?.name || ''), 'error');
+        return;
+      }
+
+      // Создаём приглашение
+      const { error: invErr } = await supabaseClient
+        .from('team_invites')
+        .insert({
+          team_id: currentTeam.id,
+          inviter_id: currentUser.id,
+          invitee_id: playerId,
+          role: role,
+          message: `${currentUser.nick} зовёт тебя в ${currentTeam.name} на роль ${roleLabel(role)}`,
+        });
+
+      if (invErr) {
+        if (invErr.code === '23505') {
+          showToast('Ты уже приглашал ' + playerNick + ' в эту команду', 'error');
+        } else {
+          showToast('Ошибка: ' + invErr.message, 'error');
+        }
+        return;
+      }
+
+      // Создаём уведомление игроку
+      await supabaseClient.from('notifications').insert({
+        user_id: playerId,
+        kind: 'invite',
+        title: '📨 Тебя зовут в команду',
+        body: `${currentTeam.name}: на роль ${roleLabel(role)}`,
+        link: 'invites',
+        is_urgent: true,
+      });
+
+      showToast('Приглашение отправлено ' + playerNick + ' 📨', 'success', 4000);
+
+      // Очищаем поиск
+      document.getElementById('invSearchInput').value = '';
+      document.getElementById('invSearchResults').innerHTML = '';
+    } catch (e) {
+      console.error('Send invite error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
+  }
+
+  // =====================================
+  // LEAVE TEAM — покинуть команду
+  // =====================================
+  async function leaveTeam() {
+    if (!supabaseClient || !currentUser || !currentTeam) {
+      showToast('Ты не в команде', 'error');
+      return;
+    }
+
+    const isCaptain = currentTeam.my_is_captain;
+    let confirmText = `Покинуть команду "${currentTeam.name}"?`;
+    if (isCaptain) {
+      confirmText += '\n\n⚠️ Ты капитан! Если ты единственный участник — команда удалится. Иначе капитаном станет случайный игрок.';
+    }
+    if (!confirm(confirmText)) return;
+
+    showToast('Покидаем команду...', 'default');
+
+    try {
+      // Помечаем выход (мягкое удаление через left_at)
+      const { error: leaveErr } = await supabaseClient
+        .from('team_members')
+        .update({ left_at: new Date().toISOString() })
+        .eq('team_id', currentTeam.id)
+        .eq('player_id', currentUser.id);
+
+      if (leaveErr) {
+        showToast('Ошибка: ' + leaveErr.message, 'error');
+        return;
+      }
+
+      // Если я был капитаном — нужно передать роль или удалить команду
+      if (isCaptain) {
+        const { data: remaining } = await supabaseClient
+          .from('team_members')
+          .select('player_id')
+          .eq('team_id', currentTeam.id)
+          .is('left_at', null)
+          .order('joined_at', { ascending: true })
+          .limit(1);
+
+        if (!remaining || remaining.length === 0) {
+          // Команда пустая — удаляем
+          await supabaseClient.from('teams').delete().eq('id', currentTeam.id);
+          showToast('Команда удалена (ты был последним)', 'important');
+        } else {
+          // Передаём капитанство первому из оставшихся
+          await supabaseClient
+            .from('team_members')
+            .update({ is_captain: true, role: 'captain' })
+            .eq('team_id', currentTeam.id)
+            .eq('player_id', remaining[0].player_id);
+
+          await supabaseClient.from('notifications').insert({
+            user_id: remaining[0].player_id,
+            kind: 'system',
+            title: '👑 Ты теперь капитан!',
+            body: `${currentUser.nick} покинул команду и передал тебе капитанство`,
+            link: 'team',
+            is_urgent: true,
+          });
+        }
+      }
+
+      showToast('Ты покинул команду 👋', 'success', 3000);
+      await refreshUserState();
+      goPage('home');
+    } catch (e) {
+      console.error('Leave error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
+  }
+
+  // =====================================
+  // KICK / PASS CAPTAIN — управление составом капитаном
+  // =====================================
+  async function kickPlayer(playerId, playerNick) {
+    if (!supabaseClient || !currentUser || !currentTeam) return;
+    if (!currentTeam.my_is_captain) {
+      showToast('Только капитан может удалять игроков', 'error');
+      return;
+    }
+    if (!confirm(`Удалить ${playerNick} из команды?`)) return;
+
+    try {
+      const { error } = await supabaseClient
+        .from('team_members')
+        .update({ left_at: new Date().toISOString() })
+        .eq('team_id', currentTeam.id)
+        .eq('player_id', playerId);
+
+      if (error) {
+        showToast('Ошибка: ' + error.message, 'error');
+        return;
+      }
+
+      // Уведомление удалённому игроку
+      await supabaseClient.from('notifications').insert({
+        user_id: playerId,
+        kind: 'system',
+        title: '👋 Тебя удалили из команды',
+        body: `Капитан ${currentUser.nick} удалил тебя из ${currentTeam.name}`,
+        is_urgent: true,
+      });
+
+      showToast(playerNick + ' удалён из команды', 'important', 3000);
+      await loadTeamRoster(currentTeam.id);
+    } catch (e) {
+      console.error('Kick error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
+  }
+
+  async function passCaptaincy(playerId, playerNick) {
+    if (!supabaseClient || !currentUser || !currentTeam) return;
+    if (!currentTeam.my_is_captain) {
+      showToast('Ты не капитан', 'error');
+      return;
+    }
+    if (!confirm(`Передать капитанство ${playerNick}?\n\nТы перестанешь быть капитаном, ${playerNick} получит права управления командой.`)) return;
+
+    try {
+      // Снимаем капитанство с меня
+      const { error: e1 } = await supabaseClient
+        .from('team_members')
+        .update({ is_captain: false, role: 'entry' })
+        .eq('team_id', currentTeam.id)
+        .eq('player_id', currentUser.id);
+
+      if (e1) {
+        showToast('Ошибка: ' + e1.message, 'error');
+        return;
+      }
+
+      // Назначаем нового капитана
+      const { error: e2 } = await supabaseClient
+        .from('team_members')
+        .update({ is_captain: true, role: 'captain' })
+        .eq('team_id', currentTeam.id)
+        .eq('player_id', playerId);
+
+      if (e2) {
+        // Откатываем
+        await supabaseClient
+          .from('team_members')
+          .update({ is_captain: true, role: 'captain' })
+          .eq('team_id', currentTeam.id)
+          .eq('player_id', currentUser.id);
+        showToast('Ошибка: ' + e2.message, 'error');
+        return;
+      }
+
+      // Уведомление новому капитану
+      await supabaseClient.from('notifications').insert({
+        user_id: playerId,
+        kind: 'system',
+        title: '👑 Ты теперь капитан!',
+        body: `${currentUser.nick} передал тебе капитанство ${currentTeam.name}`,
+        is_urgent: true,
+      });
+
+      showToast('👑 Капитанство передано ' + playerNick, 'success', 3500);
+      await refreshUserState();
+      await loadTeamRoster(currentTeam.id);
+    } catch (e) {
+      console.error('Pass captaincy error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
+  }
+
+  // =====================================
+  // ИГРОКИ — поиск на странице /players
+  // =====================================
+  // =====================================
+  // PROFILE PLAYER — открытие профиля игрока по ID
+  // =====================================
+  async function openPlayerProfile(playerId) {
+    if (!supabaseClient || !playerId) {
+      goPage('player');
+      return;
+    }
+
+    // Загружаем профиль + текущую команду
+    const { data: profile, error } = await supabaseClient
+      .from('profiles')
+      .select(`
+        *,
+        team_members!inner (
+          role, is_captain,
+          teams (id, name, logo_initials, logo_color, rank)
+        )
+      `)
+      .eq('id', playerId)
+      .is('team_members.left_at', null)
+      .maybeSingle();
+
+    // Если у юзера нет команды — второй запрос без JOIN
+    let p = profile;
+    if (!p) {
+      const { data: justProfile } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', playerId)
+        .maybeSingle();
+      p = justProfile;
+    }
+
+    if (!p) {
+      showToast('Игрок не найден', 'error');
+      return;
+    }
+
+    window._playerOverrideId = playerId;
+    goPage('player');
+
+    const page = document.querySelector('[data-page="player"]');
+    if (!page) return;
+
+    const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
+    const color = p.avatar_color || 'var(--accent)';
+
+    // Аватарка + ник
+    const avatar = page.querySelector('.ph-avatar');
+    if (avatar) {
+      avatar.textContent = initials;
+      avatar.style.background = color;
+    }
+    const verified = page.querySelector('.ph-verified');
+    if (verified) verified.style.display = p.is_verified ? '' : 'none';
+
+    const name = page.querySelector('.ph-name');
+    if (name) {
+      const star = p.is_verified ? ' <span style="color: var(--mint); font-size: 0.5em;">★</span>' : '';
+      name.innerHTML = (p.nick || 'player') + star;
+    }
+
+    // Handle row
+    const handleRow = page.querySelector('.ph-handle-row');
+    if (handleRow) {
+      const team = p.team_members?.[0]?.teams;
+      const role = p.team_members?.[0]?.role || p.preferred_role || 'entry';
+      const handle = p.handle || ('@' + p.nick);
+
+      let teamHtml = '<span style="color: var(--muted); font-weight: 600; font-size: 12px;">без команды</span>';
+      if (team) {
+        teamHtml = `<a href="#" class="ph-pill team" onclick="openOpponentTeam('${team.name.replace(/'/g, "\\'")}', '${team.logo_initials}', '${team.logo_color}'); return false;">${team.logo_initials} ${team.name}</a>`;
+      }
+
+      handleRow.innerHTML = `
+        <span class="ph-pill">${handle}</span>
+        <span class="ph-pill role">${roleEmoji(role)} ${roleLabel(role)}</span>
+        ${teamHtml}
+        <span>· ${p.region || 'RU'}${p.city ? ' · ' + p.city : ''}</span>
+      `;
+    }
+
+    // Кнопки в actions
+    const actions = page.querySelector('.ph-actions');
+    if (actions) {
+      const isMe = currentUser && currentUser.id === playerId;
+      if (isMe) {
+        actions.innerHTML = `
+          <button class="th-action ghost" onclick="goPage('settings')">⚙️ Настройки</button>
+        `;
+      } else {
+        actions.innerHTML = `
+          <button class="th-action primary" onclick="openMessageModal('${(p.nick || '').replace(/'/g, "\\'")}')">📨 Написать</button>
+          <button class="th-action ghost" onclick="toggleFollow(this, 'игрока ${(p.nick || '').replace(/'/g, "\\'")}')">⭐ Подписаться</button>
+        `;
+      }
+    }
+
+    // Статы
+    const stats = page.querySelectorAll('.ph-stat-val');
+    if (stats.length >= 5) {
+      const kd = Number(p.total_kd || 1).toFixed(2);
+      const wr = Math.round(Number(p.total_wr || 0) * 100);
+      stats[0].textContent = kd;
+      stats[0].className = 'ph-stat-val ' + (kd >= 1.2 ? 'pos' : '');
+      stats[1].textContent = wr + '%';
+      stats[1].className = 'ph-stat-val ' + (wr >= 60 ? 'pos' : '');
+      stats[2].textContent = p.total_mvp || 0;
+      stats[2].className = 'ph-stat-val';
+      stats[3].textContent = p.matches_played || 0;
+      stats[3].className = 'ph-stat-val';
+      stats[4].textContent = (p.current_elo || 2000).toLocaleString('ru');
+      stats[4].className = 'ph-stat-val points';
+    }
+
+    // Прячем все блоки с хардкодом расписания/истории если они есть
+    page.querySelectorAll('.match-card').forEach(card => {
+      const title = card.querySelector('.mc-title');
+      if (!title) return;
+      const t = title.textContent;
+      // Прячем сложные блоки которые требуют реальной статы
+      if (t.includes('расписание') || t.includes('Recent') || t.includes('Любим') || t.includes('форм')) {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  async function loadPlayers() {
+    if (!supabaseClient) return;
+
+    const { data: players, error } = await supabaseClient
+      .from('profiles')
+      .select('id, nick, handle, avatar_color, total_kd, total_wr, total_mvp, current_elo, is_verified, preferred_role, region')
+      .order('current_elo', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.warn('loadPlayers error:', error);
+      return;
+    }
+
+    // Найдём контейнер на странице
+    const page = document.querySelector('[data-page="players"]');
+    if (!page) return;
+
+    // Ищем контейнеры топа по ролям и список всех
+    let listContainer = page.querySelector('#playersList');
+    if (!listContainer) {
+      // Создаём если нет
+      const hub = page.querySelector('.hub-inner');
+      if (hub) {
+        const div = document.createElement('div');
+        div.id = 'playersList';
+        div.style.cssText = 'margin-top: 20px; display: flex; flex-direction: column; gap: 8px;';
+        hub.appendChild(div);
+        listContainer = div;
+      }
+    }
+
+    // Обновляем подзаголовок
+    const sub = page.querySelector('.hub-sub');
+    if (sub) sub.textContent = `${players?.length || 0} игроков · из БД · сортировка по ELO`;
+
+    if (!players || players.length === 0) {
+      if (listContainer) {
+        listContainer.innerHTML = `
+          <div style="padding: 48px 20px; text-align: center; background: var(--card); border-radius: 18px; border: 2px dashed var(--line);">
+            <div style="font-size: 56px; line-height: 1; margin-bottom: 14px;">🎮</div>
+            <div style="font-size: 17px; font-weight: 800; margin-bottom: 8px;">Игроков пока нет</div>
+            <div style="font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5;">
+              Будь первым кто зарегается на сайте.
+            </div>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    if (listContainer) {
+      listContainer.innerHTML = `
+        <div style="font-size: 12px; color: var(--muted); font-weight: 700; padding: 0 14px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Все игроки</div>
+        ${players.map((p, idx) => {
+          const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
+          const color = p.avatar_color || 'var(--accent)';
+          const wr = Math.round(Number(p.total_wr || 0) * 100);
+          return `
+            <div onclick="openPlayerProfile('${p.id}')" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border-radius: 12px; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='var(--card-2)'" onmouseout="this.style.background='var(--card)'">
+              <div style="font-size: 11px; color: var(--muted); font-weight: 700; min-width: 24px;">#${idx + 1}</div>
+              <div style="width: 38px; height: 38px; border-radius: 50%; background: ${color}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">${initials}</div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 14px; font-weight: 800;">${p.nick}${p.is_verified ? ' <span style="color: var(--mint); font-size: 11px;">★</span>' : ''}</div>
+                <div style="font-size: 11.5px; color: var(--muted); font-weight: 600;">
+                  ${p.preferred_role ? roleEmoji(p.preferred_role) + ' ' + roleLabel(p.preferred_role) : '🎮'} · ${p.region || 'RU'} · ELO ${p.current_elo || 2000}
+                </div>
+              </div>
+              <div style="font-size: 13px; font-weight: 800; color: var(--mint);">KD ${Number(p.total_kd || 1).toFixed(2)}</div>
+              <div style="font-size: 11.5px; color: var(--muted); font-weight: 700;">WR ${wr}%</div>
+            </div>
+          `;
+        }).join('')}
+      `;
+    }
+  }
+
+  async function loadInvites() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data: invites, error } = await supabaseClient
+      .from('team_invites')
+      .select(`
+        *,
+        teams (id, name, tag, logo_initials, logo_color, rank, region, points, wins, losses),
+        inviter:profiles!team_invites_inviter_id_fkey (nick, handle)
+      `)
+      .eq('invitee_id', currentUser.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('loadInvites error:', error);
+      return;
+    }
+
+    const list = document.getElementById('invitesList');
+    if (!list) return;
+
+    if (!invites || invites.length === 0) {
+      // Empty state остаётся
+      return;
+    }
+
+    // Обновляем счётчики
+    const allCount = document.querySelector('.invites-tabs .hub-tab[data-filter="all"] .count');
+    const newCount = document.querySelector('.invites-tabs .hub-tab[data-filter="new"] .count');
+    if (allCount) allCount.textContent = invites.length;
+    if (newCount) newCount.textContent = invites.length;
+
+    // Подзаголовок страницы
+    const sub = document.querySelector('[data-page="invites"] .hub-sub');
+    if (sub) sub.textContent = `${invites.length} активных приглашений`;
+
+    // Рендерим карточки
+    list.innerHTML = invites.map(inv => {
+      const team = inv.teams || {};
+      const inviter = inv.inviter || {};
+      const timeAgo = formatTimeAgo(new Date(inv.created_at));
+      return `
+        <div class="invite-card new">
+          <div class="iv-head">
+            <div class="iv-from-logo" style="background: ${team.logo_color || 'var(--accent)'}">${team.logo_initials || '??'}</div>
+            <div class="iv-from-info">
+              <div class="iv-from-name">${team.name || 'Команда'} <span class="th-pill" style="font-size: 10px; padding: 2px 7px;">${team.rank ? '#' + String(team.rank).padStart(2, '0') : 'D1'}</span></div>
+              <div class="iv-from-meta">
+                <span>от <b>${inviter.nick || 'капитан'}</b></span>
+                <span>· ${timeAgo}</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 14px 16px;">
+            <div style="font-size: 13px; color: var(--text); font-weight: 600; line-height: 1.55; margin-bottom: 12px;">
+              «${inv.message || 'Тебя зовут в команду как ' + (inv.role || 'игрока')}»
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="ntc-btn primary" onclick="acceptInvite('${inv.id}')">✓ Принять</button>
+              <button class="ntc-btn ghost" onclick="declineInvite('${inv.id}')">✕ Отклонить</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function acceptInvite(inviteId) {
+    if (!supabaseClient || !currentUser) return;
+
+    if (userHasTeam) {
+      showToast('Ты уже в команде — сначала покинь её', 'error');
+      return;
+    }
+
+    showToast('Принимаем приглашение...', 'default');
+
+    try {
+      // Получаем приглашение
+      const { data: inv, error: invErr } = await supabaseClient
+        .from('team_invites')
+        .select('*')
+        .eq('id', inviteId)
+        .single();
+
+      if (invErr || !inv) {
+        showToast('Приглашение не найдено', 'error');
+        return;
+      }
+
+      // Меняем статус приглашения
+      await supabaseClient
+        .from('team_invites')
+        .update({
+          status: 'accepted',
+          responded_at: new Date().toISOString(),
+        })
+        .eq('id', inviteId);
+
+      // Добавляем юзера в команду
+      const { error: memberErr } = await supabaseClient
+        .from('team_members')
+        .insert({
+          team_id: inv.team_id,
+          player_id: currentUser.id,
+          role: inv.role || 'substitute',
+        });
+
+      if (memberErr) {
+        showToast('Ошибка: ' + memberErr.message, 'error');
+        return;
+      }
+
+      // Уведомляем капитана команды
+      await supabaseClient.from('notifications').insert({
+        user_id: inv.inviter_id,
+        kind: 'system',
+        title: '🎉 Игрок принял приглашение',
+        body: `${currentUser.nick} вступил в команду`,
+        link: 'team',
+      });
+
+      showToast('🎉 Ты принят в команду!', 'success', 4000);
+      if (typeof fireConfetti === 'function') fireConfetti(0.7);
+
+      await refreshUserState();
+      await loadInvites();
+
+      setTimeout(() => goPage('team'), 1000);
+    } catch (e) {
+      console.error('Accept error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+    }
+  }
+
+  async function declineInvite(inviteId) {
+    if (!supabaseClient || !currentUser) return;
+
+    if (!confirm('Отклонить приглашение? Капитан получит уведомление.')) return;
+
+    try {
+      const { error } = await supabaseClient
+        .from('team_invites')
+        .update({
+          status: 'declined',
+          responded_at: new Date().toISOString(),
+        })
+        .eq('id', inviteId);
+
+      if (error) {
+        showToast('Ошибка: ' + error.message, 'error');
+        return;
+      }
+
+      showToast('Приглашение отклонено', 'default');
+      await loadInvites();
+    } catch (e) {
+      console.error('Decline error:', e);
+    }
+  }
+
+  // =====================================
   // ИНИЦИАЛИЗАЦИЯ
   // =====================================
   // Загружаем данные при старте + при переходе на соответствующие страницы
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     loadSeason();
     loadTeams();
     loadNews();
     loadLeaderboardHome();
+    // Проверяем есть ли уже залогиненный юзер
+    await refreshUserState();
+    // Подписываемся на изменения авторизации
+    if (supabaseClient) {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        console.log('Auth event:', event);
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+          refreshUserState();
+        }
+      });
+    }
   });
 
   // Если goPage переключает страницу — можно перезагружать данные
@@ -12979,9 +14097,8 @@
       console.log('✅ Logged in:', sessionData.user);
       showToast('🎉 Привет, ' + (tgUser.first_name || 'игрок') + '!', 'success', 4000);
 
-      // Меняем состояние и закрываем модалку
-      isLoggedIn = true;
-      applyAuthState();
+      // Загружаем профиль из БД и обновляем UI
+      await refreshUserState();
       closeModal();
 
       // Конфетти для приятного эффекта
@@ -12996,6 +14113,48 @@
   };
 
   // Кнопка "Войти через Telegram" — динамически вставляет официальный TG widget
+  // =====================================
+  // GOOGLE LOGIN — основной способ авторизации
+  // =====================================
+  async function loginWithGoogle() {
+    if (!supabaseClient) {
+      showToast('Supabase не подключён', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('googleLoginBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+    }
+
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Google OAuth error:', error);
+        showToast('Не удалось войти: ' + error.message, 'error');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+        return;
+      }
+      // После OAuth Google вернёт юзера обратно на сайт
+      // и refreshUserState() в DOMContentLoaded подхватит сессию
+    } catch (e) {
+      console.error('Google login error:', e);
+      showToast('Ошибка: ' + String(e), 'error');
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+  }
+
   function loginWithTelegram() {
     const container = document.getElementById('tgWidgetContainer');
     const mount = document.getElementById('tgWidgetMount');
