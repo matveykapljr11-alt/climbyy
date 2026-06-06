@@ -10021,43 +10021,27 @@
         <!-- ========== STEP: LOGIN ========== -->
         <div class="step-content" data-step="0">
           <div class="login-options">
-            <button class="login-btn primary" onclick="loginWithTelegram()" id="tgLoginBtn">
-              <div class="login-btn-icon" style="background: #2AABEE;">T</div>
+            <button class="login-btn primary" onclick="loginWithGoogle()" id="googleLoginBtn">
+              <div class="login-btn-icon" style="background: white; color: #4285F4; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">G</div>
               <div class="login-btn-info">
-                <div class="login-btn-title">Войти через Telegram</div>
-                <div class="login-btn-sub">в один клик · без смурфов · быстро</div>
+                <div class="login-btn-title">Войти через Google</div>
+                <div class="login-btn-sub">в один клик · работает везде</div>
               </div>
               <span class="login-btn-tag">⚡ топ</span>
               <span class="login-btn-arrow">→</span>
             </button>
-
-            <button class="login-btn" onclick="loginWithGoogle()" id="googleLoginBtn">
-              <div class="login-btn-icon" style="background: white; color: #4285F4; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">G</div>
-              <div class="login-btn-info">
-                <div class="login-btn-title">Войти через Google</div>
-                <div class="login-btn-sub">альтернатива · быстрая регистрация</div>
-              </div>
-              <span class="login-btn-arrow">→</span>
-            </button>
           </div>
 
-          <!-- Контейнер куда вставится официальный Telegram Login Widget -->
-          <div id="tgWidgetContainer" style="display: none; text-align: center; padding: 16px; background: var(--card-2); border-radius: 14px; margin-top: 12px;">
-            <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px; font-weight: 600;">
-              👇 Нажми синюю кнопку Telegram чтобы войти
+          <div style="margin-top: 14px; padding: 14px 16px; background: rgba(42, 171, 238, 0.08); border-radius: 12px; border: 1px solid rgba(42, 171, 238, 0.2);">
+            <div style="font-size: 13px; color: var(--text); font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 16px;">💬</span> Для участия в лиге — привяжи Telegram
             </div>
-            <div id="tgWidgetMount"></div>
+            <div style="font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.55;">
+              Один Telegram = один игрок. Защита от смурфов.<br>
+              После входа через Google → откроется <b>@ClimbyVf_bot</b> для привязки.
+            </div>
           </div>
-
-          <div class="login-divider"><span>или по email</span></div>
-
-          <div class="login-email-form">
-            <input class="input" type="email" placeholder="твой@email.com">
-            <input class="input" type="password" placeholder="пароль">
-            <button class="btn btn-primary btn-big" style="width: 100%; justify-content: center;">
-              Войти →
-            </button>
-          </div>
+        </div>
 
           <div class="login-foot">
             Ещё нет аккаунта? <a href="#" onclick="goToStep(0); return false;">Зарегаться</a> — займёт 30 секунд.
@@ -11166,6 +11150,15 @@
           }, 200);
         }
         window._welcomedThisSession = true;
+      }
+
+      // Если профиль без telegram_id — показываем модалку "Привяжи TG"
+      // (только один раз за сессию, и не сразу при логине, а через 2 сек)
+      if (!profile.telegram_id && !window._tgPromptShownThisSession) {
+        window._tgPromptShownThisSession = true;
+        setTimeout(() => {
+          showLinkTelegramModal();
+        }, 2500);
       }
 
       // Обновляем last_seen
@@ -12670,6 +12663,9 @@
       return;
     }
 
+    // Защита: нужен привязанный Telegram
+    if (!requireTelegram('создать команду')) return;
+
     if (userHasTeam) {
       showToast('Ты уже в команде — сначала покинь её', 'error');
       return;
@@ -13928,6 +13924,9 @@
   async function acceptInvite(inviteId) {
     if (!supabaseClient || !currentUser) return;
 
+    // Защита: нужен привязанный Telegram
+    if (!requireTelegram('принять приглашение')) return;
+
     if (userHasTeam) {
       showToast('Ты уже в команде — сначала покинь её', 'error');
       return;
@@ -14116,6 +14115,109 @@
   // =====================================
   // GOOGLE LOGIN — основной способ авторизации
   // =====================================
+  // =====================================
+  // LINK TELEGRAM — привязка TG к Google профилю
+  // =====================================
+  function showLinkTelegramModal() {
+    if (!currentUser) return;
+
+    // Генерим короткий уникальный токен для привязки
+    const linkToken = (currentUser.id || '').replace(/-/g, '').substring(0, 16);
+
+    // Делаем deeplink к боту
+    const botLink = 'https://t.me/ClimbyVf_bot?start=link_' + linkToken;
+
+    const modalHtml = `
+      <div class="modal-backdrop open" id="linkTgModal" onclick="if(event.target===this) closeLinkTgModal()" style="z-index: 9999;">
+        <div class="modal-card" style="max-width: 440px;">
+          <div style="text-align: center; padding: 24px 20px;">
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #2AABEE, #229ED9); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; box-shadow: 0 8px 24px rgba(42, 171, 238, 0.25);">💬</div>
+            <h2 style="font-size: 22px; font-weight: 900; margin-bottom: 8px;">Привяжи Telegram</h2>
+            <p style="font-size: 14px; color: var(--muted); font-weight: 600; line-height: 1.55; margin-bottom: 6px;">
+              Один Telegram = один игрок. Защита от смурфов и фейк-аккаунтов в лиге.
+            </p>
+            <p style="font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5; margin-bottom: 22px;">
+              Без привязки не сможешь <b>создать команду</b> и <b>принять приглашение</b>.
+            </p>
+
+            <a href="${botLink}" target="_blank" onclick="onLinkTgClicked()" class="btn btn-primary btn-big" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; font-size: 15px; background: #2AABEE; box-shadow: 0 6px 20px rgba(42, 171, 238, 0.35); margin-bottom: 12px;">
+              💬 Открыть @ClimbyVf_bot →
+            </a>
+
+            <button onclick="closeLinkTgModal()" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px;">
+              Позже
+            </button>
+
+            <div style="margin-top: 18px; padding: 12px 14px; background: var(--card-2); border-radius: 10px; text-align: left;">
+              <div style="font-size: 11.5px; color: var(--muted); font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Как работает</div>
+              <div style="font-size: 12.5px; color: var(--text); font-weight: 600; line-height: 1.6;">
+                1. Жмёшь кнопку выше<br>
+                2. Telegram откроется → жмёшь <b>"Запустить"</b><br>
+                3. Бот автоматически привяжет твой TG к профилю<br>
+                4. Возвращаешься на сайт → готово ✓
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Удаляем старую модалку если есть
+    const old = document.getElementById('linkTgModal');
+    if (old) old.remove();
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLinkTgModal() {
+    const modal = document.getElementById('linkTgModal');
+    if (modal) modal.remove();
+    document.body.style.overflow = '';
+  }
+
+  function onLinkTgClicked() {
+    showToast('Проверь Telegram — бот ждёт тебя 💬', 'default', 4000);
+    // Через несколько секунд начинаем периодически обновлять состояние
+    // чтобы поймать момент когда юзер привязался
+    let attempts = 0;
+    const interval = setInterval(async () => {
+      attempts++;
+      if (attempts > 30) {
+        clearInterval(interval);
+        return;
+      }
+      if (supabaseClient && currentUser) {
+        const { data: prof } = await supabaseClient
+          .from('profiles')
+          .select('telegram_id, is_verified')
+          .eq('id', currentUser.id)
+          .maybeSingle();
+        if (prof?.telegram_id) {
+          clearInterval(interval);
+          closeLinkTgModal();
+          showToast('🎉 Telegram привязан! Теперь можно создавать команды.', 'success', 5000);
+          if (typeof fireConfetti === 'function') fireConfetti(0.6);
+          await refreshUserState();
+        }
+      }
+    }, 3000);
+  }
+
+  // Защита: проверяет привязан ли TG перед действиями
+  function requireTelegram(actionName) {
+    if (!currentUser) {
+      showToast('Сначала войди в аккаунт', 'error');
+      return false;
+    }
+    if (!currentUser.telegram_id) {
+      showToast('⚠️ Для этого нужно привязать Telegram', 'error', 3500);
+      setTimeout(() => showLinkTelegramModal(), 500);
+      return false;
+    }
+    return true;
+  }
+
   async function loginWithGoogle() {
     if (!supabaseClient) {
       showToast('Supabase не подключён', 'error');
