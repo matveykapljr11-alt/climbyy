@@ -5733,7 +5733,7 @@
         <!-- Моя тима -->
         <div class="pm-section">
           <div class="pm-section-label">моя тима</div>
-          <a href="#" class="pm-team" onclick="goPage('team'); closeProfile(); return false;">
+          <a href="#" class="pm-team" onclick="goMyTeam(); closeProfile(); return false;">
             <div class="pm-team-logo" style="background: var(--accent)">??</div>
             <div class="pm-team-info">
               <div class="pm-team-name">Без команды</div>
@@ -5753,12 +5753,12 @@
           <a class="pm-link" href="#" onclick="openMyMatches(); closeProfile(); return false;">
             <span class="pm-link-emoji">🎮</span>
             <span class="pm-link-text">Мои матчи</span>
-            <span class="pm-link-badge">3 новых</span>
+            <span class="pm-link-badge" id="pmMatchesBadge" style="display:none"></span>
           </a>
           <a class="pm-link" href="#" onclick="goPage('invites'); closeProfile(); return false;">
             <span class="pm-link-emoji">📨</span>
             <span class="pm-link-text">Приглашения</span>
-            <span class="pm-link-badge dot">2</span>
+            <span class="pm-link-badge dot" id="pmInvitesBadge" style="display:none"></span>
           </a>
           <a class="pm-link" href="#" onclick="openMyProfile(); closeProfile(); return false;">
             <span class="pm-link-emoji">📊</span>
@@ -11502,13 +11502,26 @@
   // ============================================
   // МОИ МАТЧИ — переход на /matches с открытым фильтром
   // ============================================
+  function goMyTeam() {
+    // Есть команда → на страницу команды, нет → на список команд
+    if (window.currentTeam && currentTeam.id) {
+      goPage('team');
+    } else {
+      goPage('teams');
+    }
+  }
+
   function openMyMatches() {
     goPage('matches');
     // подсветим что это твои матчи через подзаголовок
     setTimeout(() => {
       const subtitle = document.querySelector('[data-page="matches"] .hub-sub');
       if (subtitle) {
-        subtitle.innerHTML = '🎮 показаны только матчи <b style="color: var(--text)">Vortex Renegades</b> · <a href="#" onclick="resetMatchesFilter(); return false;" style="color: var(--mint); font-weight: 800;">показать все →</a>';
+        if (window.currentTeam && currentTeam.name) {
+          subtitle.innerHTML = '🎮 показаны только матчи <b style="color: var(--text)">' + currentTeam.name + '</b> · <a href="#" onclick="resetMatchesFilter(); return false;" style="color: var(--mint); font-weight: 800;">показать все →</a>';
+        } else {
+          subtitle.innerHTML = '🎮 у тебя пока нет матчей — <a href="#" onclick="goPage(\'teams\'); return false;" style="color: var(--mint); font-weight: 800;">найди команду →</a>';
+        }
       }
       const title = document.querySelector('[data-page="matches"] .hub-title');
       if (title) {
