@@ -9545,7 +9545,78 @@
   </div>
 </div>
 
-<!-- ========== PAGE: HELP / FAQ ========== -->
+<!-- ========== PAGE: VERIFY TELEGRAM (онбординг после Google) ========== -->
+<div class="page" data-page="verify-tg">
+  <div style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="max-width: 520px; width: 100%; background: var(--card); border-radius: 24px; padding: 32px 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); border: 1px solid var(--line);">
+
+      <!-- Иконка TG -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #2AABEE, #229ED9); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 40px; box-shadow: 0 12px 32px rgba(42, 171, 238, 0.3);">💬</div>
+      </div>
+
+      <!-- Заголовок -->
+      <h1 style="font-size: 28px; font-weight: 900; text-align: center; margin-bottom: 12px; line-height: 1.2;">
+        Привяжи <span class="accent">Telegram</span><br>
+        чтобы играть
+      </h1>
+
+      <p style="font-size: 14px; color: var(--muted); text-align: center; font-weight: 600; line-height: 1.55; margin-bottom: 28px;">
+        Один Telegram = один игрок. Защита от смурфов и фейк-аккаунтов.<br>
+        Без привязки нельзя создать команду или принять приглашение.
+      </p>
+
+      <!-- Большая кнопка -->
+      <button id="openTgBotBtn" onclick="openTgBotForLink()" class="btn btn-primary btn-big" style="width: 100%; padding: 18px 24px; font-size: 16px; background: #2AABEE; box-shadow: 0 8px 24px rgba(42, 171, 238, 0.35); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <span style="font-size: 22px;">💬</span>
+        <span>Открыть @ClimbyVf_bot</span>
+        <span style="font-size: 18px;">→</span>
+      </button>
+
+      <!-- Статус ожидания -->
+      <div id="tgWaitingStatus" style="display: none; padding: 14px 16px; background: rgba(42, 171, 238, 0.1); border-radius: 12px; margin-bottom: 16px; text-align: center; border: 1px solid rgba(42, 171, 238, 0.25);">
+        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); font-weight: 700;">
+          <div style="width: 14px; height: 14px; border: 2px solid #2AABEE; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <span>Ждём привязки в Telegram...</span>
+        </div>
+        <div style="font-size: 11.5px; color: var(--muted); font-weight: 600; margin-top: 4px;">Как только нажмёшь "Запустить" в боте — здесь появится "✓"</div>
+      </div>
+
+      <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+
+      <!-- Инструкция -->
+      <div style="padding: 16px; background: var(--card-2); border-radius: 12px; margin-bottom: 16px;">
+        <div style="font-size: 12px; color: var(--muted); font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Как это работает</div>
+        <div style="font-size: 13px; color: var(--text); font-weight: 600; line-height: 1.7;">
+          <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+            <span style="background: var(--accent); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;">1</span>
+            <span>Жмёшь синюю кнопку выше → Telegram открывается</span>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+            <span style="background: var(--accent); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;">2</span>
+            <span>В боте жмёшь <b>"Запустить"</b> (или <code>/start</code>)</span>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+            <span style="background: var(--accent); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;">3</span>
+            <span>Бот привяжет твой Telegram автоматически</span>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <span style="background: var(--mint); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;">✓</span>
+            <span><b>Сайт сам переключится</b> когда привязка готова</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Кнопка "Позже" -->
+      <button onclick="skipTgLinkForNow()" style="width: 100%; background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 700; padding: 12px; cursor: pointer;">
+        Позже (без привязки нельзя играть)
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="page" data-page="help">
   <div class="hub">
     <div class="hub-inner help-page">
@@ -11152,13 +11223,15 @@
         window._welcomedThisSession = true;
       }
 
-      // Если профиль без telegram_id — показываем модалку "Привяжи TG"
-      // (только один раз за сессию, и не сразу при логине, а через 2 сек)
+      // Если профиль без telegram_id — отправляем на страницу верификации
+      // (только при первом логине, не каждый раз)
       if (!profile.telegram_id && !window._tgPromptShownThisSession) {
         window._tgPromptShownThisSession = true;
         setTimeout(() => {
-          showLinkTelegramModal();
-        }, 2500);
+          goPage('verify-tg');
+          // Запускаем авто-проверку привязки
+          startTgLinkPolling();
+        }, 800);
       }
 
       // Обновляем last_seen
@@ -12249,6 +12322,12 @@
     }
     if (name === 'home' && typeof loadLeaderboardHome === 'function') {
       loadLeaderboardHome();
+      // При возврате на главную — останавливаем поллинг TG если был
+      if (typeof stopTgLinkPolling === 'function') stopTgLinkPolling();
+    }
+    if (name === 'verify-tg' && typeof startTgLinkPolling === 'function') {
+      // При заходе на страницу верификации — запускаем поллинг
+      startTgLinkPolling();
     }
     if (name === 'notifications' && typeof loadNotifications === 'function') {
       loadNotifications();
@@ -14115,6 +14194,110 @@
   // =====================================
   // GOOGLE LOGIN — основной способ авторизации
   // =====================================
+  // =====================================
+  // VERIFY-TG PAGE — онбординг привязки TG после Google логина
+  // =====================================
+  let _tgPollInterval = null;
+
+  function openTgBotForLink() {
+    if (!currentUser) {
+      showToast('Нужно войти в аккаунт', 'error');
+      return;
+    }
+
+    // Генерируем токен из ID юзера (первые 16 hex символов)
+    const linkToken = (currentUser.id || '').replace(/-/g, '').substring(0, 16);
+    const botLink = 'https://t.me/ClimbyVf_bot?start=link_' + linkToken;
+
+    // Показываем статус ожидания
+    const statusEl = document.getElementById('tgWaitingStatus');
+    if (statusEl) statusEl.style.display = '';
+
+    // Меняем текст кнопки
+    const btn = document.getElementById('openTgBotBtn');
+    if (btn) {
+      btn.innerHTML = '<span style="font-size: 22px;">💬</span><span>Открыть @ClimbyVf_bot снова</span><span style="font-size: 18px;">↗</span>';
+    }
+
+    // Открываем бота
+    window.open(botLink, '_blank');
+
+    // Запускаем поллинг
+    startTgLinkPolling();
+  }
+
+  function startTgLinkPolling() {
+    // Не запускаем второй раз
+    if (_tgPollInterval) return;
+
+    let attempts = 0;
+    _tgPollInterval = setInterval(async () => {
+      attempts++;
+
+      // После 5 минут (60 попыток × 5 сек = 300 сек) — останавливаемся
+      if (attempts > 60) {
+        clearInterval(_tgPollInterval);
+        _tgPollInterval = null;
+        const statusEl = document.getElementById('tgWaitingStatus');
+        if (statusEl) {
+          statusEl.innerHTML = '<div style="font-size: 13px; color: var(--muted); font-weight: 700;">Долго не отвечаешь. Когда привяжешь — обнови страницу.</div>';
+        }
+        return;
+      }
+
+      if (supabaseClient && currentUser) {
+        try {
+          const { data: prof } = await supabaseClient
+            .from('profiles')
+            .select('telegram_id, telegram_username, nick')
+            .eq('id', currentUser.id)
+            .maybeSingle();
+
+          if (prof?.telegram_id) {
+            // Привязка успешна!
+            clearInterval(_tgPollInterval);
+            _tgPollInterval = null;
+
+            // Обновляем статус
+            const statusEl = document.getElementById('tgWaitingStatus');
+            if (statusEl) {
+              statusEl.style.background = 'rgba(46, 184, 138, 0.15)';
+              statusEl.style.borderColor = 'rgba(46, 184, 138, 0.4)';
+              statusEl.innerHTML = '<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--mint); font-weight: 800;"><span style="font-size: 20px;">✓</span><span>Telegram привязан!</span></div>';
+            }
+
+            // Конфетти + тост
+            if (typeof fireConfetti === 'function') fireConfetti(0.8);
+            showToast('🎉 Готово! Можешь играть в лиге.', 'success', 5000);
+
+            // Обновляем currentUser
+            await refreshUserState();
+
+            // Через 2 сек переходим на главную
+            setTimeout(() => {
+              goPage('home');
+            }, 2000);
+          }
+        } catch (e) {
+          console.warn('TG poll error:', e);
+        }
+      }
+    }, 3000);
+  }
+
+  function stopTgLinkPolling() {
+    if (_tgPollInterval) {
+      clearInterval(_tgPollInterval);
+      _tgPollInterval = null;
+    }
+  }
+
+  function skipTgLinkForNow() {
+    stopTgLinkPolling();
+    showToast('Можешь привязать Telegram позже в настройках', 'default', 3500);
+    goPage('home');
+  }
+
   // =====================================
   // LINK TELEGRAM — привязка TG к Google профилю
   // =====================================
