@@ -5587,6 +5587,61 @@
       return null;
     }
   }
+
+  // ============================================
+  // TG LOGIN — обработка ?tg_login=TOKEN после бота
+  // ============================================
+  async function handleTgLoginFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const tgToken = params.get('tg_login');
+    if (!tgToken || !supabaseClient) return;
+
+    console.log('🔄 TG login token detected, exchanging...');
+
+    try {
+      // Чистим URL сразу чтобы юзер не палил токен
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, '', cleanUrl);
+
+      // Шлём токен на Edge Function
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/tg-login?token=${encodeURIComponent(tgToken)}`, {
+        method: 'GET',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        }
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        console.error('TG login failed:', data);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Ссылка устарела. Запроси новую в боте.', 'error', 5000);
+        } else {
+          alert('Ссылка устарела. Запроси новую в боте.');
+        }
+        return;
+      }
+
+      console.log('✅ Got action_link, redirecting...');
+
+      // action_link — magic link который залогинит юзера
+      // Просто перенаправляем на него (он внутри сделает session.set и редирект назад)
+      window.location.href = data.action_link;
+
+    } catch (e) {
+      console.error('TG login exception:', e);
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Ошибка входа: ' + e.message, 'error', 5000);
+      }
+    }
+  }
+
+  // Запускаем сразу при загрузке
+  if (supabaseClient) {
+    handleTgLoginFromUrl();
+  }
 </script>
 
 </head>
@@ -10092,24 +10147,30 @@
         <!-- ========== STEP: LOGIN ========== -->
         <div class="step-content" data-step="0">
           <div class="login-options">
-            <button class="login-btn primary" onclick="loginWithGoogle()" id="googleLoginBtn">
-              <div class="login-btn-icon" style="background: white; color: #4285F4; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">G</div>
+            <a href="https://t.me/ClimbyVf_bot?start=login" target="_blank" class="login-btn primary" style="text-decoration: none;">
+              <div class="login-btn-icon" style="background: #2AABEE;">T</div>
               <div class="login-btn-info">
-                <div class="login-btn-title">Войти через Google</div>
-                <div class="login-btn-sub">в один клик · работает везде</div>
+                <div class="login-btn-title">Войти через Telegram</div>
+                <div class="login-btn-sub">в один клик · через бота · работает с 2FA</div>
               </div>
               <span class="login-btn-tag">⚡ топ</span>
               <span class="login-btn-arrow">→</span>
-            </button>
+            </a>
           </div>
 
-          <div style="margin-top: 14px; padding: 14px 16px; background: rgba(42, 171, 238, 0.08); border-radius: 12px; border: 1px solid rgba(42, 171, 238, 0.2);">
-            <div style="font-size: 13px; color: var(--text); font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 16px;">💬</span> Для участия в лиге — привяжи Telegram
+          <div style="margin-top: 14px; padding: 14px 16px; background: var(--card-2); border-radius: 12px;">
+            <div style="font-size: 12px; color: var(--muted); font-weight: 800; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Как это работает</div>
+            <div style="font-size: 13px; color: var(--text); font-weight: 600; line-height: 1.6;">
+              1. Жмёшь кнопку → откроется <b>@ClimbyVf_bot</b><br>
+              2. Жмёшь "Запустить" в боте<br>
+              3. Бот пришлёт ссылку → жмёшь → ты на сайте ✓
             </div>
-            <div style="font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.55;">
-              Один Telegram = один игрок. Защита от смурфов.<br>
-              После входа через Google → откроется <b>@ClimbyVf_bot</b> для привязки.
+          </div>
+
+          <div style="margin-top: 14px; padding: 12px 14px; background: rgba(42, 171, 238, 0.08); border-radius: 10px; border: 1px solid rgba(42, 171, 238, 0.18);">
+            <div style="font-size: 12px; color: var(--text); font-weight: 700; line-height: 1.5;">
+              💬 Один Telegram = один игрок. Защита от смурфов.<br>
+              <span style="color: var(--muted); font-weight: 600;">Не нужны логины/пароли — твой TG это твой аккаунт.</span>
             </div>
           </div>
         </div>
