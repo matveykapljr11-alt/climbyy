@@ -11109,8 +11109,13 @@
     window._teamOverride = true;
     window._teamOverrideId = team.id;
     goPage('team');
+    await populateTeamPage(team);
+  }
+
+  // Заполнить страницу /team реальными данными команды
+  async function populateTeamPage(team) {
     const page = document.querySelector('[data-page="team"]');
-    if (!page) return;
+    if (!page || !team) return;
     const isMine = currentTeam && currentTeam.id === team.id;
 
     const logo = page.querySelector('.th-logo');
@@ -12986,9 +12991,12 @@
       }
     }
 
-    // При прямом переходе на /team (например через навбар) сбрасываем профиль на мою команду
-    // openOpponentTeam ставит другие данные — нужно вернуть назад
+    // При прямом переходе на /team: есть моя команда → показываем её реальные данные.
+    // Демо-Vortex остаётся только для гостей без команды.
     if (name === 'team' && !window._teamOverride) {
+      if (window.currentTeam && currentTeam.id && typeof populateTeamPage === 'function') {
+        populateTeamPage(currentTeam);
+      } else {
       const page = document.querySelector('[data-page="team"]');
       if (page) {
         const heroLogo = page.querySelector('.th-logo');
@@ -13016,6 +13024,7 @@
           page.querySelectorAll('.my-team-action').forEach(b => b.style.display = '');
           page.querySelectorAll('.other-team-action').forEach(b => b.style.display = 'none');
         }
+      }
       }
     }
     window._teamOverride = false;
