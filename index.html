@@ -5745,7 +5745,7 @@
 
         <!-- Меню -->
         <div class="pm-menu">
-          <a class="pm-link" href="#" onclick="goPage('player'); closeProfile(); return false;">
+          <a class="pm-link" href="#" onclick="openMyProfile(); closeProfile(); return false;">
             <span class="pm-link-emoji">👤</span>
             <span class="pm-link-text">Мой профиль</span>
             <span class="pm-link-arrow">→</span>
@@ -5760,7 +5760,7 @@
             <span class="pm-link-text">Приглашения</span>
             <span class="pm-link-badge dot">2</span>
           </a>
-          <a class="pm-link" href="#" onclick="goPage('player'); closeProfile(); return false;">
+          <a class="pm-link" href="#" onclick="openMyProfile(); closeProfile(); return false;">
             <span class="pm-link-emoji">📊</span>
             <span class="pm-link-text">Моя статистика</span>
             <span class="pm-link-arrow">→</span>
@@ -11485,6 +11485,21 @@
   applyTeamState();
 
   // ============================================
+  // МОЙ ПРОФИЛЬ — открывает реальный профиль текущего юзера
+  // ============================================
+  function openMyProfile() {
+    if (!currentUser) {
+      showToast('Сначала войди в аккаунт', 'error');
+      return;
+    }
+    if (typeof openPlayerProfile === 'function') {
+      openPlayerProfile(currentUser.id);
+    } else {
+      goPage('player');
+    }
+  }
+
+  // ============================================
   // МОИ МАТЧИ — переход на /matches с открытым фильтром
   // ============================================
   function openMyMatches() {
@@ -13904,16 +13919,59 @@
       stats[4].className = 'ph-stat-val points';
     }
 
-    // Прячем все блоки с хардкодом расписания/истории если они есть
+    // Прячем все блоки с хардкодом расписания/истории если у игрока пусто
+    const hasMatches = (p.matches_played || 0) > 0;
+
+    // Если матчей 0 — прячем расписание, форму, последние матчи, любимые карты
+    page.querySelectorAll('.ph-section, .pp-section, .player-section').forEach(section => {
+      const title = section.querySelector('.section-title, .ph-section-title, .pp-section-title, h2, h3');
+      if (!title) return;
+      const t = (title.textContent || '').toLowerCase();
+      // Прячем если есть матчи статистики которых нет
+      if (!hasMatches && (t.includes('расписание') || t.includes('форма') || t.includes('история') || t.includes('последние') || t.includes('любим') || t.includes('карт') || t.includes('достижени'))) {
+        section.style.display = 'none';
+      }
+    });
+
+    // Для match-card тоже
     page.querySelectorAll('.match-card').forEach(card => {
+      if (!hasMatches) {
+        card.style.display = 'none';
+        return;
+      }
       const title = card.querySelector('.mc-title');
       if (!title) return;
       const t = title.textContent;
-      // Прячем сложные блоки которые требуют реальной статы
       if (t.includes('расписание') || t.includes('Recent') || t.includes('Любим') || t.includes('форм')) {
         card.style.display = 'none';
       }
     });
+
+    // Если матчей нет — показываем приветственный empty state
+    if (!hasMatches) {
+      let emptyState = page.querySelector('.player-empty-state');
+      if (!emptyState) {
+        emptyState = document.createElement('div');
+        emptyState.className = 'player-empty-state';
+        emptyState.style.cssText = 'margin: 24px 0; padding: 40px 24px; text-align: center; background: var(--card); border-radius: 18px; border: 2px dashed var(--line);';
+        emptyState.innerHTML = `
+          <div style="font-size: 56px; line-height: 1; margin-bottom: 12px;">🎮</div>
+          <div style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Здесь пока пусто</div>
+          <div style="font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.55; max-width: 400px; margin: 0 auto;">
+            Сыграй первые матчи — здесь появятся расписание, форма, достижения и любимые карты.
+          </div>
+        `;
+        const header = page.querySelector('.player-hero, .ph-card, .hub-inner > div');
+        if (header && header.parentNode) {
+          header.parentNode.insertBefore(emptyState, header.nextSibling);
+        }
+      } else {
+        emptyState.style.display = '';
+      }
+    } else {
+      const emptyState = page.querySelector('.player-empty-state');
+      if (emptyState) emptyState.style.display = 'none';
+    }
   }
 
   async function loadPlayers() {
