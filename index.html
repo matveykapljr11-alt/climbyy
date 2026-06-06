@@ -5546,6 +5546,29 @@
     }
     .preview-panel { display: none; }
   }
+  @media (max-width: 760px) {
+    .modal-backdrop { padding: 0; align-items: stretch; justify-content: stretch; }
+    .modal {
+      grid-template-columns: 1fr !important;
+      width: 100%; max-width: 100%;
+      height: 100dvh; max-height: 100dvh;
+      border-radius: 0;
+      transform: none !important;
+    }
+    .modal-backdrop.open .modal { transform: none !important; }
+    .preview-panel { display: none !important; }
+    .form-panel { padding: 54px 18px 18px; overflow-y: auto; }
+    .form-panel::after { display: none; }
+    .form-body { overflow: visible; padding-right: 0; flex: none; }
+    .form-foot {
+      flex-wrap: wrap; gap: 10px;
+      position: sticky; bottom: 0;
+      background: var(--card);
+      padding-bottom: 8px;
+    }
+    .foot-actions { width: 100%; }
+    .foot-actions .btn { flex: 1; }
+  }
 </style>
 
 <!-- ============================================
@@ -6021,6 +6044,7 @@
           <div class="hub-title"><span class="emoji">🎮</span>Все <span class="accent">матчи</span></div>
           <div class="hub-sub">24 игры на этой неделе · фильтруй как хочешь</div>
         </div>
+        <button class="th-action ghost" onclick="goPage('playoff')" style="align-self:flex-start">🏆 Плей-офф</button>
       </div>
 
       <div class="hub-tabs" data-tabs="matches-div">
@@ -6049,6 +6073,28 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: PLAYOFF ========== -->
+<div class="page" data-page="playoff">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goPage('matches'); return false;">← к матчам</a>
+      <div class="hub-head">
+        <div>
+          <div class="hub-title"><span class="emoji">🏆</span>Плей-офф <span class="accent">дивизиона</span></div>
+          <div class="hub-sub">топ-8 · double elimination · BO3</div>
+        </div>
+      </div>
+      <div id="playoffBracket" style="display:flex; flex-direction:column; gap:18px">
+        <div style="padding:60px 30px; text-align:center; background:var(--card); border-radius:18px; border:2px dashed var(--line)">
+          <div style="font-size:64px; line-height:1; margin-bottom:16px">🏆</div>
+          <div style="font-size:20px; font-weight:800; margin-bottom:10px">Сетка ещё не сформирована</div>
+          <div style="font-size:14px; color:var(--muted); font-weight:600">Плей-офф стартует за 3-4 дня до конца сезона. Топ-8 команд — следи за таблицей!</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -6747,6 +6793,66 @@
     <div class="hub-inner match-page">
       <a class="hub-back" href="#" onclick="goPage('matches'); return false;">← к матчам</a>
 
+      <!-- ========== РЕАЛЬНЫЙ СЕЗОННЫЙ МАТЧ ========== -->
+      <div id="seasonMatch" style="display:none">
+        <div class="match-card" style="margin-bottom:16px">
+          <div class="mc-head">
+            <div class="mc-title">⚔️ <span id="smTeams">—</span></div>
+            <div class="mc-sub" id="smWindow">—</div>
+          </div>
+          <div style="padding:16px 18px; display:flex; flex-direction:column; gap:14px">
+            <div id="smStatusLine" style="font-weight:700; font-size:14px; color:var(--muted)"></div>
+
+            <a id="smTgLink" href="#" target="_blank" class="btn btn-primary" style="display:none; text-align:center">💬 Написать капитану соперника</a>
+
+            <!-- БАНПИК -->
+            <div id="smBanpick" style="display:none">
+              <div style="font-weight:800; margin-bottom:8px">🗺️ Банпик карт · <span id="smBpTurn">—</span></div>
+              <div id="smMaps" style="display:flex; flex-wrap:wrap; gap:8px"></div>
+            </div>
+
+            <!-- ИТОГ КАРТЫ -->
+            <div id="smPicked" style="display:none; font-weight:800; font-size:16px"></div>
+
+            <!-- ВРЕМЯ + ХОСТЕР (капитан) -->
+            <div id="smSchedule" style="display:none">
+              <div style="font-weight:800; margin-bottom:8px">📅 Время и хостер</div>
+              <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center">
+                <input type="datetime-local" id="smTime" style="padding:10px 12px; border:2px solid var(--line); border-radius:10px; font-family:inherit; font-weight:700">
+                <select id="smHost" style="padding:10px 12px; border:2px solid var(--line); border-radius:10px; font-family:inherit; font-weight:700"></select>
+                <button class="btn btn-primary" onclick="announceMatch()">📣 Анонсировать</button>
+              </div>
+            </div>
+
+            <!-- АНОНС -->
+            <div id="smAnnounce" style="display:none; padding:14px; background:var(--card-2); border-radius:12px; font-weight:800; line-height:1.5"></div>
+
+            <!-- ЧЕК-ИНЫ -->
+            <div id="smCheckins" style="display:none">
+              <div style="font-weight:800; margin-bottom:8px">✅ Подтверждения участия</div>
+              <div id="smCheckinRows" style="display:flex; flex-direction:column; gap:8px"></div>
+            </div>
+
+            <!-- РЕЗУЛЬТАТ -->
+            <div id="smResult" style="display:none">
+              <div style="font-weight:800; margin-bottom:8px">🏆 Результат матча</div>
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-weight:800">
+                <span id="smResA">A</span>
+                <input id="smScoreA" type="number" min="0" max="50" style="width:70px; padding:10px; border:2px solid var(--line); border-radius:10px; font-weight:800; font-family:inherit; text-align:center">
+                <span>:</span>
+                <input id="smScoreB" type="number" min="0" max="50" style="width:70px; padding:10px; border:2px solid var(--line); border-radius:10px; font-weight:800; font-family:inherit; text-align:center">
+                <span id="smResB">B</span>
+              </div>
+              <div style="margin-top:10px; font-weight:700; font-size:13px; color:var(--muted)">скрины счёта/статы + демка (запись экрана):</div>
+              <input type="file" id="smFiles" multiple accept="image/*,video/*" style="margin-top:6px; font-family:inherit">
+              <div style="margin-top:10px">
+                <button class="btn btn-primary" onclick="submitResult()" id="smSubmitBtn">📤 Отправить результат</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Демо-переключатель состояний -->
       <div class="match-state-switcher">
         <div class="switcher-label">фазы:</div>
@@ -7180,7 +7286,7 @@
           </div>
           <div class="th-actions" id="teamActions">
             <!-- Кнопки для моей команды (Vortex) -->
-            <button class="th-action primary my-team-action" onclick="goPage('match')">⚔️ Следующий матч</button>
+            <button class="th-action primary my-team-action" id="findMatchBtn" onclick="findMatch()">⚔️ Найти матч</button>
             <button class="th-action ghost my-team-action" onclick="openChallengeModal()">⚔️ Вызвать кого-то</button>
             <button class="th-action danger my-team-action" onclick="leaveTeam()">🚪 Покинуть</button>
 
@@ -10998,6 +11104,60 @@
   // ============================================
   // ОТКРЫТЬ ПРОФИЛЬ ДРУГОЙ КОМАНДЫ С ПОДМЕНОЙ ДАННЫХ
   // ============================================
+  // Открыть реальную команду (своя или чужая) с настоящими данными
+  async function openTeamPage(team) {
+    window._teamOverride = true;
+    window._teamOverrideId = team.id;
+    goPage('team');
+    const page = document.querySelector('[data-page="team"]');
+    if (!page) return;
+    const isMine = currentTeam && currentTeam.id === team.id;
+
+    const logo = page.querySelector('.th-logo');
+    if (logo) { logo.textContent = team.logo_initials || '??'; logo.style.background = team.logo_color || 'var(--accent)'; }
+    const name = page.querySelector('.th-name');
+    if (name) name.innerHTML = team.name + (isMine ? ' <span style="color:var(--accent); font-size:14px; font-weight:900">· твоя</span>' : '');
+
+    const pills = page.querySelectorAll('.th-tag-row .th-pill');
+    if (pills[0]) pills[0].textContent = team.tag || '';
+    if (pills[1]) pills[1].textContent = '🌍 ' + (team.region || '—');
+    if (pills[2]) pills[2].textContent = '🐣 D1 Rookie · #' + String(team.rank || 0).padStart(2, '0');
+    const founded = page.querySelector('.th-tag-row > span:not(.th-pill)');
+    if (founded) founded.textContent = '· основана ' + (team.created_at ? new Date(team.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
+
+    const sv = page.querySelectorAll('.th-stat .th-stat-val');
+    const wr = Math.round((team.wr || 0) * 100);
+    if (sv[0]) sv[0].textContent = '🏅 #' + String(team.rank || 0).padStart(2, '0');
+    if (sv[1]) sv[1].textContent = team.points || 0;
+    if (sv[2]) sv[2].textContent = wr + '%';
+    if (sv[3]) sv[3].textContent = (team.wins || 0) + '-' + (team.losses || 0);
+    if (sv[4]) sv[4].textContent = '—';
+    if (sv[5]) sv[5].textContent = '—';
+
+    // BIO + "след матч" (нет реальных данных)
+    const bio = page.querySelector('.team-bio');
+    const bioText = page.querySelector('.team-bio-text');
+    const bioMeta = page.querySelector('.team-bio-meta');
+    if (team.bio && bioText) { bioText.textContent = '«' + team.bio + '»'; if (bio) bio.style.display = ''; }
+    else if (bio) bio.style.display = 'none';
+    if (bioMeta) bioMeta.style.display = 'none';
+
+    // прячем демо-«Форму»
+    page.querySelectorAll('.match-card').forEach(c => {
+      const t = c.querySelector('.mc-title');
+      if (t && t.textContent.includes('Форма')) c.style.display = 'none';
+    });
+
+    // кнопки: моя / чужая
+    page.querySelectorAll('.my-team-action').forEach(el => el.style.display = isMine ? '' : 'none');
+    page.querySelectorAll('.other-team-action').forEach(el => el.style.display = isMine ? 'none' : '');
+
+    const back = page.querySelector('.hub-back');
+    if (back) back.innerHTML = '← к командам';
+
+    if (supabaseClient && team.id) await loadTeamRoster(team.id);
+  }
+
   async function openOpponentTeam(name, initials, color) {
     window._teamOverride = true;
     goPage('team');
@@ -11502,10 +11662,401 @@
   // ============================================
   // МОИ МАТЧИ — переход на /matches с открытым фильтром
   // ============================================
+  // ============================================
+  // СЕЗОННЫЙ МАТЧ: банпик, ТГ, хостер, анонс
+  // ============================================
+  const SM_MAPS = ['Sandstone', 'Rust', 'Zone 9', 'Province', 'Sakura', 'Breeze', 'Dune'];
+  let smMatch = null;       // текущий матч
+  let smMembers = [];       // игроки обеих команд
+  let smCheckinsData = [];  // подтверждения
+  let smPoll = null;
+
+  async function openSeasonMatch(matchId) {
+    goPage('match');
+    const page = document.querySelector('[data-page="match"]');
+    // прячем демо
+    page.querySelectorAll('.match-state-switcher, .match-hero, .state-section').forEach(el => el.style.display = 'none');
+    document.getElementById('seasonMatch').style.display = '';
+
+    await refreshSeasonMatch(matchId);
+
+    clearInterval(smPoll);
+    smPoll = setInterval(() => {
+      if (!page.classList.contains('active')) { clearInterval(smPoll); return; }
+      refreshSeasonMatch(matchId);
+    }, 5000);
+  }
+
+  async function refreshSeasonMatch(matchId) {
+    const { data: m, error } = await supabaseClient
+      .from('matches')
+      .select('*, teams_a:team_a_id(id, name, tag), teams_b:team_b_id(id, name, tag)')
+      .eq('id', matchId)
+      .single();
+    if (error || !m) { showToast('Матч не найден', 'error'); return; }
+    smMatch = m;
+
+    const { data: members } = await supabaseClient
+      .from('team_members')
+      .select('team_id, is_captain, profiles:player_id(id, nick, telegram_username)')
+      .in('team_id', [m.team_a_id, m.team_b_id])
+      .is('left_at', null);
+    smMembers = members || [];
+
+    const { data: bans } = await supabaseClient
+      .from('match_banpick')
+      .select('*')
+      .eq('match_id', matchId)
+      .order('step');
+
+    const { data: checkins } = await supabaseClient
+      .from('match_checkins')
+      .select('player_id, team_id, stage')
+      .eq('match_id', matchId);
+    smCheckinsData = checkins || [];
+
+    renderSeasonMatch(m, bans || []);
+  }
+
+  function renderSeasonMatch(m, bans) {
+    const fmt = d => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    document.getElementById('smTeams').textContent = `${m.teams_a.name} vs ${m.teams_b.name}`;
+    document.getElementById('smWindow').textContent =
+      m.window_start ? `договоритесь и сыграйте: ${fmt(m.window_start)} → ${fmt(m.window_end)}` : '';
+
+    const myTeamId = currentTeam?.id;
+    const iAmCaptain = !!currentTeam?.my_is_captain;
+    const inMatch = myTeamId === m.team_a_id || myTeamId === m.team_b_id;
+    const oppTeamId = myTeamId === m.team_a_id ? m.team_b_id : m.team_a_id;
+
+    // ТГ капитана соперника
+    const tgLink = document.getElementById('smTgLink');
+    const oppCap = smMembers.find(x => x.team_id === oppTeamId && x.is_captain);
+    if (inMatch && oppCap?.profiles?.telegram_username) {
+      tgLink.href = 'https://t.me/' + oppCap.profiles.telegram_username;
+      tgLink.style.display = '';
+    } else { tgLink.style.display = 'none'; }
+
+    // СТАТУС + БАНПИК
+    const bpWrap = document.getElementById('smBanpick');
+    const picked = document.getElementById('smPicked');
+    const sched = document.getElementById('smSchedule');
+    const ann = document.getElementById('smAnnounce');
+    const statusLine = document.getElementById('smStatusLine');
+    bpWrap.style.display = 'none'; picked.style.display = 'none';
+    sched.style.display = 'none'; ann.style.display = 'none';
+    document.getElementById('smCheckins').style.display = 'none';
+    document.getElementById('smResult').style.display = 'none';
+
+    if (m.status === 'completed') {
+      ann.innerHTML = `🏆 <b>${m.teams_a.name}</b> ${m.team_a_score} : ${m.team_b_score} <b>${m.teams_b.name}</b><br>победа ${m.winner_id === m.team_a_id ? m.teams_a.name : m.teams_b.name} · очки: ${m.points_a > 0 ? '+' : ''}${m.points_a} / ${m.points_b > 0 ? '+' : ''}${m.points_b}`;
+      ann.style.display = '';
+      statusLine.textContent = 'Матч завершён.';
+      return;
+    }
+
+    if (m.status === 'scheduled') {
+      const host = smMembers.find(x => x.profiles?.id === m.host_player_id);
+      ann.innerHTML = `📣 <b>${m.teams_a.name}</b> vs <b>${m.teams_b.name}</b><br>🗺️ ${m.map} · 🕐 ${fmt(m.scheduled_at)}<br>🎮 хостер: ${host?.profiles?.nick || '—'}`;
+      ann.style.display = '';
+      renderCheckins(m, inMatch);
+
+      // после времени матча капитан может отправить результат
+      const started = new Date(m.scheduled_at) <= new Date();
+      if (started && inMatch && iAmCaptain) {
+        document.getElementById('smResA').textContent = m.teams_a.name;
+        document.getElementById('smResB').textContent = m.teams_b.name;
+        document.getElementById('smResult').style.display = '';
+        statusLine.textContent = 'Матч сыгран? Внеси счёт, прикрепи сс и демку.';
+      } else {
+        statusLine.textContent = started ? 'Ждём результат от капитана.' : 'Подтверди участие за час и за 10 минут до матча!';
+      }
+      return;
+    }
+
+    if (m.map) {
+      // карта выбрана — капитан назначает время и хостера
+      picked.textContent = `🗺️ Карта: ${m.map}`;
+      picked.style.display = '';
+      if (inMatch && iAmCaptain) {
+        const sel = document.getElementById('smHost');
+        sel.innerHTML = smMembers.map(x =>
+          `<option value="${x.profiles.id}">${x.profiles.nick} (${x.team_id === m.team_a_id ? m.teams_a.tag : m.teams_b.tag})</option>`
+        ).join('');
+        sched.style.display = '';
+        statusLine.textContent = 'Выберите время и хостера, затем анонсируйте.';
+      } else {
+        statusLine.textContent = 'Ждём, пока капитан назначит время и хостера.';
+      }
+      return;
+    }
+
+    // банпик идёт: нечётный step банит team_a, чётный — team_b
+    const step = bans.length + 1;
+    const turnTeamId = step % 2 === 1 ? m.team_a_id : m.team_b_id;
+    const turnName = turnTeamId === m.team_a_id ? m.teams_a.name : m.teams_b.name;
+    const myTurn = inMatch && iAmCaptain && turnTeamId === myTeamId;
+    const bannedMaps = bans.map(b => b.map);
+    const left = SM_MAPS.filter(x => !bannedMaps.includes(x));
+
+    document.getElementById('smBpTurn').innerHTML = myTurn
+      ? '<span style="color:var(--accent)">твоя очередь банить!</span>'
+      : `банит ${turnName}`;
+    document.getElementById('smMaps').innerHTML = SM_MAPS.map(map => {
+      const banned = bannedMaps.includes(map);
+      return `<button onclick="banMap('${map}')" ${banned || !myTurn ? 'disabled' : ''}
+        style="padding:10px 14px; border-radius:10px; border:2px solid var(--line); font-weight:800; font-family:inherit; cursor:${banned || !myTurn ? 'default' : 'pointer'};
+        ${banned ? 'text-decoration:line-through; opacity:.4; background:var(--card-2)' : 'background:var(--card)'}">${map}</button>`;
+    }).join('');
+    bpWrap.style.display = '';
+    statusLine.textContent = `Баньте по очереди, последняя карта — играется. Осталось карт: ${left.length}`;
+  }
+
+  async function banMap(map) {
+    if (!smMatch || !currentTeam) return;
+    const bansCount = SM_MAPS.length - document.querySelectorAll('#smMaps button:not([disabled])').length;
+    try {
+      const { data: bans } = await supabaseClient
+        .from('match_banpick').select('step, map').eq('match_id', smMatch.id).order('step');
+      const step = (bans?.length || 0) + 1;
+      const banned = (bans || []).map(b => b.map);
+      if (banned.includes(map)) return;
+
+      const { error } = await supabaseClient.from('match_banpick').insert({
+        match_id: smMatch.id, team_id: currentTeam.id, action: 'ban', map, step
+      });
+      if (error) throw error;
+
+      const left = SM_MAPS.filter(x => !banned.includes(x) && x !== map);
+      if (left.length === 1) {
+        // последняя карта — итог
+        await supabaseClient.from('matches')
+          .update({ map: left[0], status: 'negotiating' })
+          .eq('id', smMatch.id);
+      }
+      refreshSeasonMatch(smMatch.id);
+    } catch (e) {
+      console.error('banMap:', e);
+      showToast('Ошибка бана: ' + (e.message || e), 'error');
+    }
+  }
+
+  async function announceMatch() {
+    if (!smMatch || !currentTeam?.my_is_captain) return;
+    const time = document.getElementById('smTime').value;
+    const hostId = document.getElementById('smHost').value;
+    if (!time) { showToast('Выбери время матча', 'error'); return; }
+
+    try {
+      const { error } = await supabaseClient.from('matches').update({
+        scheduled_at: new Date(time).toISOString(),
+        host_player_id: hostId,
+        status: 'scheduled'
+      }).eq('id', smMatch.id);
+      if (error) throw error;
+
+      // нотификации всем игрокам обеих команд
+      const host = smMembers.find(x => x.profiles?.id === hostId);
+      const fmt = new Date(time).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      const body = `${smMatch.teams_a.name} vs ${smMatch.teams_b.name} · ${smMatch.map} · ${fmt} · хостер ${host?.profiles?.nick || '—'}`;
+      const notifs = smMembers.map(x => ({
+        user_id: x.profiles.id, kind: 'match_announce',
+        title: '📣 Матч назначен!', body
+      }));
+      await supabaseClient.from('notifications').insert(notifs);
+
+      showToast('📣 Матч анонсирован!', 'success');
+      refreshSeasonMatch(smMatch.id);
+    } catch (e) {
+      console.error('announceMatch:', e);
+      showToast('Ошибка анонса: ' + (e.message || e), 'error');
+    }
+  }
+
+  function renderCheckins(m, inMatch) {
+    const wrap = document.getElementById('smCheckins');
+    const rows = document.getElementById('smCheckinRows');
+    const total = smMembers.length;
+    const now = new Date();
+    const start = new Date(m.scheduled_at);
+    const myId = currentUser?.id;
+
+    const stages = [
+      { key: 'hour',  label: 'За час',    opensAt: new Date(start - 60 * 60000) },
+      { key: 'final', label: 'За 10 мин', opensAt: new Date(start - 10 * 60000) }
+    ];
+
+    rows.innerHTML = stages.map(s => {
+      const confirmed = smCheckinsData.filter(c => c.stage === s.key);
+      const mine = confirmed.some(c => c.player_id === myId);
+      const open = now >= s.opensAt && now < start;
+      let btn = '';
+      if (inMatch && myId) {
+        if (mine) btn = '<span style="color:var(--accent); font-weight:800">✓ подтверждено</span>';
+        else if (open) btn = `<button class="btn btn-primary" style="padding:8px 14px" onclick="submitCheckin('${s.key}')">💚 Подтвердить</button>`;
+        else if (now < s.opensAt) btn = `<span style="color:var(--muted); font-weight:700; font-size:12px">откроется в ${s.opensAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>`;
+      }
+      return `<div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--card-2); border-radius:10px; flex-wrap:wrap">
+        <b>${s.label}:</b> <span>${confirmed.length}/${total}</span> ${btn}
+      </div>`;
+    }).join('');
+    wrap.style.display = '';
+  }
+
+  async function submitCheckin(stage) {
+    if (!smMatch || !currentTeam || !currentUser) return;
+    try {
+      const { error } = await supabaseClient.from('match_checkins').insert({
+        match_id: smMatch.id, player_id: currentUser.id, team_id: currentTeam.id, stage
+      });
+      if (error && !String(error.message).includes('duplicate')) throw error;
+      showToast('💚 Подтверждено!', 'success');
+      refreshSeasonMatch(smMatch.id);
+    } catch (e) {
+      console.error('submitCheckin:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
+    }
+  }
+
+  async function submitResult() {
+    if (!smMatch || !currentTeam?.my_is_captain) return;
+    const a = parseInt(document.getElementById('smScoreA').value);
+    const b = parseInt(document.getElementById('smScoreB').value);
+    if (isNaN(a) || isNaN(b) || a === b) { showToast('Введи корректный счёт (не равный)', 'error'); return; }
+
+    const btn = document.getElementById('smSubmitBtn');
+    btn.disabled = true; btn.textContent = '⏳ Отправляем...';
+    try {
+      // загрузка файлов в storage
+      const files = document.getElementById('smFiles').files;
+      for (const f of files) {
+        const path = `${smMatch.id}/${currentTeam.id}/${Date.now()}_${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const { error: upErr } = await supabaseClient.storage.from('evidence').upload(path, f);
+        if (upErr) throw upErr;
+        const { data: pub } = supabaseClient.storage.from('evidence').getPublicUrl(path);
+        await supabaseClient.from('match_evidence').insert({
+          match_id: smMatch.id, team_id: currentTeam.id, uploaded_by: currentUser.id,
+          kind: f.type.startsWith('video') ? 'demo' : 'score_screenshot',
+          url: pub.publicUrl
+        });
+      }
+
+      // применяем результат (очки, ранги, wr)
+      const { error } = await supabaseClient.rpc('apply_match_result', {
+        p_match_id: smMatch.id, p_score_a: a, p_score_b: b
+      });
+      if (error) throw error;
+
+      showToast('🏆 Результат принят! Очки начислены', 'success');
+      refreshSeasonMatch(smMatch.id);
+    } catch (e) {
+      console.error('submitResult:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '📤 Отправить результат';
+    }
+  }
+
+  // ============================================
+  // ПЛЕЙ-ОФФ: сетка
+  // ============================================
+  const PO_BRACKET_NAMES = { upper: '⬆️ Верхняя сетка', lower: '⬇️ Нижняя сетка', grand_final: '👑 Гранд-финал' };
+
+  async function loadPlayoff() {
+    const wrap = document.getElementById('playoffBracket');
+    const { data: pms, error } = await supabaseClient
+      .from('playoff_matches')
+      .select('*, teams_a:team_a_id(id, name, tag), teams_b:team_b_id(id, name, tag)')
+      .order('day').order('round').order('slot');
+    if (error || !pms || pms.length === 0) return; // остаётся empty state
+
+    const days = [...new Set(pms.map(x => x.day))].sort();
+    wrap.innerHTML = days.map(day => {
+      const dayMatches = pms.filter(x => x.day === day);
+      return `<div>
+        <div style="font-weight:900; font-size:18px; margin-bottom:10px">День ${day}</div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          ${dayMatches.map(renderPoMatch).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderPoMatch(pm) {
+    const a = pm.teams_a, b = pm.teams_b;
+    const done = pm.status === 'completed';
+    const nameA = a ? a.name : '—';
+    const nameB = b ? b.name : '—';
+    const winA = done && pm.winner_team_id === pm.team_a_id;
+    const winB = done && pm.winner_team_id === pm.team_b_id;
+
+    // капитан одной из команд может внести счёт
+    const canReport = !done && a && b && currentTeam?.my_is_captain &&
+      (currentTeam.id === pm.team_a_id || currentTeam.id === pm.team_b_id);
+
+    return `<div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; flex-wrap:wrap">
+      <span style="font-size:11px; font-weight:800; color:var(--muted); min-width:120px">${PO_BRACKET_NAMES[pm.bracket]} · R${pm.round}</span>
+      <span style="font-weight:${winA ? 900 : 700}; ${winA ? 'color:var(--accent)' : ''}">${nameA}</span>
+      <span style="font-weight:900">${done ? pm.score_a + ' : ' + pm.score_b : 'vs'}</span>
+      <span style="font-weight:${winB ? 900 : 700}; ${winB ? 'color:var(--accent)' : ''}">${nameB}</span>
+      ${done ? '<span style="margin-left:auto">✅</span>' : ''}
+      ${canReport ? `<button class="btn btn-primary" style="margin-left:auto; padding:8px 12px" onclick="reportPlayoff('${pm.id}')">внести счёт</button>` : ''}
+    </div>`;
+  }
+
+  async function reportPlayoff(pmId) {
+    const raw = prompt('Счёт BO3 по картам (например 2:1):');
+    if (!raw) return;
+    const m = raw.trim().match(/^(\d+)\s*[:\-]\s*(\d+)$/);
+    if (!m) { showToast('Формат: 2:1', 'error'); return; }
+    try {
+      const { error } = await supabaseClient.rpc('report_playoff_result', {
+        p_id: pmId, p_a: parseInt(m[1]), p_b: parseInt(m[2])
+      });
+      if (error) throw error;
+      showToast('🏆 Счёт принят, сетка обновлена', 'success');
+      loadPlayoff();
+    } catch (e) {
+      console.error('reportPlayoff:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
+    }
+  }
+
+  async function findMatch() {
+    if (!currentTeam || !currentTeam.id) { showToast('Сначала вступи в команду', 'error'); return; }
+    if (!currentTeam.my_is_captain) { showToast('Искать матч может только капитан', 'error'); return; }
+
+    const btn = document.getElementById('findMatchBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Ищем соперника...'; }
+
+    try {
+      const { data: matchId, error } = await supabaseClient.rpc('generate_match', { p_team_id: currentTeam.id });
+      if (error) throw error;
+      if (!matchId) { showToast('Нет доступных соперников в твоём диапазоне (-4..+7). Попробуй позже', 'error'); return; }
+
+      // тянем матч с именами команд
+      const { data: m } = await supabaseClient
+        .from('matches')
+        .select('id, team_a_id, team_b_id, window_start, window_end, is_placement, teams_a:team_a_id(name, tag), teams_b:team_b_id(name, tag)')
+        .eq('id', matchId)
+        .single();
+
+      const oppTeam = m.team_a_id === currentTeam.id ? m.teams_b : m.teams_a;
+      const fmt = d => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      showToast(`⚔️ Матч найден: vs ${oppTeam.name}! Договоритесь и сыграйте с ${fmt(m.window_start)} до ${fmt(m.window_end)}`, 'success', 8000);
+      openSeasonMatch(matchId);
+    } catch (e) {
+      console.error('findMatch:', e);
+      showToast('Ошибка поиска матча: ' + (e.message || e), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '⚔️ Найти матч'; }
+    }
+  }
+
   function goMyTeam() {
-    // Есть команда → на страницу команды, нет → на список команд
+    // Есть команда → на страницу команды с реальными данными, нет → на список команд
     if (window.currentTeam && currentTeam.id) {
-      goPage('team');
+      openTeamPage(currentTeam);
     } else {
       goPage('teams');
     }
@@ -12421,6 +12972,9 @@
     if (name === 'notifications' && typeof loadNotifications === 'function') {
       loadNotifications();
     }
+    if (name === 'playoff' && typeof loadPlayoff === 'function') {
+      loadPlayoff();
+    }
     if (name === 'players' && typeof loadPlayers === 'function') {
       loadPlayers();
     }
@@ -13057,15 +13611,16 @@
       const wr = Math.round((team.wr || 0) * 100);
       const record = `${team.wins || 0}-${team.losses || 0}`;
 
+      const isMine = currentTeam && currentTeam.id === team.id;
       const card = document.createElement('div');
       card.className = 'team-card-lg';
       card.style.cursor = 'pointer';
-      card.onclick = () => openOpponentTeam(team.name, team.logo_initials, team.logo_color);
+      card.onclick = () => openTeamPage(team);
       card.innerHTML = `
         <div class="tcl-rank" style="color: ${rankColor(rank)};">#${String(rank).padStart(2, '0')}</div>
         <div class="tcl-logo" style="background: ${team.logo_color};">${team.logo_initials}</div>
         <div class="tcl-info">
-          <div class="tcl-name">${team.name} ${team.is_recruiting ? '<span style="color: var(--mint); font-size: 11px; font-weight: 800;">↗ recruiting</span>' : ''}</div>
+          <div class="tcl-name">${team.name} ${isMine ? '<span style="color: var(--accent); font-size: 11px; font-weight: 900;">· твоя</span>' : (team.is_recruiting ? '<span style="color: var(--mint); font-size: 11px; font-weight: 800;">↗ recruiting</span>' : '')}</div>
           <div class="tcl-meta">
             <span class="tcl-tag">${team.tag}</span>
             <span>· ${team.region}</span>
