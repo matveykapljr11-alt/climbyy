@@ -13472,6 +13472,7 @@
 
       if (memberErr) {
         console.error('Member add error:', memberErr);
+        showToast('⚠️ Команда создана, но не удалось добавить тебя в состав: ' + memberErr.message, 'error', 8000);
       }
 
       // Обновляем состояние
@@ -13483,8 +13484,8 @@
         setTimeout(() => fireConfetti(1), 200);
       }
 
-      // Переходим на страницу команды
-      setTimeout(() => goPage('team'), 800);
+      // Переходим на страницу команды с реальными данными
+      setTimeout(() => openTeamPage(team), 800);
 
     } catch (e) {
       console.error('Create team error:', e);
