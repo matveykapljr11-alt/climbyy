@@ -170,6 +170,11 @@
   @media (max-width: 540px) {
     .season-badge-progress { display: none; }
   }
+  @media (max-width: 600px) {
+    nav .season-badge { display: none; }
+    .nav-right { gap: 6px; }
+    .nav-right .btn { padding: 8px 12px; font-size: 13px; }
+  }
   .season-badge .dot {
     width: 7px; height: 7px; border-radius: 50%;
     background: var(--mint); box-shadow: 0 0 10px var(--mint);
@@ -5834,16 +5839,18 @@
     <div class="hero-glow-2"></div>
     <div class="hero-tag">
       <span class="hero-tag-emoji">🔥</span>
-      Сезон 1 идёт прямо сейчас
+      Сезон 1 · регистрация открыта
     </div>
     <h1>
-      Привет<span class="wave-emoji">👋</span><br>
-      го <span class="accent">в топ</span><br>
-      Standoff 2?
+      Соревновательный<br>
+      <span class="accent">Standoff 2</span><br>
+      начинается здесь
     </h1>
     <p class="hero-sub">
-      Climby — кэжуальная лига по Standoff 2. Собирай тиму, играй сезон,
-      апай рейтинг и забирайся в топ-дивизион. Без душнил.
+      Climby — соревновательная лига по Standoff 2. Соберите команду 5/5,
+      сыграйте 12 матчей за сезон и поднимитесь в таблице дивизиона —
+      восьмёрка сильнейших разыграет титул в плей-офф.
+      Банпик и согласование матчей — прямо в Telegram.
     </p>
     <!-- IN TEAM: карточка команды со статами (данные подставляются через applyTeamData) -->
     <div class="my-team-card team-state active" data-team-state="in-team" onclick="goPage('team')">
@@ -5922,31 +5929,31 @@
     <div class="ladder">
       <div class="ladder-title">
         <span>Как устроена лига</span>
-        <a href="#" class="live-count" onclick="openDivision('d1'); return false;">сейчас D1 · 50 команд</a>
+        <a href="#" class="live-count" id="liveCountD1" onclick="openDivision('d1'); return false;">сейчас D1 · регистрация открыта</a>
       </div>
       <div class="div current" onclick="openDivision('d1')">
         <span class="div-emoji">🐣</span>
         <span class="div-name">D1 · Rookie</span>
-        <span class="div-teams">50/50</span>
+        <span class="div-teams" id="d1TeamsCount">0/50</span>
         <span class="div-status status-live">LIVE</span>
       </div>
       <div class="div" onclick="openDivision('d2')">
         <span class="div-emoji">⚔️</span>
         <span class="div-name">D2 · Challenger</span>
         <span class="div-teams">— /32</span>
-        <span class="div-status status-soon">Сезон 2</span>
+        <span class="div-status status-soon">soon</span>
       </div>
       <div class="div" onclick="openDivision('d3')">
         <span class="div-emoji">💎</span>
         <span class="div-name">D3 · Elite</span>
         <span class="div-teams">— /16</span>
-        <span class="div-status status-soon">скоро</span>
+        <span class="div-status status-soon">soon</span>
       </div>
       <div class="div" onclick="openDivision('d4')">
         <span class="div-emoji">👑</span>
         <span class="div-name">D4 · Pro</span>
         <span class="div-teams">— /8</span>
-        <span class="div-status status-soon">скоро</span>
+        <span class="div-status status-soon">soon</span>
       </div>
     </div>
   </section>
@@ -6042,23 +6049,23 @@
       <div class="hub-head">
         <div>
           <div class="hub-title"><span class="emoji">🎮</span>Все <span class="accent">матчи</span></div>
-          <div class="hub-sub">24 игры на этой неделе · фильтруй как хочешь</div>
+          <div class="hub-sub">матчи сезона · фильтруй как хочешь</div>
         </div>
         <button class="th-action ghost" onclick="goPage('playoff')" style="align-self:flex-start">🏆 Плей-офф</button>
       </div>
 
       <div class="hub-tabs" data-tabs="matches-div">
-        <div class="hub-tab active" data-filter="d1">🐣 D1 Rookie <span class="count">24</span></div>
+        <div class="hub-tab active" data-filter="d1">🐣 D1 Rookie <span class="count">0</span></div>
         <div class="hub-tab disabled" data-filter="d2">⚔️ D2 Challenger <span class="count">soon</span></div>
         <div class="hub-tab disabled" data-filter="d3">💎 D3 Elite <span class="count">soon</span></div>
         <div class="hub-tab disabled" data-filter="d4">👑 D4 Pro <span class="count">soon</span></div>
       </div>
 
       <div class="hub-tabs sub" data-tabs="matches">
-        <div class="hub-tab active" data-filter="all">Все <span class="count">24</span></div>
-        <div class="hub-tab" data-filter="live">🔴 Идут <span class="count">2</span></div>
-        <div class="hub-tab" data-filter="upcoming">⏱️ Собираются <span class="count">14</span></div>
-        <div class="hub-tab" data-filter="past">✅ Прошли <span class="count">8</span></div>
+        <div class="hub-tab active" data-filter="all">Все <span class="count">0</span></div>
+        <div class="hub-tab" data-filter="live">🔴 Идут <span class="count">0</span></div>
+        <div class="hub-tab" data-filter="upcoming">⏱️ Собираются <span class="count">0</span></div>
+        <div class="hub-tab" data-filter="past">✅ Прошли <span class="count">0</span></div>
       </div>
 
       <div class="matches-grid" id="matchesGrid">
@@ -6845,7 +6852,9 @@
               </div>
               <div style="margin-top:10px; font-weight:700; font-size:13px; color:var(--muted)">скрины счёта/статы + демка (запись экрана):</div>
               <input type="file" id="smFiles" multiple accept="image/*,video/*" style="margin-top:6px; font-family:inherit">
-              <div style="margin-top:10px">
+              <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn" id="smOcrBtn" onclick="recognizeScore()" style="background:var(--card-2)">🤖 Считать счёт со скрина</button>
+                <button class="btn" onclick="swapScores()" style="background:var(--card-2)" title="поменять местами">⇄</button>
                 <button class="btn btn-primary" onclick="submitResult()" id="smSubmitBtn">📤 Отправить результат</button>
               </div>
             </div>
@@ -9817,6 +9826,40 @@
         </div>
       </div>
 
+      <!-- КАК РАБОТАЕТ ЛИГА (актуальный флоу) -->
+      <div class="faq-section" id="cat-flow" style="margin-top:26px">
+        <div class="faq-section-head">
+          <span class="faq-section-emoji">🧭</span>
+          <div class="faq-section-title">Как работает лига — путь одного матча</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>1. Вход и команда.</b> Заходишь через нашего Telegram-бота, создаёшь команду или принимаешь приглашение. Создатель — капитан. Состав 5 игроков.
+          </div>
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>2. Поиск матча.</b> Капитан жмёт «⚔️ Найти матч». Система рандомно подбирает соперника рядом с вами в таблице (на 4 позиции выше — 7 ниже) и даёт <b>окно</b>: «договоритесь и сыграйте с [дата] до [дата]».
+          </div>
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>3. Банпик — в Telegram.</b> Обоим капитанам бот присылает 7 карт. Баните по очереди кнопками, последняя оставшаяся — играется.
+          </div>
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>4. Время и хостер.</b> Там же в боте: один капитан предлагает слот, второй подтверждает. Кто нажал «🎮 Я хощу» — создаёт лобби. Бот автоматически анонсирует матч всем 10 игрокам.
+          </div>
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>5. Чек-ины ×2.</b> Каждый игрок подтверждает участие на сайте <b>за час</b> и <b>за 10 минут</b> до начала. Бот пришлёт напоминания — не проспишь.
+          </div>
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>6. После игры.</b> С каждой команды один игрок пишет запись экрана (демку). Капитан на странице матча: прикрепляет <b>скрин финального счёта</b> (цифры считаются автоматически), статы и демку → «Отправить». Очки начисляются сразу.
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-2, var(--card-2)); border:2px solid var(--accent); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>💎 Очки:</b> победа <b>+10</b>. Поражение: набрали 11+ раундов → <b>−5</b>, 8–10 → <b>−6</b>, 7 и меньше → <b>−7</b>. Близкие катки щадят рейтинг.
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-2, var(--card-2)); border:2px solid var(--accent); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>🏆 Плей-офф:</b> за 3–4 дня до конца сезона топ-8 дивизиона играет double elimination BO3. День 1 — четвертьфиналы + нижняя сетка, дальше по дням до гранд-финала.
+          </div>
+        </div>
+      </div>
+
       <!-- CATEGORY: START -->
       <div class="faq-section" id="cat-start">
         <div class="faq-section-head">
@@ -11147,10 +11190,12 @@
     else if (bio) bio.style.display = 'none';
     if (bioMeta) bioMeta.style.display = 'none';
 
-    // прячем демо-«Форму»
+    // прячем демо-карточки (нет реальных данных): Форма, Расписание, История,
+    // Статистика по картам, Достижения, Путь команды
+    const demoCards = ['Форма', 'Расписание', 'История матчей', 'Статистика по картам', 'Достижения', 'Путь команды'];
     page.querySelectorAll('.match-card').forEach(c => {
       const t = c.querySelector('.mc-title');
-      if (t && t.textContent.includes('Форма')) c.style.display = 'none';
+      if (t && demoCards.some(x => t.textContent.includes(x))) c.style.display = 'none';
     });
 
     // кнопки: моя / чужая
@@ -11273,6 +11318,10 @@
   // ОТКРЫТЬ ДИВИЗИОН (с подменой фильтра)
   // ============================================
   function openDivision(div) {
+    if (div !== 'd1') {
+      showToast('🔒 Пока открыт только D1 Rookie. Остальные дивизионы — со 2-го сезона', 'default', 4000);
+      return;
+    }
     goPage('teams');
     // переключаем активный таб на нужный дивизион
     setTimeout(() => {
@@ -11923,6 +11972,59 @@
     }
   }
 
+  // Распознавание счёта со скриншота через Claude Vision
+  async function recognizeScore() {
+    const files = document.getElementById('smFiles').files;
+    const img = [...files].find(f => f.type.startsWith('image'));
+    if (!img) { showToast('Сначала прикрепи скрин счёта', 'error'); return; }
+
+    const btn = document.getElementById('smOcrBtn');
+    btn.disabled = true; btn.textContent = '⏳ Распознаём...';
+    try {
+      // даунскейл до 1400px чтобы влезть в лимиты
+      const base64 = await new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(img);
+        const im = new Image();
+        im.onload = () => {
+          const scale = Math.min(1, 1400 / Math.max(im.width, im.height));
+          const c = document.createElement('canvas');
+          c.width = Math.round(im.width * scale);
+          c.height = Math.round(im.height * scale);
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(url);
+          resolve(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
+        };
+        im.onerror = reject;
+        im.src = url;
+      });
+
+      const r = await fetch('/api/analyze-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64, media_type: 'image/jpeg' }),
+      });
+      const data = await r.json();
+      if (data.error) throw new Error(data.error === 'not_found' ? 'Счёт на скрине не найден' : data.error);
+
+      document.getElementById('smScoreA').value = data.left;
+      document.getElementById('smScoreB').value = data.right;
+      const names = data.team_left || data.team_right
+        ? ` (${data.team_left || '?'} vs ${data.team_right || '?'})` : '';
+      showToast(`🤖 Считано: ${data.left}:${data.right}${names}. Проверь и поменяй ⇄ если команды наоборот`, 'success', 7000);
+    } catch (e) {
+      console.error('recognizeScore:', e);
+      showToast('Не получилось: ' + (e.message || e), 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '🤖 Считать счёт со скрина';
+    }
+  }
+
+  function swapScores() {
+    const a = document.getElementById('smScoreA');
+    const b = document.getElementById('smScoreB');
+    const t = a.value; a.value = b.value; b.value = t;
+  }
+
   async function submitResult() {
     if (!smMatch || !currentTeam?.my_is_captain) return;
     const a = parseInt(document.getElementById('smScoreA').value);
@@ -12027,6 +12129,23 @@
     }
   }
 
+  // Реальный счётчик команд D1 на главной
+  async function loadDivisionCounts() {
+    if (!supabaseClient) return;
+    try {
+      const { count } = await supabaseClient
+        .from('teams')
+        .select('id', { count: 'exact', head: true })
+        .eq('division_id', 'd1');
+      const n = count || 0;
+      const lc = document.getElementById('liveCountD1');
+      const dt = document.getElementById('d1TeamsCount');
+      if (lc) lc.textContent = `сейчас D1 · ${n} ${n === 1 ? 'команда' : n < 5 ? 'команды' : 'команд'}`;
+      if (dt) dt.textContent = `${n}/50`;
+    } catch (e) { console.warn('loadDivisionCounts:', e); }
+  }
+  document.addEventListener('DOMContentLoaded', () => setTimeout(loadDivisionCounts, 500));
+
   async function findMatch() {
     if (!currentTeam || !currentTeam.id) { showToast('Сначала вступи в команду', 'error'); return; }
     if (!currentTeam.my_is_captain) { showToast('Искать матч может только капитан', 'error'); return; }
@@ -12089,7 +12208,7 @@
   function resetMatchesFilter() {
     const subtitle = document.querySelector('[data-page="matches"] .hub-sub');
     const title = document.querySelector('[data-page="matches"] .hub-title');
-    if (subtitle) subtitle.textContent = '24 игры на этой неделе · фильтруй как хочешь';
+    if (subtitle) subtitle.textContent = 'матчи сезона · фильтруй как хочешь';
     if (title) title.innerHTML = '<span class="emoji">🎮</span>Все <span class="accent">матчи</span>';
   }
 
