@@ -5690,10 +5690,9 @@
     <span class="season-badge-progress"><span class="season-badge-progress-fill" style="width: 38%"></span></span>
   </a>
   <div class="nav-right">
-    <!-- Гостевое состояние: только Войти / Verify -->
+    <!-- Гостевое состояние: только Войти -->
     <div class="auth-state" data-auth-state="guest" style="display: none;">
-      <button class="btn btn-ghost" onclick="openModal('login')">Войти</button>
-      <button class="btn btn-primary" onclick="openModal('verify')">Verify ★</button>
+      <button class="btn btn-primary" onclick="openModal('login')">Войти</button>
     </div>
 
     <!-- Залогиненное состояние: уведомления + профиль -->
@@ -5792,6 +5791,11 @@
           <a class="pm-link" href="#" onclick="goPage('settings'); closeProfile(); return false;">
             <span class="pm-link-emoji">⚙️</span>
             <span class="pm-link-text">Настройки</span>
+            <span class="pm-link-arrow">→</span>
+          </a>
+          <a class="pm-link" id="adminMenuLink" href="#" onclick="goPage('admin'); closeProfile(); return false;" style="display:none">
+            <span class="pm-link-emoji">🛠</span>
+            <span class="pm-link-text">Админка</span>
             <span class="pm-link-arrow">→</span>
           </a>
         </div>
@@ -6055,6 +6059,14 @@
         </div>
       </div>
 
+      <div class="site-footer" style="margin-top:28px; padding:20px 0; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--muted)">
+        <span>© 2026 Climby</span>
+        <a href="#" onclick="goPage('rules'); return false;" style="color:var(--muted)">Правила</a>
+        <a href="#" onclick="goPage('terms'); return false;" style="color:var(--muted)">Соглашение</a>
+        <a href="#" onclick="goPage('privacy'); return false;" style="color:var(--muted)">Конфиденциальность</a>
+        <a href="https://t.me/ClimbyVf_bot" target="_blank" style="color:var(--muted)">Поддержка</a>
+      </div>
+
     </div>
   </div>
 </div>
@@ -6111,6 +6123,47 @@
 </div>
 
 
+<!-- ========== PAGE: ADMIN ========== -->
+<div class="page" data-page="admin">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
+      <div class="hub-head">
+        <div>
+          <div class="hub-title"><span class="emoji">🛠</span>Админ <span class="accent">панель</span></div>
+          <div class="hub-sub">Управление лигой</div>
+        </div>
+      </div>
+
+      <!-- дашборд -->
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px">
+        <div class="match-card" style="padding:16px; text-align:center"><div style="font-size:24px; font-weight:800" id="admStatTeams">—</div><div style="font-size:11px; color:var(--muted); font-weight:700">команд</div></div>
+        <div class="match-card" style="padding:16px; text-align:center"><div style="font-size:24px; font-weight:800" id="admStatActive">—</div><div style="font-size:11px; color:var(--muted); font-weight:700">активных матчей</div></div>
+        <div class="match-card" style="padding:16px; text-align:center"><div style="font-size:24px; font-weight:800" id="admStatDone">—</div><div style="font-size:11px; color:var(--muted); font-weight:700">сыграно</div></div>
+      </div>
+
+      <!-- действия -->
+      <div class="match-card" style="margin-bottom:16px">
+        <div class="mc-head"><div class="mc-title">⚡ Действия</div></div>
+        <div style="padding:14px; display:flex; flex-wrap:wrap; gap:10px">
+          <button class="btn btn-primary" onclick="admRunRound()">🎲 Распределить раунд</button>
+          <button class="btn" style="background:var(--card-2)" onclick="admStartPlayoff()">🏆 Старт плей-офф</button>
+          <button class="btn" style="background:var(--card-2)" onclick="admResetSeason()">♻️ Сбросить сезон</button>
+        </div>
+      </div>
+
+      <!-- табы -->
+      <div class="hub-tabs">
+        <div class="hub-tab active" onclick="admTab('matches', this)">Матчи</div>
+        <div class="hub-tab" onclick="admTab('teams', this)">Команды</div>
+      </div>
+
+      <div id="admMatches"></div>
+      <div id="admTeams" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== PAGE: PLAYERS ========== -->
 <div class="page" data-page="players">
   <div class="hub">
@@ -6146,6 +6199,66 @@
           <div style="font-size:44px;line-height:1;margin-bottom:10px">⭐</div>
           <div style="font-size:14px;font-weight:800;margin-bottom:4px">Статистика появится после матчей</div>
           <div style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.5">Сыграй и пришли скрин МС — попадёшь в топ.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: ADMIN ========== -->
+<div class="page" data-page="admin">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
+      <div class="hub-head">
+        <div>
+          <div class="hub-title"><span class="emoji">🛠️</span>Админ <span class="accent">панель</span></div>
+          <div class="hub-sub" id="adminSub">управление лигой</div>
+        </div>
+      </div>
+
+      <div id="adminGate" style="display:none; padding:60px 30px; text-align:center; background:var(--card); border-radius:18px; border:2px dashed var(--line)">
+        <div style="font-size:64px; margin-bottom:16px">🔒</div>
+        <div style="font-size:20px; font-weight:800; margin-bottom:10px">Доступ только для админа</div>
+      </div>
+
+      <div id="adminContent" style="display:none">
+        <!-- ДАШБОРД -->
+        <div id="adminStats" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-bottom:18px"></div>
+
+        <!-- УПРАВЛЕНИЕ ЛИГОЙ -->
+        <div class="match-card" style="margin-bottom:14px">
+          <div class="mc-head"><div class="mc-title">⚙️ Управление лигой</div></div>
+          <div style="padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px">
+            <button class="btn btn-primary" onclick="adminAction('admin_run_round', {}, 'Распределение запущено')">⚔️ Распределить раунд</button>
+            <button class="btn" style="background:var(--card-2)" onclick="adminAction('admin_start_playoff', {p_division_id:'d1'}, 'Плей-офф создан')">🏆 Старт плей-офф</button>
+            <button class="btn" style="background:var(--card-2)" onclick="adminNewSeason()">📅 Новый сезон</button>
+            <button class="btn btn-danger" onclick="adminResetSeason()">♻️ Сбросить сезон</button>
+          </div>
+        </div>
+
+        <!-- СПОРЫ -->
+        <div class="match-card" style="margin-bottom:14px">
+          <div class="mc-head"><div class="mc-title">⚖️ Споры</div><div class="mc-sub" id="disputeCount">—</div></div>
+          <div id="adminDisputes" style="padding:8px"></div>
+        </div>
+
+        <!-- МАТЧИ -->
+        <div class="match-card" style="margin-bottom:14px">
+          <div class="mc-head"><div class="mc-title">🎮 Матчи</div></div>
+          <div id="adminMatches" style="padding:8px"></div>
+        </div>
+
+        <!-- КОМАНДЫ -->
+        <div class="match-card" style="margin-bottom:14px">
+          <div class="mc-head"><div class="mc-title">👥 Команды</div></div>
+          <div id="adminTeams" style="padding:8px"></div>
+        </div>
+
+        <!-- ИГРОКИ -->
+        <div class="match-card">
+          <div class="mc-head"><div class="mc-title">🧗 Игроки</div></div>
+          <div id="adminPlayers" style="padding:8px"></div>
         </div>
       </div>
     </div>
@@ -6644,7 +6757,7 @@
             <div class="th-info">
               <div class="th-name">—</div>
               <div class="th-tag-row">
-                <span class="th-pill">VRN</span>
+                <span class="th-pill">[VRN]</span>
                 <span class="th-pill region">🇷🇺 RU · Moscow</span>
                 <span class="th-pill div">🚧 D0 · BETA</span>
                 <span>· основана 12 апр 2026</span>
@@ -6652,15 +6765,11 @@
             </div>
           </div>
           <div class="th-actions" id="teamActions">
-            <!-- Кнопки для моей команды (—) -->
-            <button class="th-action primary my-team-action" id="findMatchBtn" onclick="findMatch()">⚔️ Найти матч</button>
-            <button class="th-action ghost my-team-action" onclick="openChallengeModal()">⚔️ Вызвать кого-то</button>
+            <!-- Кнопки для моей команды -->
             <button class="th-action danger my-team-action" onclick="leaveTeam()">🚪 Покинуть</button>
 
             <!-- Кнопки для чужой команды (скрыты по умолчанию) -->
             <button class="th-action primary other-team-action" style="display: none;" onclick="openApplyModal()">📨 Подать заявку</button>
-
-            <button class="th-action ghost other-team-action" style="display: none;" onclick="openChallengeModal()">⚔️ Вызвать</button>
           </div>
         </div>
 
@@ -6859,57 +6968,6 @@
             </div>
             <div style="text-align: center; margin-top: 10px; font-size: 12px; color: var(--mint); font-weight: 700;">
               
-            </div>
-          </div>
-
-          <div class="match-card" style="margin-bottom: 14px;">
-            <div class="mc-head">
-              <div class="mc-title">🏆 Достижения</div>
-              <div class="mc-sub">3/8</div>
-            </div>
-            <div class="awards-list">
-              <div class="award-row" onclick="openAchievement('🥉', 'Топ-5', 'место в топе', true)">
-                <div class="award-emoji">🥉</div>
-                <div class="award-body">
-                  <div class="award-title">Топ-5</div>
-                  <div class="award-sub">место в топе</div>
-                </div>
-              </div>
-              <div class="award-row" onclick="openAchievement('🔥', 'Огонь', '3 победы подряд', false)">
-                <div class="award-emoji">🔥</div>
-                <div class="award-body">
-                  <div class="award-title">Огонь</div>
-                  <div class="award-sub">3 победы подряд</div>
-                </div>
-              </div>
-              <div class="award-row" onclick="openAchievement('⚡', 'Громила Breeze', '80% побед на карте', false)">
-                <div class="award-emoji">⚡</div>
-                <div class="award-body">
-                  <div class="award-title">Громила Breeze</div>
-                  <div class="award-sub">80% побед на карте</div>
-                </div>
-              </div>
-              <div class="award-row locked" onclick="openAchievement('🥈', 'Топ-2', '2 место в дивизионе', true)">
-                <div class="award-emoji">🥈</div>
-                <div class="award-body">
-                  <div class="award-title">Топ-2</div>
-                  <div class="award-sub">2 место в дивизионе</div>
-                </div>
-              </div>
-              <div class="award-row locked" onclick="openAchievement('👑', 'Чемпион', '1 место в сезоне', true)">
-                <div class="award-emoji">👑</div>
-                <div class="award-body">
-                  <div class="award-title">Чемпион</div>
-                  <div class="award-sub">1 место в сезоне</div>
-                </div>
-              </div>
-              <div class="award-row locked" onclick="openAchievement('💯', 'Плей-офф', 'выйти в топ-8', true)">
-                <div class="award-emoji">💯</div>
-                <div class="award-body">
-                  <div class="award-title">Промоушн</div>
-                  <div class="award-sub">выйти в топ-8</div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -7444,20 +7502,20 @@
             <div class="settings-section-title">🎮 Игровой аккаунт</div>
             <div class="settings-section-sub">Привязка к Standoff 2 и Telegram</div>
 
-            <div class="setting-row">
+            <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:10px">
               <div class="setting-info">
-                <div class="setting-title">Standoff 2 ID</div>
-                <div class="setting-desc">Привязан: <code>5432198765</code> · 147 ч в игре · ✓ верифицирован</div>
+                <div class="setting-title">Верификация Standoff 2</div>
+                <div class="setting-desc" id="verifyStatusDesc">Укажи игровой <b>ID</b> и <b>подпись</b> из профиля Standoff 2. ⚠️ Игра под другим ID = бан.</div>
               </div>
-              <div class="setting-control">
-                <button class="setting-btn ghost" onclick="relinkAccount()">Перепривязать</button>
-              </div>
+              <input class="input" id="verifyGameId" placeholder="Игровой ID (напр. 1289450137)" style="font-family:'JetBrains Mono',monospace">
+              <input class="input" id="verifySignature" placeholder="Подпись из профиля Standoff 2">
+              <button class="btn btn-primary" id="verifyAccountBtn" onclick="saveVerification()">Верифицировать</button>
             </div>
 
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Telegram</div>
-                <div class="setting-desc">Привязан: <code>@your_handle</code></div>
+                <div class="setting-desc">Привязан через бота</div>
               </div>
               <div class="setting-control">
                 <button class="setting-btn ghost">Отвязать</button>
@@ -7991,6 +8049,87 @@
   </div>
 </div>
 
+<!-- ========== PAGE: RULES ========== -->
+<div class="page" data-page="rules">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
+      <div class="hub-head"><div>
+        <div class="hub-title"><span class="emoji">⚖️</span>Правила <span class="accent">лиги</span></div>
+        <div class="hub-sub">Climby · сезон BETA</div>
+      </div></div>
+      <div class="legal-doc" style="background:var(--card); border-radius:16px; padding:22px; line-height:1.7; font-size:14px; font-weight:600">
+        <h3 style="margin:0 0 8px">1. Формат</h3>
+        <p>Команда состоит из 5 игроков (+запасные). Сезон: 3 placement-матча (без очков, для распределения) → 12 рейтинговых матчей. Каждый матч — BO1 на карте, определённой банпиком. Топ-8 по итогам сезона выходят в плей-офф (BO3).</p>
+        <h3 style="margin:16px 0 8px">2. Очки</h3>
+        <p>Победа: +10. Поражение: −5 (если набрано ≥11 раундов), −6 (8–10), −7 (≤7). Placement-матчи очки не дают, но влияют на стартовое распределение.</p>
+        <h3 style="margin:16px 0 8px">3. Матчи и подбор</h3>
+        <p>Соперник подбирается автоматически в пределах ±позиций по таблице. На матч даётся окно 2 дня. Банпик и согласование времени — в Telegram-боте. Не явились — техническое поражение.</p>
+        <h3 style="margin:16px 0 8px">4. Честная игра</h3>
+        <p>Запрещены: читы, смурфы, игра под чужим аккаунтом, договорные матчи, накрутка результатов. Для верификации игрок указывает игровой ID и подпись. <b>Игра под ID, отличным от верифицированного, — бан.</b></p>
+        <h3 style="margin:16px 0 8px">5. Поведение</h3>
+        <p>Запрещены оскорбления, разжигание ненависти, спам, обман. За нарушения — предупреждения (warn), временный или постоянный бан в лиге.</p>
+        <h3 style="margin:16px 0 8px">6. Споры</h3>
+        <p>Спорные результаты решает администрация на основе скринов/записей (СС/МС). Решение администрации окончательно. Ложные жалобы наказываются.</p>
+        <p style="color:var(--muted); margin-top:18px; font-size:12px">Администрация вправе обновлять правила. Актуальная версия — на этой странице.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: TERMS (ОФЕРТА) ========== -->
+<div class="page" data-page="terms">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
+      <div class="hub-head"><div>
+        <div class="hub-title"><span class="emoji">📄</span>Пользовательское <span class="accent">соглашение</span></div>
+        <div class="hub-sub">условия использования Climby</div>
+      </div></div>
+      <div class="legal-doc" style="background:var(--card); border-radius:16px; padding:22px; line-height:1.7; font-size:14px; font-weight:600">
+        <p>Используя Climby, вы соглашаетесь с настоящими условиями.</p>
+        <h3 style="margin:16px 0 8px">1. Сервис</h3>
+        <p>Climby — любительская соревновательная платформа (лига) по игре Standoff 2. Сервис не связан и не аффилирован с разработчиком игры. Все товарные знаки принадлежат их владельцам.</p>
+        <h3 style="margin:16px 0 8px">2. Аккаунт</h3>
+        <p>Для участия нужен аккаунт Telegram и верификация игрового профиля. Вы отвечаете за достоверность указанных данных и за действия под своим аккаунтом.</p>
+        <h3 style="margin:16px 0 8px">3. Оплата</h3>
+        <p>На время BETA участие бесплатно. При вводе платных функций условия оплаты и возврата будут опубликованы отдельно до списания средств.</p>
+        <h3 style="margin:16px 0 8px">4. Контент</h3>
+        <p>Загружая скрины/записи матчей, вы подтверждаете право на их использование платформой для проверки результатов и разрешения споров.</p>
+        <h3 style="margin:16px 0 8px">5. Ответственность</h3>
+        <p>Сервис предоставляется «как есть». Администрация не гарантирует бесперебойную работу и вправе ограничить доступ при нарушении правил.</p>
+        <h3 style="margin:16px 0 8px">6. Контакты</h3>
+        <p>Связь и поддержка — через Telegram-бот <b>@ClimbyVf_bot</b>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: PRIVACY ========== -->
+<div class="page" data-page="privacy">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
+      <div class="hub-head"><div>
+        <div class="hub-title"><span class="emoji">🔐</span>Политика <span class="accent">конфиденциальности</span></div>
+        <div class="hub-sub">какие данные мы храним</div>
+      </div></div>
+      <div class="legal-doc" style="background:var(--card); border-radius:16px; padding:22px; line-height:1.7; font-size:14px; font-weight:600">
+        <h3 style="margin:0 0 8px">1. Какие данные мы собираем</h3>
+        <p>Telegram ID и имя пользователя (для входа и уведомлений), игровой ID и подпись (для верификации), игровой никнейм, состав команды, результаты матчей и загруженные скрины/записи.</p>
+        <h3 style="margin:16px 0 8px">2. Зачем</h3>
+        <p>Для работы лиги: вход, подбор матчей, подсчёт результатов, разрешение споров, защита от нарушений. Личный Telegram других игроков на публичных страницах не показывается.</p>
+        <h3 style="margin:16px 0 8px">3. Хранение и передача</h3>
+        <p>Данные хранятся на серверах Supabase. Мы не продаём ваши данные третьим лицам. Доступ к служебным данным имеет только администрация.</p>
+        <h3 style="margin:16px 0 8px">4. Ваши права</h3>
+        <p>Вы можете запросить удаление аккаунта и связанных данных через Telegram-бот. Часть обезличенных результатов матчей может сохраняться в истории лиги.</p>
+        <h3 style="margin:16px 0 8px">5. Контакты</h3>
+        <p>По вопросам данных — <b>@ClimbyVf_bot</b>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== PAGE: SEASON ========== -->
 <div class="page" data-page="season">
   <div class="hub">
@@ -8387,7 +8526,7 @@
             <b>1. Вход и команда.</b> Заходишь через нашего Telegram-бота, создаёшь команду или принимаешь приглашение. Создатель — капитан. Состав 5 игроков.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>2. Поиск матча.</b> Капитан жмёт «⚔️ Найти матч». Система рандомно подбирает соперника рядом с вами в таблице (на 4 позиции выше — 7 ниже) и даёт <b>окно</b>: «договоритесь и сыграйте с [дата] до [дата]».
+            <b>2. Подбор матча.</b> Система <b>автоматически</b> подбирает соперника рядом с вами в таблице (на 4 позиции выше — 7 ниже) и даёт <b>окно 2 дня</b> на игру. Капитанам в Telegram приходит банпик.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
             <b>3. Банпик — в Telegram.</b> Обоим капитанам бот присылает 7 карт. Баните по очереди кнопками, последняя оставшаяся — играется.
@@ -8445,7 +8584,7 @@
                 <li>Указать <b>ID Standoff 2</b> — найдёшь в игре: Профиль → значок копирования рядом с ником</li>
                 <li>Иметь <b>100+ часов</b> в игре — проверим автоматом</li>
               </ul>
-              Просто жми <b>Verify ★</b> в правом верхнем углу. Без него можешь только смотреть.
+              Войди через Telegram-бота, затем в <b>Аккаунте</b> укажи игровой ID и подпись. Без верификации можешь только смотреть.
             </div>
           </div>
         </div>
@@ -8459,7 +8598,7 @@
             <div class="faq-a-inner">
               Два пути:
               <ul>
-                <li><b>Создать свою тиму</b> и звать друзей (₽499 за регистрацию — защита от спама)</li>
+                <li><b>Создать свою тиму</b> и звать друзей</li>
                 <li><b>Вступить в существующую</b> — посмотри страницу команд, многие ищут 5-го</li>
               </ul>
               После того как ростер 5/5, играешь <b>Placement (3 матча)</b> — и попадаешь в таблицу D0 · BETA.
@@ -8934,7 +9073,7 @@
           <div class="verify-intro" id="verifyHint" style="display: none;">
             <div class="verify-intro-icon" style="background: rgba(255, 138, 60, 0.22); font-size: 18px;">⭐</div>
             <div class="verify-intro-text">
-              Ты <b style="color: var(--mint)">Verified ★</b> — можешь создавать тимы и капитанить. Регистрация ₽ 499 (защита от спам-составов).
+              После верификации можешь создавать тимы и капитанить.
             </div>
           </div>
 
@@ -9051,10 +9190,10 @@
           <div class="field-group" style="margin-bottom: 4px;">
             <div class="price-box">
               <div class="price-info">
-                <div class="price-title"><span>💸</span>Регистрация тимы</div>
-                <div class="price-sub">Защита от спам-составов. Оплата на следующем шаге.</div>
+                <div class="price-title"><span>🎉</span>Регистрация тимы</div>
+                <div class="price-sub">На время BETA — бесплатно.</div>
               </div>
-              <div class="price-amount">₽499</div>
+              <div class="price-amount">Free</div>
             </div>
           </div>
 
@@ -9318,7 +9457,7 @@
   }
 
   function relinkAccount() {
-    if (confirm('Перепривязать Standoff 2 ID?\n\nТекущий: 1289450137\n\nЭто потребует повторной верификации через бота. Стата сохранится.')) {
+    if (confirm('Перепривязать Standoff 2 ID? Потребуется повторная верификация. Стата сохранится.')) {
       showToast('Открыли бы Telegram для верификации 📨');
     }
   }
@@ -9713,7 +9852,7 @@
     if (name) name.innerHTML = team.name + (isMine ? ' <span style="color:var(--accent); font-size:14px; font-weight:900">· твоя</span>' : '');
 
     const pills = page.querySelectorAll('.th-tag-row .th-pill');
-    if (pills[0]) pills[0].textContent = team.tag || '';
+    if (pills[0]) pills[0].textContent = team.tag ? '[' + team.tag + ']' : '';
     if (pills[1]) pills[1].textContent = '🌍 ' + (team.region || '—');
     if (pills[2]) pills[2].textContent = '🚧 D0 · BETA';
     const founded = page.querySelector('.th-tag-row > span:not(.th-pill)');
@@ -10266,6 +10405,14 @@
     document.querySelectorAll('.join-cta').forEach(el => {
       el.style.display = isLoggedIn ? '' : 'none';
     });
+    // ссылка на админку — только админам
+    if (isLoggedIn && supabaseClient && window.currentUser?.id) {
+      supabaseClient.from('profiles').select('is_admin').eq('id', currentUser.id).maybeSingle()
+        .then(({ data }) => {
+          const link = document.getElementById('adminMenuLink');
+          if (link) link.style.display = data?.is_admin ? '' : 'none';
+        });
+    }
     // на гостевом — прячем колокольчик уведомлений и профиль (auth-state="logged-in" уже скроет, но дочерние элементы)
   }
 
@@ -11699,12 +11846,178 @@
     } catch (e) { console.warn('loadPlayerTop:', e); }
   }
 
+  // ===================== АДМИН-ПАНЕЛЬ =====================
+  async function loadAdmin() {
+    const gate = document.getElementById('adminGate');
+    const content = document.getElementById('adminContent');
+    if (!supabaseClient || !window.currentUser?.id) {
+      if (gate) gate.style.display = ''; if (content) content.style.display = 'none'; return;
+    }
+    // проверка прав
+    const { data: me } = await supabaseClient.from('profiles').select('is_admin').eq('id', currentUser.id).maybeSingle();
+    if (!me?.is_admin) {
+      if (gate) gate.style.display = ''; if (content) content.style.display = 'none'; return;
+    }
+    if (gate) gate.style.display = 'none';
+    if (content) content.style.display = '';
+    loadAdminStats();
+    loadAdminDisputes();
+    loadAdminMatches();
+    loadAdminTeams();
+    loadAdminPlayers();
+  }
+
+  async function loadAdminStats() {
+    try {
+      const { data, error } = await supabaseClient.rpc('admin_stats');
+      if (error) throw error;
+      const s = data || {};
+      const cards = [
+        ['Команды', s.teams || 0], ['Игроки', s.players || 0],
+        ['Верифиц.', s.players_verified || 0], ['Баны', s.players_banned || 0],
+        ['Матчи', s.matches_total || 0], ['🔴 Live', s.matches_live || 0],
+        ['Ожидают', s.matches_pending || 0], ['Сыграно', s.matches_done || 0],
+        ['⚖️ Споры', s.disputes || 0],
+      ];
+      document.getElementById('adminStats').innerHTML = cards.map(([l, v]) =>
+        `<div style="background:var(--card-2); border-radius:12px; padding:14px; text-align:center">
+          <div style="font-size:22px; font-weight:800">${v}</div>
+          <div style="font-size:11px; color:var(--muted); font-weight:700; margin-top:2px">${l}</div>
+        </div>`).join('');
+      const sub = document.getElementById('adminSub');
+      if (sub && s.season) sub.textContent = `Сезон ${s.season.number} · ${s.season.name || ''}`;
+    } catch (e) { console.warn('adminStats:', e); }
+  }
+
+  function adminMatchRow(m, withResolve) {
+    const a = m.teams_a?.name || '—', b = m.teams_b?.name || '—';
+    const sc = (m.team_a_score != null) ? `${m.team_a_score}:${m.team_b_score}` : '';
+    return `<div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px; flex-wrap:wrap">
+      <div style="flex:1; min-width:140px; font-weight:700; font-size:13px">${a} vs ${b} <span style="color:var(--muted)">${sc}</span></div>
+      <div style="font-size:11px; color:var(--muted); font-weight:700">${m.status}</div>
+      <button class="btn" style="padding:6px 10px; font-size:12px; background:var(--card-3)" onclick="adminResolveMatch('${m.id}','${a.replace(/'/g,"")}','${b.replace(/'/g,"")}')">✏️ счёт</button>
+      <button class="btn" style="padding:6px 10px; font-size:12px; background:var(--card-3)" onclick="adminAction('admin_cancel_match',{p_match_id:'${m.id}'},'Матч отменён', loadAdmin)">✖️</button>
+    </div>`;
+  }
+
+  async function loadAdminDisputes() {
+    try {
+      const { data } = await supabaseClient.from('matches')
+        .select('*, teams_a:team_a_id(name), teams_b:team_b_id(name)')
+        .eq('status', 'disputed').order('created_at', { ascending: false }).limit(20);
+      const box = document.getElementById('adminDisputes');
+      document.getElementById('disputeCount').textContent = (data?.length || 0) + ' активных';
+      box.innerHTML = (data && data.length)
+        ? data.map(m => adminMatchRow(m, true)).join('')
+        : '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Споров нет 👍</div>';
+    } catch (e) { console.warn(e); }
+  }
+
+  async function loadAdminMatches() {
+    try {
+      const { data } = await supabaseClient.from('matches')
+        .select('*, teams_a:team_a_id(name), teams_b:team_b_id(name)')
+        .order('created_at', { ascending: false }).limit(15);
+      const box = document.getElementById('adminMatches');
+      box.innerHTML = (data && data.length)
+        ? data.map(m => adminMatchRow(m)).join('')
+        : '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Матчей нет</div>';
+    } catch (e) { console.warn(e); }
+  }
+
+  async function loadAdminTeams() {
+    try {
+      const { data } = await supabaseClient.from('teams').select('id, name, tag, points, is_banned')
+        .order('points', { ascending: false }).limit(30);
+      const box = document.getElementById('adminTeams');
+      box.innerHTML = (data && data.length) ? data.map(t =>
+        `<div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px">
+          <div style="flex:1; font-weight:700; font-size:13px">[${t.tag}] ${t.name} <span style="color:var(--muted)">· ${t.points} pts</span></div>
+          <button class="btn" style="padding:6px 10px; font-size:12px; background:var(--card-3)" onclick="adminAdjustPoints('${t.id}', ${t.points})">±очки</button>
+          <button class="btn btn-danger" style="padding:6px 10px; font-size:12px" onclick="adminDeleteTeam('${t.id}','${t.name.replace(/'/g,"")}')">🗑️</button>
+        </div>`).join('')
+        : '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Команд нет</div>';
+    } catch (e) { console.warn(e); }
+  }
+
+  async function loadAdminPlayers() {
+    try {
+      const { data } = await supabaseClient.from('profiles').select('id, nick, is_verified, is_banned')
+        .order('created_at', { ascending: false }).limit(30);
+      const box = document.getElementById('adminPlayers');
+      box.innerHTML = (data && data.length) ? data.map(p =>
+        `<div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px">
+          <div style="flex:1; font-weight:700; font-size:13px">${p.nick || '—'} ${p.is_verified ? '✓' : ''} ${p.is_banned ? '🚫' : ''}</div>
+          <button class="btn" style="padding:6px 10px; font-size:12px; background:${p.is_banned ? 'var(--accent)' : 'var(--card-3)'}" onclick="adminAction('admin_ban_player',{p_player_id:'${p.id}',p_banned:${!p.is_banned}},'${p.is_banned ? 'Разбанен' : 'Забанен'}', loadAdmin)">${p.is_banned ? 'разбан' : 'бан'}</button>
+        </div>`).join('')
+        : '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Игроков нет</div>';
+    } catch (e) { console.warn(e); }
+  }
+
+  // универсальный вызов админ-RPC
+  async function adminAction(fn, args, okMsg, cb) {
+    try {
+      const { error } = await supabaseClient.rpc(fn, args);
+      if (error) throw error;
+      showToast('✅ ' + okMsg, 'success');
+      if (cb) cb(); else loadAdminStats();
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
+  }
+
+  async function adminResolveMatch(id, a, b) {
+    const v = prompt(`Счёт матча ${a} vs ${b} (формат 13:7, относительно ${a}):`);
+    if (!v) return;
+    const m = v.match(/^(\d+)\s*[:\-]\s*(\d+)$/);
+    if (!m) { showToast('Формат: 13:7', 'error'); return; }
+    await adminAction('admin_set_score', { p_match_id: id, p_a: +m[1], p_b: +m[2] }, 'Счёт выставлен', loadAdmin);
+  }
+  async function adminAdjustPoints(id, cur) {
+    const v = prompt('Новое значение очков команды:', cur);
+    if (v == null) return;
+    await adminAction('admin_adjust_points', { p_team_id: id, p_points: parseInt(v) || 0 }, 'Очки обновлены', loadAdmin);
+  }
+  async function adminDeleteTeam(id, name) {
+    if (!confirm(`Удалить команду "${name}" и все её матчи? Необратимо.`)) return;
+    await adminAction('admin_delete_team', { p_team_id: id }, 'Команда удалена', loadAdmin);
+  }
+  async function adminNewSeason() {
+    const name = prompt('Название нового сезона:');
+    if (!name) return;
+    await adminAction('admin_new_season', { p_name: name }, 'Новый сезон создан', loadAdmin);
+  }
+  async function adminResetSeason() {
+    if (!confirm('Сбросить текущий сезон? Очки/статы обнулятся, матчи сезона удалятся. Необратимо.')) return;
+    await adminAction('admin_reset_season', {}, 'Сезон сброшен', loadAdmin);
+  }
+
   function ctaClimb() {
     // не залогинен → регистрация, залогинен → создание команды
     if (window.currentUser && currentUser.id) {
       openModal('team');
     } else {
       openModal('login');
+    }
+  }
+
+  async function saveVerification() {
+    const idEl = document.getElementById('verifyGameId');
+    const sigEl = document.getElementById('verifySignature');
+    const status = document.getElementById('verifyStatusDesc');
+    const gameId = (idEl?.value || '').trim().replace(/\s/g, '');
+    const sig = (sigEl?.value || '').trim();
+    if (!/^\d{6,12}$/.test(gameId)) { showToast('Введи корректный игровой ID (6–12 цифр)', 'error'); return; }
+    if (!sig) { showToast('Укажи подпись из профиля', 'error'); return; }
+    if (!supabaseClient || !window.currentUser?.id) { showToast('Сначала войди через Telegram', 'error'); return; }
+    try {
+      const { error } = await supabaseClient.from('profiles').update({
+        standoff_id: gameId, game_signature: sig, is_verified: true,
+      }).eq('id', currentUser.id);
+      if (error) throw error;
+      if (status) status.innerHTML = `✓ Верифицирован · ID: <code>${gameId}</code>`;
+      showToast('✅ Профиль верифицирован!', 'success');
+    } catch (e) {
+      console.error('saveVerification:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
     }
   }
 
@@ -11722,6 +12035,9 @@
     // Подгружаем данные при переходе на специальные страницы
     if (name === 'invites' && typeof loadInvites === 'function') {
       loadInvites();
+    }
+    if (name === 'admin' && typeof loadAdmin === 'function') {
+      loadAdmin();
     }
     if (name === 'players' && typeof loadPlayerTopTabs === 'function') {
       loadPlayerTopTabs();
@@ -12229,7 +12545,7 @@
         } else {
           showToast('Ошибка: ' + createErr.message, 'error');
         }
-        if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Оплатить ₽499 →'; }
+        if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Создать команду →'; }
         return;
       }
 
@@ -12263,7 +12579,7 @@
     } catch (e) {
       console.error('Create team error:', e);
       showToast('Ошибка: ' + String(e), 'error');
-      if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Оплатить ₽499 →'; }
+      if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Создать команду →'; }
     }
   }
   function prevStep() {
