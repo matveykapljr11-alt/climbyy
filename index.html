@@ -4309,6 +4309,92 @@
   @media (max-width: 900px) {
     .ph-stats { grid-template-columns: repeat(3, 1fr); }
   }
+  /* статы профиля в строки */
+  .ph-stats-rows {
+    display: flex; flex-direction: column; gap: 10px;
+    background: rgba(0,0,0,0.22); border-radius: 14px;
+    padding: 14px 16px; position: relative; z-index: 1;
+  }
+  .ph-srow {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px;
+    font-size: 14px; font-weight: 700;
+  }
+  .ph-scell { display: inline-flex; align-items: baseline; gap: 5px; }
+  .ph-sdiv { width: 1px; align-self: stretch; background: var(--line); }
+  .ph-sval { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 17px; }
+  .ph-sval.pos { color: var(--mint); }
+  .ph-sval.points { color: var(--peach); }
+  .ph-slbl { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+  .ph-slash { color: var(--muted-2); }
+  /* мета-список профиля (ID, команда, дата) */
+  .ph-meta-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+  .ph-meta-item { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+  .ph-meta-k { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; min-width: 88px; }
+  .ph-meta-v { font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+  .ph-meta-v.link { color: var(--peach); text-decoration: none; cursor: pointer; }
+  .ph-meta-v.link:hover { filter: brightness(1.15); }
+  /* слоты медалей */
+  .ph-medals { display: flex; gap: 8px; margin: 14px 0; position: relative; z-index: 1; }
+  .ph-medal {
+    flex: 1; aspect-ratio: 1; max-width: 64px;
+    background: rgba(0,0,0,0.22); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; border: 1.5px solid var(--line);
+  }
+  .ph-medal.empty { opacity: 0.4; font-size: 18px; }
+  /* мета-список команды */
+  .th-meta-list { display: flex; flex-direction: column; gap: 6px; }
+  .th-meta-item { display: flex; align-items: baseline; gap: 10px; font-size: 14px; }
+  .th-meta-k { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; min-width: 72px; }
+  .th-meta-v { font-weight: 800; color: var(--text); }
+  .th-meta-v.th-tag, .th-meta-v.th-created, .th-meta-v.th-ranking { font-family: 'JetBrains Mono', monospace; }
+  .th-meta-v.link { color: var(--peach); text-decoration: none; cursor: pointer; border-bottom: 1px dashed var(--peach); }
+  .th-meta-v.link:hover { filter: brightness(1.15); }
+  /* ===== VS-ПАНЕЛЬ МАТЧА ===== */
+  .sm-vs-panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px 16px; margin-bottom: 16px; }
+  .sm-vs-teams { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+  .sm-vs-team { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 8px; border-radius: 16px; border: 2px solid transparent; position: relative; }
+  .sm-vs-team.win { border-color: var(--mint); background: rgba(110,251,205,0.06); }
+  .sm-vs-team.loss { border-color: var(--hot-pink); background: rgba(196,24,32,0.06); }
+  .sm-vs-badge { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; height: 16px; }
+  .sm-vs-team.win .sm-vs-badge { color: var(--mint); }
+  .sm-vs-team.loss .sm-vs-badge { color: var(--hot-pink); order: 3; }
+  .sm-vs-logo { width: 72px; height: 72px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 24px; color: #fff; }
+  .sm-vs-name { font-weight: 800; font-size: 14px; text-align: center; line-height: 1.2; }
+  .sm-vs-mid { display: flex; flex-direction: column; align-items: center; }
+  .sm-vs-score { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 28px; letter-spacing: 1px; }
+  .sm-vs-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 16px; }
+  .sm-vs-info-item { display: flex; flex-direction: column; gap: 3px; background: var(--card-2); border-radius: 10px; padding: 9px 12px; }
+  .sm-vs-info-item span { font-size: 10.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+  .sm-vs-info-item b { font-size: 13px; font-weight: 800; }
+  /* ростер матча с КД */
+  .sm-roster-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .sm-roster-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sm-roster-logo { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff; }
+  .sm-roster-name { font-weight: 800; font-size: 15px; flex: 1; }
+  .sm-roster-kd { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px; padding: 3px 10px; border-radius: 100px; }
+  .sm-roster-kd.pos { color: var(--mint); background: rgba(110,251,205,0.12); }
+  .sm-roster-kd.neg { color: var(--hot-pink); background: rgba(196,24,32,0.12); }
+  .sm-rp { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 10px; font-size: 13px; }
+  .sm-rp:nth-child(odd) { background: var(--card-2); }
+  .sm-rp-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sm-rp-stat { font-family: 'JetBrains Mono', monospace; font-weight: 800; min-width: 46px; text-align: right; }
+  .sm-rp-stat small { color: var(--muted); font-weight: 700; font-size: 9px; display: block; text-transform: uppercase; }
+  /* бейдж капитана */
+  .rc-cap-badge, .sm-cap-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 6px;
+    background: var(--peach); color: #1a1a1a;
+    font-weight: 900; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    vertical-align: middle;
+  }
+  /* мобильный фикс шапки профиля — кнопка не наезжает */
+  @media (max-width: 680px) {
+    .ph-top { flex-wrap: wrap; }
+    .ph-actions { width: 100%; order: 3; margin-top: 4px; }
+    .ph-actions .th-action { width: 100%; justify-content: center; }
+    .ph-sdiv { display: none; }
+  }
 
   /* ============================================
      INVITES PAGE
@@ -4848,6 +4934,9 @@
     color: var(--muted);
     font-weight: 700;
   }
+  @media (max-width: 760px) {
+    .gs-kbd { display: none; }
+  }
   .gs-results {
     flex: 1;
     overflow-y: auto;
@@ -4907,6 +4996,9 @@
     font-size: 11px;
     color: var(--muted);
     font-weight: 600;
+  }
+  @media (max-width: 760px) {
+    .gs-footer { display: none !important; }
   }
   .gs-kbd-sm {
     font-family: 'JetBrains Mono', monospace;
@@ -5545,11 +5637,11 @@
     main { height: auto; grid-template-columns: 1fr; }
     .nav-links { display: none; }
   }
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     .modal-backdrop { padding: 0 !important; align-items: stretch !important; justify-content: stretch !important; }
     .modal {
       grid-template-columns: 1fr !important;
-      display: block !important;
+      display: flex !important; flex-direction: column !important;
       width: 100% !important; max-width: 100% !important;
       height: 100dvh !important; max-height: 100dvh !important;
       border-radius: 0 !important;
@@ -5558,7 +5650,7 @@
     }
     .modal-backdrop.open .modal { transform: none !important; }
     .preview-panel { display: none !important; }
-    .form-panel { padding: 54px 18px 18px !important; width: 100% !important; }
+    .form-panel { padding: 54px 18px 18px !important; width: 100% !important; min-width: 0 !important; flex: 1 1 auto !important; }
     .form-panel::after { display: none !important; }
     .form-body { overflow: visible !important; padding-right: 0 !important; flex: none !important; }
     .form-foot {
@@ -5783,11 +5875,6 @@
             <span class="pm-link-text">Приглашения</span>
             <span class="pm-link-badge dot" id="pmInvitesBadge" style="display:none"></span>
           </a>
-          <a class="pm-link" href="#" onclick="openMyProfile(); closeProfile(); return false;">
-            <span class="pm-link-emoji">📊</span>
-            <span class="pm-link-text">Моя статистика</span>
-            <span class="pm-link-arrow">→</span>
-          </a>
           <a class="pm-link" href="#" onclick="goPage('settings'); closeProfile(); return false;">
             <span class="pm-link-emoji">⚙️</span>
             <span class="pm-link-text">Настройки</span>
@@ -5834,6 +5921,16 @@
 
 <div class="page active" data-page="home">
 <main>
+  <!-- БАННЕР ВЕРИФИКАЦИИ (для залогиненных но не верифицированных) -->
+  <div id="verifyBanner" style="display:none; grid-column:1 / -1; margin-bottom:18px; background:linear-gradient(135deg, rgba(255,90,90,0.16), rgba(255,160,66,0.10)); border:1.5px solid var(--accent); border-radius:16px; padding:18px 20px; align-items:center; gap:16px; flex-wrap:wrap">
+    <div style="font-size:32px">⚠️</div>
+    <div style="flex:1; min-width:200px">
+      <div style="font-weight:800; font-size:16px; margin-bottom:3px">Подтверди игровой аккаунт</div>
+      <div style="font-weight:600; font-size:13px; color:var(--muted)">Укажи игровой ID и никнейм Standoff 2, чтобы создавать команду и играть матчи.</div>
+    </div>
+    <button class="btn btn-primary" onclick="goPage('settings'); setTimeout(()=>document.getElementById('verifyGameId')?.scrollIntoView({behavior:'smooth',block:'center'}),300)">Верифицироваться →</button>
+  </div>
+
   <!-- LEFT: HERO -->
   <section class="hero">
     <div class="hero-glow-2"></div>
@@ -5842,15 +5939,14 @@
       Сезон 1 · регистрация открыта
     </div>
     <h1>
-      Соревновательный<br>
-      <span class="accent">Standoff 2</span><br>
-      начинается здесь
+      Киберспортивная<br>
+      платформа для команд по<br>
+      <span class="accent">Standoff 2</span>
     </h1>
     <p class="hero-sub">
-      Climby — соревновательная лига по Standoff 2. Соберите команду 5/5,
-      сыграйте 12 матчей за сезон и поднимитесь в таблице дивизиона —
-      восьмёрка сильнейших разыграет титул в плей-офф.
-      Банпик и согласование матчей — прямо в Telegram.
+      Climby — платформа, где команды борются в лигах за попадание в топ
+      и звание лучших. Всё просто: зарегистрируйся, найди команду,
+      играй с открытого дивизиона, побеждай и дойди до профессиональной лиги.
     </p>
     <!-- IN TEAM: карточка команды со статами (данные подставляются через applyTeamData) -->
     <div class="my-team-card team-state active" data-team-state="in-team" onclick="goPage('team')">
@@ -6273,6 +6369,31 @@
 
       <!-- ========== РЕАЛЬНЫЙ СЕЗОННЫЙ МАТЧ ========== -->
       <div id="seasonMatch" style="display:none">
+        <!-- VS ПАНЕЛЬ -->
+        <div class="sm-vs-panel">
+          <div class="sm-vs-teams">
+            <div class="sm-vs-team" id="smVsTeamA">
+              <div class="sm-vs-badge"></div>
+              <div class="sm-vs-logo">—</div>
+              <div class="sm-vs-name">—</div>
+            </div>
+            <div class="sm-vs-mid">
+              <div class="sm-vs-score" id="smVsScore">★ : ★</div>
+            </div>
+            <div class="sm-vs-team" id="smVsTeamB">
+              <div class="sm-vs-badge"></div>
+              <div class="sm-vs-logo">—</div>
+              <div class="sm-vs-name">—</div>
+            </div>
+          </div>
+          <div class="sm-vs-info">
+            <div class="sm-vs-info-item"><span>📅 Дата</span><b id="smInfoDate">—</b></div>
+            <div class="sm-vs-info-item"><span>🕐 Время</span><b id="smInfoTime">—</b></div>
+            <div class="sm-vs-info-item"><span>🎮 Хост</span><b id="smInfoHost">—</b></div>
+            <div class="sm-vs-info-item"><span>🗺️ Карта</span><b id="smInfoMap">—</b></div>
+          </div>
+        </div>
+
         <div class="match-card" style="margin-bottom:16px">
           <div class="mc-head">
             <div class="mc-title">⚔️ <span id="smTeams">—</span></div>
@@ -6331,6 +6452,9 @@
             </div>
           </div>
         </div>
+
+        <!-- РОСТЕРЫ С КД -->
+        <div id="smRosters" style="display:flex; flex-direction:column; gap:14px"></div>
       </div>
 
       <!-- Демо-переключатель состояний -->
@@ -6674,66 +6798,37 @@
           </div>
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА: H2H + правила -->
+        <!-- ПРАВАЯ КОЛОНКА: личные встречи -->
         <div>
-          <div class="match-card" style="margin-bottom: 14px;">
-            <div class="mc-head">
-              <div class="mc-title">⚔️ История встреч</div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div onclick="openMatchVs('—', '—', 'var(--sky)', '—')" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--card-2); border-radius: 11px; font-size: 12px; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='var(--card-3)'; this.style.transform='translateX(2px)'" onmouseout="this.style.background='var(--card-2)'; this.style.transform=''">
-                <span style="color: var(--muted); font-weight: 600;">—</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">
-                  <span style="color: var(--mint)">16</span>
-                  <span style="color: var(--muted-2)"> : </span>
-                  <span>9</span>
-                </span>
-                <span style="font-size: 10px; font-weight: 800; color: var(--mint); padding: 2px 6px; background: rgba(255, 138, 60, 0.15); border-radius: 100px;">VR win</span>
-              </div>
-              <div onclick="openMatchVs('—', '—', 'var(--sky)', '—')" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--card-2); border-radius: 11px; font-size: 12px; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='var(--card-3)'; this.style.transform='translateX(2px)'" onmouseout="this.style.background='var(--card-2)'; this.style.transform=''">
-                <span style="color: var(--muted); font-weight: 600;">—</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">
-                  <span>11</span>
-                  <span style="color: var(--muted-2)"> : </span>
-                  <span style="color: var(--mint)">13</span>
-                </span>
-                <span style="font-size: 10px; font-weight: 800; color: var(--hot-pink); padding: 2px 6px; background: rgba(196, 24, 32, 0.15); border-radius: 100px;">SH win</span>
-              </div>
-              <div onclick="openMatchVs('—', '—', 'var(--sky)', '—')" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--card-2); border-radius: 11px; font-size: 12px; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='var(--card-3)'; this.style.transform='translateX(2px)'" onmouseout="this.style.background='var(--card-2)'; this.style.transform=''">
-                <span style="color: var(--muted); font-weight: 600;">—</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">
-                  <span style="color: var(--mint)">13</span>
-                  <span style="color: var(--muted-2)"> : </span>
-                  <span>7</span>
-                </span>
-                <span style="font-size: 10px; font-weight: 800; color: var(--mint); padding: 2px 6px; background: rgba(255, 138, 60, 0.15); border-radius: 100px;">VR win</span>
-              </div>
-            </div>
-            <div style="text-align: center; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 12px; color: var(--muted); font-weight: 700;">
-              <span style="color: var(--peach);">VR</span> ведёт 2-1
-            </div>
-          </div>
-
           <div class="match-card">
             <div class="mc-head">
-              <div class="mc-title">⚖️ Правила матча</div>
+              <div class="mc-title">Статистика личных встреч</div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 7px; font-size: 12px;">
-              <div style="display: flex; gap: 8px; padding: 8px 12px; background: var(--card-2); border-radius: 9px;">
-                <span style="color: var(--mint); font-weight: 800;">+10</span>
-                <span style="color: var(--muted); font-weight: 600;">за победу</span>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div onclick="openMatchVs('—', '—', 'var(--sky)', '—')" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; padding: 10px 12px; background: var(--card-2); border-radius: 11px; font-size: 13px; cursor: pointer;">
+                <span style="font-weight: 800; text-align: right;">TEAM1</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">
+                  <span style="color: var(--mint)">16</span><span style="color: var(--muted-2)"> : </span><span style="color: var(--hot-pink)">9</span>
+                </span>
+                <span style="font-weight: 800;">TEAM2</span>
               </div>
-              <div style="display: flex; gap: 8px; padding: 8px 12px; background: var(--card-2); border-radius: 9px;">
-                <span style="color: var(--hot-pink); font-weight: 800;">−7</span>
-                <span style="color: var(--muted); font-weight: 600;">за поражение</span>
+              <div onclick="openMatchVs('—', '—', 'var(--sky)', '—')" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; padding: 10px 12px; background: var(--card-2); border-radius: 11px; font-size: 13px; cursor: pointer;">
+                <span style="font-weight: 800; text-align: right;">TEAM1</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">
+                  <span style="color: var(--hot-pink)">11</span><span style="color: var(--muted-2)"> : </span><span style="color: var(--mint)">13</span>
+                </span>
+                <span style="font-weight: 800;">TEAM2</span>
               </div>
-              <div style="display: flex; gap: 8px; padding: 8px 12px; background: var(--card-2); border-radius: 9px;">
-                <span style="color: var(--peach); font-weight: 800;">−5</span>
-                <span style="color: var(--muted); font-weight: 600;">close loss (11+ раундов)</span>
+              <div onclick="openMatchVs('—', '—', 'var(--sky)', '—')" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; padding: 10px 12px; background: var(--card-2); border-radius: 11px; font-size: 13px; cursor: pointer;">
+                <span style="font-weight: 800; text-align: right;">TEAM1</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">
+                  <span style="color: var(--mint)">13</span><span style="color: var(--muted-2)"> : </span><span style="color: var(--hot-pink)">7</span>
+                </span>
+                <span style="font-weight: 800;">TEAM2</span>
               </div>
-              <div style="margin-top: 4px; font-size: 11px; color: var(--muted-2); font-weight: 600; line-height: 1.5; padding: 0 4px;">
-                Бороться до конца — выгодно. Чем ближе счёт, тем меньше теряешь.
-              </div>
+            </div>
+            <div style="text-align: center; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 13px; font-weight: 800;">
+              TEAM1 <span style="font-family: 'JetBrains Mono', monospace;"><span style="color: var(--mint)">2</span> : <span style="color: var(--hot-pink)">1</span></span> TEAM2
             </div>
           </div>
         </div>
@@ -6755,18 +6850,17 @@
           <div class="th-identity">
             <div class="th-logo" style="background: var(--peach)">—</div>
             <div class="th-info">
-              <div class="th-name">—</div>
-              <div class="th-tag-row">
-                <span class="th-pill">[VRN]</span>
-                <span class="th-pill region">🇷🇺 RU · Moscow</span>
-                <span class="th-pill div">🚧 D0 · BETA</span>
-                <span>· основана 12 апр 2026</span>
+              <div class="th-meta-list">
+                <div class="th-meta-item"><span class="th-meta-k">Name</span><span class="th-meta-v th-name">—</span></div>
+                <div class="th-meta-item"><span class="th-meta-k">Tag</span><span class="th-meta-v th-tag">[—]</span></div>
+                <div class="th-meta-item"><span class="th-meta-k">Created</span><span class="th-meta-v th-created">—</span></div>
+                <div class="th-meta-item"><span class="th-meta-k">Ranking</span><a href="#" class="th-meta-v link th-ranking" onclick="openTeamRanking(); return false;">D0 · BETA №—</a></div>
               </div>
             </div>
           </div>
           <div class="th-actions" id="teamActions">
-            <!-- Кнопки для моей команды -->
-            <button class="th-action danger my-team-action" onclick="leaveTeam()">🚪 Покинуть</button>
+            <!-- Кнопки для моей команды (скрыта по умолчанию, показывается из JS) -->
+            <button class="th-action danger my-team-action" style="display: none;" onclick="leaveTeam()">🚪 Покинуть</button>
 
             <!-- Кнопки для чужой команды (скрыты по умолчанию) -->
             <button class="th-action primary other-team-action" style="display: none;" onclick="openApplyModal()">📨 Подать заявку</button>
@@ -6836,10 +6930,8 @@
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <input id="invSearchInput" class="input" placeholder="Введи ник игрока..." style="flex: 1; min-width: 180px;">
                 <select id="invRoleSelect" class="input" style="max-width: 160px;">
-                  <option value="substitute">Substitute</option>
-                  <option value="sniper">🎯 Sniper</option>
-                  <option value="entry">⚡ Entry</option>
-                  <option value="support">🛡️ Support</option>
+                  <option value="player">Основа</option>
+                  <option value="substitute">Запас</option>
                 </select>
                 <button class="btn btn-primary" onclick="searchAndInvite()" style="white-space: nowrap;">Найти и позвать →</button>
               </div>
@@ -7029,9 +7121,10 @@
           </div>
           <div class="ph-info">
             <div class="ph-name">Игрок <span style="color: var(--mint); font-size: 0.5em;">★</span></div>
-            <div class="ph-handle-row">
-              <a href="#" class="ph-pill team" onclick="goPage('team'); return false;">🦊 —</a>
-              <span>· RU</span>
+            <div class="ph-meta-list">
+              <div class="ph-meta-item"><span class="ph-meta-k">ID</span><span class="ph-meta-v" id="phGameId">—</span></div>
+              <div class="ph-meta-item"><span class="ph-meta-k">Команда</span><a href="#" class="ph-meta-v link" id="phTeam" onclick="goPage('team'); return false;">—</a></div>
+              <div class="ph-meta-item"><span class="ph-meta-k">На проекте с</span><span class="ph-meta-v" id="phReg">—</span></div>
             </div>
           </div>
           <div class="ph-actions">
@@ -7039,26 +7132,27 @@
           </div>
         </div>
 
-        <div class="ph-stats">
-          <div class="ph-stat">
-            <div class="ph-stat-val pos">—</div>
-            <div class="ph-stat-lbl">KD</div>
+        <!-- СЛОТЫ МЕДАЛЕЙ -->
+        <div class="ph-medals" id="phMedals">
+          <div class="ph-medal empty" title="медаль">🔒</div>
+          <div class="ph-medal empty" title="медаль">🔒</div>
+          <div class="ph-medal empty" title="медаль">🔒</div>
+          <div class="ph-medal empty" title="медаль">🔒</div>
+          <div class="ph-medal empty" title="медаль">🔒</div>
+        </div>
+
+        <div class="ph-stats-rows">
+          <div class="ph-srow">
+            <div class="ph-scell"><span class="ph-sval pos" id="phKD">—</span><span class="ph-slbl">KD</span></div>
+            <div class="ph-sdiv"></div>
+            <div class="ph-scell"><span class="ph-sval" id="phAVG">0</span><span class="ph-slbl">AVG</span></div>
+            <div class="ph-sdiv"></div>
+            <div class="ph-scell"><span class="ph-sval points" id="phKills">0</span><span class="ph-slbl">kills</span> <span class="ph-sslash">/</span> <span class="ph-sval" id="phDeaths">0</span><span class="ph-slbl">death</span></div>
           </div>
-          <div class="ph-stat">
-            <div class="ph-stat-val pos">—</div>
-            <div class="ph-stat-lbl">Winrate</div>
-          </div>
-          <div class="ph-stat">
-            <div class="ph-stat-val">0</div>
-            <div class="ph-stat-lbl">AVG</div>
-          </div>
-          <div class="ph-stat">
-            <div class="ph-stat-val">0</div>
-            <div class="ph-stat-lbl">Матчи</div>
-          </div>
-          <div class="ph-stat">
-            <div class="ph-stat-val points">0</div>
-            <div class="ph-stat-lbl">Kills</div>
+          <div class="ph-srow">
+            <div class="ph-scell"><span class="ph-sval" id="phWR">—</span><span class="ph-slbl">Winrate</span></div>
+            <div class="ph-sdiv"></div>
+            <div class="ph-scell"><span class="ph-slbl">best map:</span> <span class="ph-sval" id="phBestMap">—</span></div>
           </div>
         </div>
       </div>
@@ -7358,10 +7452,10 @@
       </div>
 
       <div class="invites-tabs" data-tabs="invites">
-        <div class="hub-tab active" data-filter="all">Все <span class="count">5</span></div>
-        <div class="hub-tab" data-filter="new">🆕 Новые <span class="count">2</span></div>
-        <div class="hub-tab" data-filter="seen">Просмотрены <span class="count">2</span></div>
-        <div class="hub-tab" data-filter="declined">Отклонённые <span class="count">1</span></div>
+        <div class="hub-tab active" data-filter="all">Все <span class="count">0</span></div>
+        <div class="hub-tab" data-filter="new">🆕 Новые <span class="count">0</span></div>
+        <div class="hub-tab" data-filter="seen">Просмотрены <span class="count">0</span></div>
+        <div class="hub-tab" data-filter="declined">Отклонённые <span class="count">0</span></div>
       </div>
 
       <!-- Список приглашений (рендерится из БД через loadInvites) -->
@@ -7412,14 +7506,6 @@
           <div class="settings-nav-item" data-target="privacy" onclick="scrollToSetting('privacy', this)">
             <span class="settings-nav-emoji">🔒</span>
             <span>Приватность</span>
-          </div>
-          <div class="settings-nav-item" data-target="appearance" onclick="scrollToSetting('appearance', this)">
-            <span class="settings-nav-emoji">🎨</span>
-            <span>Внешний вид</span>
-          </div>
-          <div class="settings-nav-item" data-target="danger" onclick="scrollToSetting('danger', this)">
-            <span class="settings-nav-emoji">💀</span>
-            <span style="color: var(--hot-pink);">Опасная зона</span>
           </div>
         </div>
 
@@ -7495,6 +7581,14 @@
               </div>
               <div class="setting-control"><div class="toggle"></div></div>
             </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Звуковые эффекты</div>
+                <div class="setting-desc">🔔 Тихие тоны при Ready и уведомлениях</div>
+              </div>
+              <div class="setting-control"><div class="toggle on" id="soundToggle" onclick="toggleSound(this.classList.toggle('on')); event.stopPropagation();"></div></div>
+            </div>
           </div>
 
           <!-- Игровой аккаунт -->
@@ -7505,10 +7599,10 @@
             <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:10px">
               <div class="setting-info">
                 <div class="setting-title">Верификация Standoff 2</div>
-                <div class="setting-desc" id="verifyStatusDesc">Укажи игровой <b>ID</b> и <b>подпись</b> из профиля Standoff 2. ⚠️ Игра под другим ID = бан.</div>
+                <div class="setting-desc" id="verifyStatusDesc">Укажи игровой <b>ID</b> и <b>никнейм</b> из Standoff 2. ⚠️ Игра под другим ID = бан.</div>
               </div>
               <input class="input" id="verifyGameId" placeholder="Игровой ID (напр. 1289450137)" style="font-family:'JetBrains Mono',monospace">
-              <input class="input" id="verifySignature" placeholder="Подпись из профиля Standoff 2">
+              <input class="input" id="verifySignature" placeholder="Игровой никнейм (как в Standoff 2)">
               <button class="btn btn-primary" id="verifyAccountBtn" onclick="saveVerification()">Верифицировать</button>
             </div>
 
@@ -7519,67 +7613,6 @@
               </div>
               <div class="setting-control">
                 <button class="setting-btn ghost">Отвязать</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Внешний вид -->
-          <div class="settings-section" id="setting-appearance">
-            <div class="settings-section-title">🎨 Внешний вид</div>
-            <div class="settings-section-sub">Как сайт выглядит для тебя</div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Анимации</div>
-                <div class="setting-desc">Плавные переходы и эмодзи-эффекты</div>
-              </div>
-              <div class="setting-control"><div class="toggle on"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Звуковые эффекты</div>
-                <div class="setting-desc">🔔 Тоны при Ready, победе, уведомлениях</div>
-              </div>
-              <div class="setting-control"><div class="toggle on" id="soundToggle" onclick="toggleSound(this.classList.toggle('on')); event.stopPropagation();"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Язык интерфейса</div>
-                <div class="setting-desc">Скоро будут EN/UA/KZ</div>
-              </div>
-              <div class="setting-control">
-                <select class="setting-select">
-                  <option selected>🇷🇺 Русский</option>
-                  <option disabled>🇬🇧 English (скоро)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Опасная зона -->
-          <div class="settings-section danger-zone" id="setting-danger">
-            <div class="settings-section-title">💀 Опасная зона</div>
-            <div class="settings-section-sub">Перед действием подумай дважды</div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Покинуть команду</div>
-                <div class="setting-desc">Уйти из <b>—</b>. Не сможешь играть матчи до новой команды.</div>
-              </div>
-              <div class="setting-control">
-                <button class="setting-btn danger" onclick="leaveTeam()">Покинуть тиму</button>
-              </div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Удалить аккаунт</div>
-                <div class="setting-desc">Безвозвратно. Стата исчезнет, нельзя восстановить.</div>
-              </div>
-              <div class="setting-control">
-                <button class="setting-btn danger" onclick="deleteAccount()">Удалить</button>
               </div>
             </div>
           </div>
@@ -9435,25 +9468,36 @@
   // ============================================
   // SETTINGS BUTTONS
   // ============================================
-  function editNick() {
-    const newNick = prompt('Введи новый ник (можно менять раз в 30 дней):', 'Игрок');
+  async function editNick() {
+    if (!supabaseClient || !currentUser?.id) { showToast('Сначала войди', 'error'); return; }
+    const newNick = prompt('Новый ник (3–16 символов):', currentUser.nick || '');
     if (newNick === null) return;
     const clean = newNick.trim();
-    if (clean.length < 3 || clean.length > 16) {
-      showToast('Ник должен быть 3-16 символов');
-      return;
-    }
-    showToast('Ник изменён на ' + clean + ' · следующее изменение через 30 дней');
+    if (clean.length < 3 || clean.length > 16) { showToast('Ник должен быть 3–16 символов', 'error'); return; }
+    try {
+      const { error } = await supabaseClient.from('profiles').update({ nick: clean }).eq('id', currentUser.id);
+      if (error) throw error;
+      currentUser.nick = clean;
+      // обновляем видимые места
+      document.querySelectorAll('.profile-name, .pm-name').forEach(el => { el.childNodes[0] && (el.childNodes[0].textContent = clean + ' '); });
+      const nickCode = document.querySelector('#setting-profile code');
+      if (nickCode) nickCode.textContent = clean;
+      showToast('✅ Ник изменён на ' + clean);
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
   }
 
-  function editBio() {
-    const newBio = prompt('Твоя биография (до 150 символов):', 'AWM-мейн с 2021. —, Sniper.');
+  async function editBio() {
+    if (!supabaseClient || !currentUser?.id) { showToast('Сначала войди', 'error'); return; }
+    const newBio = prompt('Биография (до 150 символов):', currentUser.bio || '');
     if (newBio === null) return;
-    if (newBio.length > 150) {
-      showToast('Слишком длинно — максимум 150 символов');
-      return;
-    }
-    showToast('Биография обновлена · кэпы команд увидят новый текст');
+    const clean = newBio.trim();
+    if (clean.length > 150) { showToast('Максимум 150 символов', 'error'); return; }
+    try {
+      const { error } = await supabaseClient.from('profiles').update({ bio: clean }).eq('id', currentUser.id);
+      if (error) throw error;
+      currentUser.bio = clean;
+      showToast('✅ Биография обновлена');
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
   }
 
   function relinkAccount() {
@@ -9841,22 +9885,65 @@
   }
 
   // Заполнить страницу /team реальными данными команды
+  // Рейтинг команды — история по сезонам
+  async function openTeamRanking() {
+    const team = window._teamPageData;
+    let rows = [];
+    if (supabaseClient && team?.id) {
+      try {
+        const { data } = await supabaseClient
+          .from('team_season_history')
+          .select('*, seasons(number, name)')
+          .eq('team_id', team.id)
+          .order('season_number', { ascending: false });
+        rows = data || [];
+      } catch (e) { /* таблицы может ещё не быть */ }
+    }
+    const body = rows.length
+      ? rows.map(r => `
+          <div style="padding:12px 14px; background:var(--card-2); border-radius:12px; margin-bottom:8px">
+            <div style="font-weight:800; margin-bottom:4px">Сезон ${r.season_number || '—'} · ${r.division_id || 'D0'}</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700; line-height:1.6">
+              Топ-ранг: №${r.best_rank ?? '—'} · Финиш: №${r.final_rank ?? '—'}${r.playoff_place ? ' · Плей-офф: ' + r.playoff_place + ' место' : ''}
+            </div>
+          </div>`).join('')
+      : '<div style="padding:24px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">Пока нет завершённых сезонов.<br>История появится после первого сезона.</div>';
+
+    let modal = document.getElementById('rankingModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'rankingModal';
+      modal.className = 'modal-backdrop';
+      modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML = `
+      <div class="support-modal" style="max-width:460px">
+        <button class="sm-close" onclick="document.getElementById('rankingModal').classList.remove('open')">✕</button>
+        <div class="sm-head"><div class="sm-icon" style="background:rgba(255,200,66,0.15)">🏆</div><div><div class="sm-title">История рейтинга</div></div></div>
+        <div class="sm-sub">Дивизионы, ранги и плей-офф по сезонам.</div>
+        <div>${body}</div>
+      </div>`;
+    modal.classList.add('open');
+  }
+
   async function populateTeamPage(team) {
     const page = document.querySelector('[data-page="team"]');
     if (!page || !team) return;
     const isMine = currentTeam && currentTeam.id === team.id;
+    window._teamPageData = team;
 
     const logo = page.querySelector('.th-logo');
     if (logo) { logo.textContent = team.logo_initials || '??'; logo.style.background = team.logo_color || 'var(--accent)'; }
-    const name = page.querySelector('.th-name');
-    if (name) name.innerHTML = team.name + (isMine ? ' <span style="color:var(--accent); font-size:14px; font-weight:900">· твоя</span>' : '');
 
-    const pills = page.querySelectorAll('.th-tag-row .th-pill');
-    if (pills[0]) pills[0].textContent = team.tag ? '[' + team.tag + ']' : '';
-    if (pills[1]) pills[1].textContent = '🌍 ' + (team.region || '—');
-    if (pills[2]) pills[2].textContent = '🚧 D0 · BETA';
-    const founded = page.querySelector('.th-tag-row > span:not(.th-pill)');
-    if (founded) founded.textContent = '· основана ' + (team.created_at ? new Date(team.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
+    const nameEl = page.querySelector('.th-meta-list .th-name');
+    if (nameEl) nameEl.innerHTML = (team.name || '—') + (isMine ? ' <span style="color:var(--accent); font-size:12px; font-weight:900">· твоя</span>' : '');
+    const tagEl = page.querySelector('.th-meta-list .th-tag');
+    if (tagEl) tagEl.textContent = team.tag ? '[' + team.tag + ']' : '[—]';
+    const createdEl = page.querySelector('.th-meta-list .th-created');
+    if (createdEl) createdEl.textContent = team.created_at ? new Date(team.created_at).toLocaleDateString('ru-RU') : '—';
+    const rankEl = page.querySelector('.th-meta-list .th-ranking');
+    if (rankEl) rankEl.textContent = 'D0 · BETA №' + String(team.rank || 0).padStart(2, '0');
 
     const sv = page.querySelectorAll('.th-stat .th-stat-val');
     const wr = Math.round((team.wr || 0) * 100);
@@ -9867,7 +9954,7 @@
     if (sv[4]) sv[4].textContent = '—';
     if (sv[5]) sv[5].textContent = '—';
 
-    // BIO + "след матч" (нет реальных данных)
+    // BIO
     const bio = page.querySelector('.team-bio');
     const bioText = page.querySelector('.team-bio-text');
     const bioMeta = page.querySelector('.team-bio-meta');
@@ -9875,8 +9962,7 @@
     else if (bio) bio.style.display = 'none';
     if (bioMeta) bioMeta.style.display = 'none';
 
-    // прячем демо-карточки (нет реальных данных): Форма, Расписание, История,
-    // Статистика по картам, Достижения, Путь команды
+    // прячем демо-карточки
     const demoCards = ['Форма', 'Расписание', 'История матчей', 'Статистика по картам', 'Достижения', 'Путь команды'];
     page.querySelectorAll('.match-card').forEach(c => {
       const t = c.querySelector('.mc-title');
@@ -10405,13 +10491,18 @@
     document.querySelectorAll('.join-cta').forEach(el => {
       el.style.display = isLoggedIn ? '' : 'none';
     });
-    // ссылка на админку — только админам
-    if (isLoggedIn && supabaseClient && window.currentUser?.id) {
-      supabaseClient.from('profiles').select('is_admin').eq('id', currentUser.id).maybeSingle()
+    // ссылка на админку + баннер верификации
+    if (isLoggedIn && supabaseClient && currentUser?.id) {
+      supabaseClient.from('profiles').select('is_admin, is_verified').eq('id', currentUser.id).maybeSingle()
         .then(({ data }) => {
           const link = document.getElementById('adminMenuLink');
           if (link) link.style.display = data?.is_admin ? '' : 'none';
+          const banner = document.getElementById('verifyBanner');
+          if (banner) banner.style.display = (data && !data.is_verified) ? 'flex' : 'none';
         });
+    } else {
+      const banner = document.getElementById('verifyBanner');
+      if (banner) banner.style.display = 'none';
     }
     // на гостевом — прячем колокольчик уведомлений и профиль (auth-state="logged-in" уже скроет, но дочерние элементы)
   }
@@ -10471,7 +10562,7 @@
   async function refreshSeasonMatch(matchId) {
     const { data: m, error } = await supabaseClient
       .from('matches')
-      .select('*, teams_a:team_a_id(id, name, tag), teams_b:team_b_id(id, name, tag)')
+      .select('*, teams_a:team_a_id(id, name, tag, logo_initials, logo_color), teams_b:team_b_id(id, name, tag, logo_initials, logo_color)')
       .eq('id', matchId)
       .single();
     if (error || !m) { showToast('Матч не найден', 'error'); return; }
@@ -10479,7 +10570,7 @@
 
     const { data: members } = await supabaseClient
       .from('team_members')
-      .select('team_id, is_captain, profiles:player_id(id, nick, telegram_username)')
+      .select('team_id, is_captain, role, profiles:player_id(id, nick, telegram_username, total_kd, total_kills)')
       .in('team_id', [m.team_a_id, m.team_b_id])
       .is('left_at', null);
     smMembers = members || [];
@@ -10499,8 +10590,83 @@
     renderSeasonMatch(m, bans || []);
   }
 
+  function renderSmVsPanel(m) {
+    const a = m.teams_a, b = m.teams_b;
+    const teamA = document.getElementById('smVsTeamA');
+    const teamB = document.getElementById('smVsTeamB');
+    if (!teamA || !teamB) return;
+    // лого + имена
+    const setTeam = (el, t) => {
+      const logo = el.querySelector('.sm-vs-logo');
+      logo.textContent = t.logo_initials || (t.name || '?').substring(0, 2).toUpperCase();
+      logo.style.background = t.logo_color || 'var(--accent)';
+      el.querySelector('.sm-vs-name').textContent = t.name || '—';
+    };
+    setTeam(teamA, a); setTeam(teamB, b);
+
+    teamA.classList.remove('win', 'loss'); teamB.classList.remove('win', 'loss');
+    teamA.querySelector('.sm-vs-badge').textContent = '';
+    teamB.querySelector('.sm-vs-badge').textContent = '';
+
+    const scoreEl = document.getElementById('smVsScore');
+    if (m.status === 'completed' && m.team_a_score != null) {
+      scoreEl.textContent = `${m.team_a_score} : ${m.team_b_score}`;
+      const aWin = m.winner_id === m.team_a_id;
+      teamA.classList.add(aWin ? 'win' : 'loss');
+      teamB.classList.add(aWin ? 'loss' : 'win');
+      teamA.querySelector('.sm-vs-badge').textContent = aWin ? 'Win' : 'Loss';
+      teamB.querySelector('.sm-vs-badge').textContent = aWin ? 'Loss' : 'Win';
+    } else {
+      scoreEl.textContent = '★ : ★';
+    }
+
+    // инфо
+    const host = smMembers.find(x => x.profiles?.id === m.host_player_id);
+    const d = m.scheduled_at ? new Date(m.scheduled_at) : null;
+    document.getElementById('smInfoDate').textContent = d ? d.toLocaleDateString('ru-RU') : '—';
+    document.getElementById('smInfoTime').textContent = d ? d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '—';
+    document.getElementById('smInfoHost').textContent = host?.profiles?.nick || '—';
+    document.getElementById('smInfoMap').textContent = m.map || '—';
+  }
+
+  function renderSmRosters(m) {
+    const wrap = document.getElementById('smRosters');
+    if (!wrap) return;
+    const teamCard = (t, tid) => {
+      const members = smMembers.filter(x => x.team_id === tid);
+      let totKills = 0, totDeaths = 0;
+      const rows = members.map(x => {
+        const p = x.profiles || {};
+        const kd = Number(p.total_kd || 0);
+        const kills = Number(p.total_kills || 0);
+        const deaths = kd > 0 ? Math.round(kills / kd) : 0;
+        totKills += kills; totDeaths += deaths;
+        return `<div class="sm-rp">
+          <div class="sm-rp-name">${x.is_captain ? '<span class="sm-cap-badge">C</span> ' : ''}${p.nick || 'player'}</div>
+          <div class="sm-rp-stat">${kills}<small>kills</small></div>
+          <div class="sm-rp-stat">${deaths}<small>death</small></div>
+          <div class="sm-rp-stat">${kd ? kd.toFixed(2) : '—'}<small>kd</small></div>
+        </div>`;
+      }).join('') || '<div style="padding:14px; text-align:center; color:var(--muted); font-weight:700; font-size:12px">ростер пуст</div>';
+      const diff = totKills - totDeaths;
+      const kdCls = diff >= 0 ? 'pos' : 'neg';
+      const kdTxt = (diff >= 0 ? '+' : '') + diff;
+      return `<div class="sm-roster-card">
+        <div class="sm-roster-head">
+          <div class="sm-roster-logo" style="background:${t.logo_color || 'var(--accent)'}">${t.logo_initials || (t.name||'?').substring(0,2).toUpperCase()}</div>
+          <div class="sm-roster-name">${t.name || '—'}</div>
+          <div class="sm-roster-kd ${kdCls}" title="суммарно киллов − смертей">${kdTxt}</div>
+        </div>
+        ${rows}
+      </div>`;
+    };
+    wrap.innerHTML = teamCard(m.teams_a, m.team_a_id) + teamCard(m.teams_b, m.team_b_id);
+  }
+
   function renderSeasonMatch(m, bans) {
     const fmt = d => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    renderSmVsPanel(m);
+    renderSmRosters(m);
     document.getElementById('smTeams').textContent = `${m.teams_a.name} vs ${m.teams_b.name}`;
     document.getElementById('smWindow').textContent =
       m.window_start ? `договоритесь и сыграйте: ${fmt(m.window_start)} → ${fmt(m.window_end)}` : '';
@@ -10988,13 +11154,14 @@
     const ctx = _getAudioCtx();
     if (!ctx) return;
     try {
+      const QUIET = 0.35; // глобально тихие звуки
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.type = type;
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.setValueAtTime(volume * QUIET, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + duration);
@@ -11038,6 +11205,7 @@
   // КОНФЕТТИ (для побед и важных моментов)
   // ============================================
   function fireConfetti(intensity = 1) {
+    return; // анимации отключены
     const container = document.getElementById('confettiContainer') || (() => {
       const c = document.createElement('div');
       c.id = 'confettiContainer';
@@ -11850,7 +12018,7 @@
   async function loadAdmin() {
     const gate = document.getElementById('adminGate');
     const content = document.getElementById('adminContent');
-    if (!supabaseClient || !window.currentUser?.id) {
+    if (!supabaseClient || !currentUser?.id) {
       if (gate) gate.style.display = ''; if (content) content.style.display = 'none'; return;
     }
     // проверка прав
@@ -11992,7 +12160,7 @@
 
   function ctaClimb() {
     // не залогинен → регистрация, залогинен → создание команды
-    if (window.currentUser && currentUser.id) {
+    if (currentUser && currentUser.id) {
       openModal('team');
     } else {
       openModal('login');
@@ -12006,14 +12174,16 @@
     const gameId = (idEl?.value || '').trim().replace(/\s/g, '');
     const sig = (sigEl?.value || '').trim();
     if (!/^\d{6,12}$/.test(gameId)) { showToast('Введи корректный игровой ID (6–12 цифр)', 'error'); return; }
-    if (!sig) { showToast('Укажи подпись из профиля', 'error'); return; }
-    if (!supabaseClient || !window.currentUser?.id) { showToast('Сначала войди через Telegram', 'error'); return; }
+    if (!sig) { showToast('Укажи игровой никнейм', 'error'); return; }
+    if (!supabaseClient || !currentUser?.id) { showToast('Сначала войди через Telegram', 'error'); return; }
     try {
       const { error } = await supabaseClient.from('profiles').update({
         standoff_id: gameId, game_signature: sig, is_verified: true,
       }).eq('id', currentUser.id);
       if (error) throw error;
       if (status) status.innerHTML = `✓ Верифицирован · ID: <code>${gameId}</code>`;
+      const banner = document.getElementById('verifyBanner');
+      if (banner) banner.style.display = 'none';
       showToast('✅ Профиль верифицирован!', 'success');
     } catch (e) {
       console.error('saveVerification:', e);
@@ -13069,9 +13239,9 @@
   }
   function roleLabel(role) {
     return {
-      captain: 'Captain', sniper: 'Sniper', entry: 'Entry',
-      support: 'Support', substitute: 'Substitute'
-    }[role] || role;
+      captain: 'Капитан', player: 'основу', substitute: 'запас',
+      sniper: 'основу', entry: 'основу', support: 'основу'
+    }[role] || 'основу';
   }
 
   // Грузит и рендерит состав открытой сейчас команды
@@ -13145,14 +13315,30 @@
           ${kickBtn}
           <div class="rc-avatar" style="background: ${color}">${initials}</div>
           <div class="rc-name">${p.nick || 'player'}</div>
-          <div class="rc-role-row">${roleEmoji(m.role)} ${roleLabel(m.role)}</div>
+          <div class="rc-role-row">${m.is_captain ? '<span class="rc-cap-badge">C</span> Капитан' : '<span style="color:var(--muted)">Игрок</span>'}</div>
           <div class="rc-mini-stats">
             <div><div class="rc-mini-stat-val">${kd}</div><div class="rc-mini-stat-lbl">KD</div></div>
             <div><div class="rc-mini-stat-val">${kills}</div><div class="rc-mini-stat-lbl">Kills</div></div>
           </div>
         </div>
       `;
-    }).join('');
+    }).join('') + `
+      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
+        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
+        <div class="rc-name">Резерв</div>
+        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
+      </div>
+      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
+        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
+        <div class="rc-name">Резерв</div>
+        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
+      </div>
+      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
+        <div class="rc-avatar" style="background:var(--card-3)">🎓</div>
+        <div class="rc-name">Coach</div>
+        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
+      </div>
+    `;
 
     // Показываем панель приглашения только если я капитан этой команды
     const invitePanel = document.getElementById('captainInvitePanel');
@@ -13524,29 +13710,28 @@
       name.innerHTML = (p.nick || 'player') + star;
     }
 
-    // Handle row
-    const handleRow = page.querySelector('.ph-handle-row');
-    if (handleRow) {
-      const team = p.team_members?.[0]?.teams;
-
-      let teamHtml = '<span style="color: var(--muted); font-weight: 600; font-size: 12px;">без команды</span>';
+    // Мета: ID, команда, дата регистрации
+    const team = p.team_members?.[0]?.teams;
+    const setMeta = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setMeta('phGameId', p.standoff_id || '—');
+    const teamEl = document.getElementById('phTeam');
+    if (teamEl) {
       if (team) {
-        teamHtml = `<a href="#" class="ph-pill team" onclick="openOpponentTeam('${team.name.replace(/'/g, "\\'")}', '${team.logo_initials}', '${team.logo_color}'); return false;">${team.logo_initials} ${team.name}</a>`;
-      }
-
-      handleRow.innerHTML = `
-        ${teamHtml}
-        <span>· ${p.region || 'RU'}</span>
-      `;
+        teamEl.textContent = '[' + (team.logo_initials || '') + '] ' + team.name;
+        teamEl.onclick = (e) => { e.preventDefault(); openOpponentTeam(team.name, team.logo_initials, team.logo_color); };
+      } else { teamEl.textContent = 'без команды'; teamEl.classList.remove('link'); }
     }
+    setMeta('phReg', p.created_at ? new Date(p.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 
     // Кнопки в actions
     const actions = page.querySelector('.ph-actions');
     if (actions) {
       const isMe = currentUser && currentUser.id === playerId;
+      const hasTeam = !!(p.team_members?.[0]?.teams);
       if (isMe) {
         actions.innerHTML = `
           <button class="th-action ghost" onclick="goPage('settings')">⚙️ Настройки</button>
+          ${hasTeam ? '<button class="th-action danger" onclick="leaveTeam()">🚪 Покинуть команду</button>' : ''}
         `;
       } else {
         actions.innerHTML = `
@@ -13555,22 +13740,20 @@
       }
     }
 
-    // Статы
-    const stats = page.querySelectorAll('.ph-stat-val');
-    if (stats.length >= 5) {
-      const kd = Number(p.total_kd || 1).toFixed(2);
+    // Статы (строчный формат)
+    {
+      const kd = Number(p.total_kd || 0);
       const wr = Math.round(Number(p.total_wr || 0) * 100);
-      const avg = p.matches_played ? (Number(p.total_kills || 0) / p.matches_played).toFixed(1) : '0';
-      stats[0].textContent = kd;
-      stats[0].className = 'ph-stat-val ' + (kd >= 1.2 ? 'pos' : '');
-      stats[1].textContent = wr + '%';
-      stats[1].className = 'ph-stat-val ' + (wr >= 60 ? 'pos' : '');
-      stats[2].textContent = avg;
-      stats[2].className = 'ph-stat-val';
-      stats[3].textContent = p.matches_played || 0;
-      stats[3].className = 'ph-stat-val';
-      stats[4].textContent = p.total_kills || 0;
-      stats[4].className = 'ph-stat-val points';
+      const kills = Number(p.total_kills || 0);
+      const deaths = kd > 0 ? Math.round(kills / kd) : 0;
+      const avg = p.matches_played ? (kills / p.matches_played).toFixed(1) : '0';
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      set('phKD', kd ? kd.toFixed(2) : '—');
+      set('phAVG', avg);
+      set('phKills', kills);
+      set('phDeaths', deaths);
+      set('phWR', (p.matches_played ? wr + '%' : '—'));
+      set('phBestMap', p.best_map || '—');
     }
 
     // Прячем все блоки с хардкодом расписания/истории если у игрока пусто
@@ -13727,8 +13910,12 @@
     const list = document.getElementById('invitesList');
     if (!list) return;
 
+    // всегда сбрасываем счётчики (чтобы не висели фейковые)
+    document.querySelectorAll('.invites-tabs .hub-tab .count').forEach(c => c.textContent = '0');
+
     if (!invites || invites.length === 0) {
-      // Empty state остаётся
+      const sub = document.querySelector('[data-page="invites"] .hub-sub');
+      if (sub) sub.textContent = 'приглашения в команды';
       return;
     }
 
