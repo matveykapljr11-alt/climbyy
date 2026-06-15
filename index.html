@@ -1480,6 +1480,12 @@
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+  .teams-meta {
+    display: flex; flex-wrap: wrap; gap: 6px 14px;
+    margin: 4px 0 14px; padding: 0 2px;
+    font-size: 12.5px; font-weight: 800; color: var(--muted);
+  }
+  .teams-meta b { color: var(--text); }
   .hub-sub {
     color: var(--muted);
     font-size: 14px;
@@ -2992,7 +2998,7 @@
   /* Stat tiles на hero */
   .th-stats {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     position: relative; z-index: 1;
   }
@@ -4326,6 +4332,39 @@
   .ph-sval.points { color: var(--peach); }
   .ph-slbl { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
   .ph-slash { color: var(--muted-2); }
+  /* тап-панель KD·AVG */
+  .ph-kd-panel {
+    position: relative; cursor: pointer; user-select: none;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; transition: border-color .15s, background .15s;
+  }
+  .ph-kd-panel:hover, .ph-kd-panel:active { border-color: var(--peach); background: rgba(255,138,60,0.05); }
+  .ph-kd-dots {
+    position: absolute; top: 6px; right: 10px;
+    color: var(--muted); font-weight: 900; font-size: 16px; line-height: 1;
+    letter-spacing: 1px; pointer-events: none;
+  }
+  .ph-kd-detail {
+    max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height .22s ease, opacity .18s, margin-top .22s, padding-top .22s;
+  }
+  .ph-kd-panel.open .ph-kd-detail {
+    max-height: 60px; opacity: 1; margin-top: 10px;
+    padding-top: 10px; border-top: 1px dashed var(--line);
+  }
+  .ph-kd-panel.open .ph-kd-dots { color: var(--peach); }
+  .ph-stats-rows .ph-kd-panel + .ph-kd-panel { margin-top: 8px; }
+  /* винрейт по картам */
+  .ph-mapwr-list, .ph-divhist-list { display: flex; flex-direction: column; gap: 7px; }
+  .ph-mapwr-row { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; font-size: 12px; }
+  .ph-mapwr-name { font-weight: 800; }
+  .ph-mapwr-bar { height: 7px; border-radius: 100px; background: var(--card-3); overflow: hidden; }
+  .ph-mapwr-fill { height: 100%; background: var(--mint); border-radius: 100px; }
+  .ph-mapwr-meta { font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--muted); white-space: nowrap; }
+  .ph-mapwr-meta b { color: var(--text); }
+  .ph-divhist-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--card-2); border-radius: 9px; font-size: 12px; font-weight: 700; }
+  .ph-empty-mini { padding: 10px 4px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 700; }
   /* мета-список профиля (ID, команда, дата) */
   .ph-meta-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
   .ph-meta-item { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
@@ -4387,6 +4426,16 @@
     background: var(--peach); color: #1a1a1a;
     font-weight: 900; font-size: 11px; font-family: 'JetBrains Mono', monospace;
     vertical-align: middle;
+  }
+  .rc-num {
+    position: absolute; top: 8px; left: 8px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 900;
+    font-size: 12px; color: var(--muted);
+    width: 20px; height: 20px; border-radius: 6px;
+    background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
+  }
+  .rc-crown {
+    position: absolute; top: 6px; right: 8px; font-size: 15px;
   }
   /* мобильный фикс шапки профиля — кнопка не наезжает */
   @media (max-width: 680px) {
@@ -6196,14 +6245,15 @@
       <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
       <div class="hub-head">
         <div>
-          <div class="hub-title"><span class="emoji">👥</span>Все <span class="accent">команды</span></div>
-          <div class="hub-sub">BETA · сортировка по очкам</div>
+          <div class="hub-title"><span class="accent">Teams</span></div>
         </div>
       </div>
 
       <div class="hub-tabs" data-tabs="teams">
-        <div class="hub-tab active" data-filter="d1">🚧 D0 · BETA <span class="count">0</span></div>
+        <div class="hub-tab active" data-filter="d1">D0 · BETA <span class="count">0</span></div>
       </div>
+
+      <div class="teams-meta" id="teamsMeta">—</div>
 
       <div class="teams-grid">
         <div style="grid-column: 1 / -1; padding: 60px 30px; text-align: center; background: var(--card); border-radius: 18px; border: 2px dashed var(--line);">
@@ -6859,21 +6909,16 @@
             </div>
           </div>
           <div class="th-actions" id="teamActions">
-            <!-- Кнопки для моей команды (скрыта по умолчанию, показывается из JS) -->
-            <button class="th-action danger my-team-action" style="display: none;" onclick="leaveTeam()">🚪 Покинуть</button>
-
             <!-- Кнопки для чужой команды (скрыты по умолчанию) -->
             <button class="th-action primary other-team-action" style="display: none;" onclick="openApplyModal()">📨 Подать заявку</button>
+            <!-- Управление кланом (только создатель) -->
+            <button class="th-action ghost founder-action" style="display: none;" onclick="openClanSettings()">⚙️ Управление</button>
           </div>
         </div>
 
-        <div class="th-stats">
+        <div class="th-stats th-stats-3">
           <div class="th-stat">
-            <div class="th-stat-val medal">🏅 —</div>
-            <div class="th-stat-lbl">место в топе</div>
-          </div>
-          <div class="th-stat">
-            <div class="th-stat-val points">39</div>
+            <div class="th-stat-val points">0</div>
             <div class="th-stat-lbl">очки</div>
           </div>
           <div class="th-stat">
@@ -6883,14 +6928,6 @@
           <div class="th-stat">
             <div class="th-stat-val">—</div>
             <div class="th-stat-lbl">W-L</div>
-          </div>
-          <div class="th-stat">
-            <div class="th-stat-val pos">—</div>
-            <div class="th-stat-lbl">round Δ</div>
-          </div>
-          <div class="th-stat">
-            <div class="th-stat-val">0</div>
-            <div class="th-stat-lbl">PTS</div>
           </div>
         </div>
       </div>
@@ -6918,7 +6955,7 @@
 
           <div class="match-card" style="margin-bottom: 14px;">
             <div class="mc-head">
-              <div class="mc-title">👥 Ростер</div>
+              <div class="mc-title">ROSTER</div>
               <div class="mc-sub" id="rosterSub">загружаем...</div>
             </div>
             <div class="roster-grid" id="teamRosterGrid">
@@ -7063,43 +7100,6 @@
             </div>
           </div>
 
-          <div class="match-card">
-            <div class="mc-head">
-              <div class="mc-title">📈 Путь команды</div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px;">
-              <div style="display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: center;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted-2); font-weight: 700;">—</div>
-                <div style="padding: 9px 12px; background: var(--card-2); border-left: 3px solid var(--mint); border-radius: 9px; font-size: 12px;">
-                  <b>В топе сезона</b>
-                </div>
-              </div>
-              <div style="display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: center;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted-2); font-weight: 700;">10 мая</div>
-                <div style="padding: 9px 12px; background: var(--card-2); border-left: 3px solid var(--peach); border-radius: 9px; font-size: 12px;">
-                  Открыли достижение <b>Огонь 🔥</b>
-                </div>
-              </div>
-              <div style="display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: center;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted-2); font-weight: 700;">—</div>
-                <div style="padding: 9px 12px; background: var(--card-2); border-left: 3px solid var(--sky); border-radius: 9px; font-size: 12px;">
-                  <b>Игрок</b> присоединился в ростер
-                </div>
-              </div>
-              <div style="display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: center;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted-2); font-weight: 700;">15 апр</div>
-                <div style="padding: 9px 12px; background: var(--card-2); border-left: 3px solid var(--mint); border-radius: 9px; font-size: 12px;">
-                  Прошли <b>Placement</b> (2W-1L)
-                </div>
-              </div>
-              <div style="display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: center;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted-2); font-weight: 700;">12 апр</div>
-                <div style="padding: 9px 12px; background: var(--card-2); border-left: 3px solid var(--accent); border-radius: 9px; font-size: 12px;">
-                  🎉 Команда создана
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -7142,17 +7142,36 @@
         </div>
 
         <div class="ph-stats-rows">
-          <div class="ph-srow">
-            <div class="ph-scell"><span class="ph-sval pos" id="phKD">—</span><span class="ph-slbl">KD</span></div>
-            <div class="ph-sdiv"></div>
-            <div class="ph-scell"><span class="ph-sval" id="phAVG">0</span><span class="ph-slbl">AVG</span></div>
-            <div class="ph-sdiv"></div>
-            <div class="ph-scell"><span class="ph-sval points" id="phKills">0</span><span class="ph-slbl">kills</span> <span class="ph-sslash">/</span> <span class="ph-sval" id="phDeaths">0</span><span class="ph-slbl">death</span></div>
+          <div class="ph-kd-panel" id="phKdPanel" onclick="togglePhKd()" title="нажми, чтобы показать киллы и смерти">
+            <span class="ph-kd-dots">⋯</span>
+            <div class="ph-srow">
+              <div class="ph-scell"><span class="ph-sval pos" id="phKD">—</span><span class="ph-slbl">KD</span></div>
+              <div class="ph-sdiv"></div>
+              <div class="ph-scell"><span class="ph-sval" id="phAVG">0</span><span class="ph-slbl">AVG</span></div>
+            </div>
+            <div class="ph-srow ph-kd-detail" id="phKdDetail">
+              <div class="ph-scell"><span class="ph-sval points" id="phKills">0</span><span class="ph-slbl">kills</span></div>
+              <div class="ph-sdiv"></div>
+              <div class="ph-scell"><span class="ph-sval" id="phDeaths">0</span><span class="ph-slbl">death</span></div>
+            </div>
           </div>
-          <div class="ph-srow">
-            <div class="ph-scell"><span class="ph-sval" id="phWR">—</span><span class="ph-slbl">Winrate</span></div>
-            <div class="ph-sdiv"></div>
-            <div class="ph-scell"><span class="ph-slbl">best map:</span> <span class="ph-sval" id="phBestMap">—</span></div>
+          <div class="ph-kd-panel" id="phWrPanel" onclick="togglePhWr()" title="нажми — винрейт по картам">
+            <span class="ph-kd-dots">⋯</span>
+            <div class="ph-srow">
+              <div class="ph-scell"><span class="ph-sval" id="phWR">—</span><span class="ph-slbl">Winrate</span></div>
+            </div>
+            <div class="ph-kd-detail" id="phWrDetail">
+              <div class="ph-mapwr-list" id="phMapWr"></div>
+            </div>
+          </div>
+          <div class="ph-kd-panel" id="phDivPanel" onclick="togglePhDiv()" title="нажми — история дивизионов">
+            <span class="ph-kd-dots">⋯</span>
+            <div class="ph-srow">
+              <div class="ph-scell"><span class="ph-sval" id="phDiv">D0 · BETA</span><span class="ph-slbl">Дивизион</span></div>
+            </div>
+            <div class="ph-kd-detail" id="phDivDetail">
+              <div class="ph-divhist-list" id="phDivHistory"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -9235,7 +9254,7 @@
       </div>
 
       <div class="form-foot">
-        <a href="#" class="save-draft">↺ сохранить черновик</a>
+        <a href="#" class="save-draft">↺ сохранить черновик <span style="opacity:.4; font-size:10px; font-weight:700">· build 0614-2</span></a>
         <div class="foot-actions">
           <button class="btn btn-ghost btn-big" id="prevBtn" onclick="prevStep()">← Назад</button>
           <button class="btn btn-primary btn-big" id="nextBtn" onclick="nextStep()">Дальше →</button>
@@ -9885,6 +9904,69 @@
   }
 
   // Заполнить страницу /team реальными данными команды
+  // Управление кланом (только создатель): название, тег, лого
+  async function openClanSettings() {
+    const team = window._teamPageData;
+    if (!team) return;
+    if (!currentUser || team.created_by !== currentUser.id) { showToast('Только создатель может менять клан', 'error'); return; }
+
+    let modal = document.getElementById('clanSettingsModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'clanSettingsModal';
+      modal.className = 'modal-backdrop';
+      modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+      document.body.appendChild(modal);
+    }
+    const colors = ['#ff8a3c', '#9b6dff', '#6ffbcd', '#ff5fa3', '#7dd3ff', '#ffe66b', '#ff7a7a'];
+    modal.innerHTML = `
+      <div class="support-modal" style="max-width:440px">
+        <button class="sm-close" onclick="document.getElementById('clanSettingsModal').classList.remove('open')">✕</button>
+        <div class="sm-head"><div class="sm-icon" style="background:rgba(255,138,60,0.15)">⚙️</div><div><div class="sm-title">Управление кланом</div></div></div>
+        <div class="sm-sub">Меняет только создатель.</div>
+        <div style="display:flex; flex-direction:column; gap:14px; margin-top:6px">
+          <div>
+            <div style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px">Название</div>
+            <input id="csName" class="input" value="${(team.name || '').replace(/"/g, '&quot;')}" maxlength="24">
+          </div>
+          <div>
+            <div style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px">Тег (2–5 симв.)</div>
+            <input id="csTag" class="input" value="${(team.tag || '').replace(/"/g, '&quot;')}" maxlength="5" style="text-transform:uppercase">
+          </div>
+          <div>
+            <div style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px">Цвет лого</div>
+            <div id="csColors" style="display:flex; gap:8px; flex-wrap:wrap">
+              ${colors.map(c => `<div onclick="window._csColor='${c}'; document.querySelectorAll('#csColors > div').forEach(x=>x.style.outline='none'); this.style.outline='3px solid #fff'" style="width:32px; height:32px; border-radius:9px; cursor:pointer; background:${c}; outline:${c === team.logo_color ? '3px solid #fff' : 'none'}"></div>`).join('')}
+            </div>
+          </div>
+          <button class="btn btn-primary btn-big" onclick="saveClanSettings()">💾 Сохранить</button>
+        </div>
+      </div>`;
+    window._csColor = team.logo_color || colors[0];
+    modal.classList.add('open');
+  }
+
+  async function saveClanSettings() {
+    const team = window._teamPageData;
+    if (!team || !supabaseClient) return;
+    const name = document.getElementById('csName')?.value.trim();
+    const tag = document.getElementById('csTag')?.value.trim().toUpperCase();
+    if (!name || name.length < 2) { showToast('Название слишком короткое', 'error'); return; }
+    if (!tag || tag.length < 2) { showToast('Тег 2–5 символов', 'error'); return; }
+    try {
+      const upd = {
+        name, tag, logo_color: window._csColor || team.logo_color,
+        logo_initials: tag.substring(0, 2).toUpperCase(),
+      };
+      const { error } = await supabaseClient.from('teams').update(upd).eq('id', team.id);
+      if (error) throw error;
+      Object.assign(team, upd);
+      document.getElementById('clanSettingsModal')?.classList.remove('open');
+      showToast('✅ Клан обновлён');
+      populateTeamPage(team);
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
+  }
+
   // Рейтинг команды — история по сезонам
   async function openTeamRanking() {
     const team = window._teamPageData;
@@ -9947,12 +10029,9 @@
 
     const sv = page.querySelectorAll('.th-stat .th-stat-val');
     const wr = Math.round((team.wr || 0) * 100);
-    if (sv[0]) sv[0].textContent = '🏅 #' + String(team.rank || 0).padStart(2, '0');
-    if (sv[1]) sv[1].textContent = team.points || 0;
-    if (sv[2]) sv[2].textContent = wr + '%';
-    if (sv[3]) sv[3].textContent = (team.wins || 0) + '-' + (team.losses || 0);
-    if (sv[4]) sv[4].textContent = '—';
-    if (sv[5]) sv[5].textContent = '—';
+    if (sv[0]) sv[0].textContent = team.points || 0;
+    if (sv[1]) sv[1].textContent = wr + '%';
+    if (sv[2]) sv[2].textContent = (team.wins || 0) + '-' + (team.losses || 0);
 
     // BIO
     const bio = page.querySelector('.team-bio');
@@ -9962,16 +10041,22 @@
     else if (bio) bio.style.display = 'none';
     if (bioMeta) bioMeta.style.display = 'none';
 
-    // прячем демо-карточки
-    const demoCards = ['Форма', 'Расписание', 'История матчей', 'Статистика по картам', 'Достижения', 'Путь команды'];
+    // прячем демо-карточки. «Расписание» — только членам команды (isMine)
+    const demoCards = ['Форма', 'История матчей', 'Статистика по картам', 'Достижения', 'Путь команды'];
     page.querySelectorAll('.match-card').forEach(c => {
       const t = c.querySelector('.mc-title');
-      if (t && demoCards.some(x => t.textContent.includes(x))) c.style.display = 'none';
+      if (!t) return;
+      const txt = t.textContent;
+      if (demoCards.some(x => txt.includes(x))) { c.style.display = 'none'; return; }
+      if (txt.includes('Расписание')) { c.style.display = isMine ? '' : 'none'; }
     });
 
     // кнопки: моя / чужая
     page.querySelectorAll('.my-team-action').forEach(el => el.style.display = isMine ? '' : 'none');
     page.querySelectorAll('.other-team-action').forEach(el => el.style.display = isMine ? 'none' : '');
+    // управление кланом — только создателю
+    const amFounder = currentUser && team.created_by === currentUser.id;
+    page.querySelectorAll('.founder-action').forEach(el => el.style.display = amFounder ? '' : 'none');
 
     const back = page.querySelector('.hub-back');
     if (back) back.innerHTML = '← к командам';
@@ -12857,8 +12942,7 @@
             : `<button class="btn btn-primary" onclick="openModal('login')">⭐ Войти и создать</button>`}
         </div>
       `;
-      const sub = document.querySelector('[data-page="teams"] .hub-sub');
-      if (sub) sub.textContent = 'D0 · BETA · ждём первых';
+      updateTeamsMeta(0);
       return;
     }
 
@@ -12902,9 +12986,8 @@
       grid.appendChild(card);
     });
 
-    // Обновляем подзаголовок
-    const sub = document.querySelector('[data-page="teams"] .hub-sub');
-    if (sub) sub.textContent = `${data.length} команд в D0 · BETA · сезон 1 · данные из БД`;
+    // Обновляем мету (кол-во команд · сезон · дней осталось)
+    updateTeamsMeta(data.length);
   }
 
   // =====================================
@@ -13016,6 +13099,8 @@
       .maybeSingle()
     );
     if (!data) return;
+    window._season = data;
+    if (typeof updateTeamsMeta === 'function') updateTeamsMeta();
 
     console.log(`✅ Текущий сезон: ${data.name}`);
 
@@ -13285,9 +13370,11 @@
       sub.innerHTML = `${members.length}/5 игроков · средний KD <span style="color: var(--mint); font-weight: 800;">${avgKD.toFixed(2)}</span>`;
     }
 
-    grid.innerHTML = members.map(m => {
+    const founderId = window._teamPageData?.created_by;
+    grid.innerHTML = members.map((m, idx) => {
       const p = m.profile || {};
       const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
+      const isFounder = founderId && p.id === founderId;
       const color = p.avatar_color || (m.is_captain ? 'var(--peach)' : 'var(--accent)');
       const kd = Number(p.total_kd || 1).toFixed(2);
       const wr = Math.round((Number(p.total_wr || 0)) * 100);
@@ -13310,12 +13397,13 @@
 
       return `
         <div class="roster-card ${m.is_captain ? 'captain' : ''}" data-player="${p.nick}" style="position: relative; cursor: pointer;" onclick="openPlayerProfile('${p.id}')">
-          ${m.is_captain ? '<span class="rc-cap-badge">★ кэп</span>' : ''}
+          <span class="rc-num">${idx + 1}</span>
+          ${isFounder ? '<span class="rc-crown" title="создатель команды">👑</span>' : (m.is_captain ? '<span class="rc-cap-badge">C</span>' : '')}
           ${passCapBtn}
           ${kickBtn}
           <div class="rc-avatar" style="background: ${color}">${initials}</div>
           <div class="rc-name">${p.nick || 'player'}</div>
-          <div class="rc-role-row">${m.is_captain ? '<span class="rc-cap-badge">C</span> Капитан' : '<span style="color:var(--muted)">Игрок</span>'}</div>
+          <div class="rc-role-row">${isFounder ? '<span style="color:var(--lemon); font-weight:800">👑 Создатель</span>' : (m.is_captain ? '<span class="rc-cap-badge">C</span> Капитан' : '<span style="color:var(--muted)">Игрок</span>')}</div>
           <div class="rc-mini-stats">
             <div><div class="rc-mini-stat-val">${kd}</div><div class="rc-mini-stat-lbl">KD</div></div>
             <div><div class="rc-mini-stat-val">${kills}</div><div class="rc-mini-stat-lbl">Kills</div></div>
@@ -13324,18 +13412,18 @@
       `;
     }).join('') + `
       <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
-        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
-        <div class="rc-name">Резерв</div>
-        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
-      </div>
-      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
-        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
-        <div class="rc-name">Резерв</div>
-        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
-      </div>
-      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
         <div class="rc-avatar" style="background:var(--card-3)">🎓</div>
         <div class="rc-name">Coach</div>
+        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
+      </div>
+      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
+        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
+        <div class="rc-name">Reserve</div>
+        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
+      </div>
+      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
+        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
+        <div class="rc-name">Reserve</div>
         <div class="rc-role-row" style="color:var(--muted)">свободно</div>
       </div>
     `;
@@ -13650,6 +13738,40 @@
   // =====================================
   // PROFILE PLAYER — открытие профиля игрока по ID
   // =====================================
+  function togglePhKd() {
+    const panel = document.getElementById('phKdPanel');
+    if (panel) panel.classList.toggle('open');
+  }
+  function togglePhWr() {
+    const panel = document.getElementById('phWrPanel');
+    if (panel) panel.classList.toggle('open');
+  }
+  function togglePhDiv() {
+    const panel = document.getElementById('phDivPanel');
+    if (panel) panel.classList.toggle('open');
+  }
+
+  // Мета на странице команд: N teams · Season X · D days left
+  function updateTeamsMeta(count) {
+    if (typeof count === 'number') window._teamsCount = count;
+    const el = document.getElementById('teamsMeta');
+    if (!el) return;
+    const c = window._teamsCount ?? 0;
+    const s = window._season;
+    let seasonTxt = 'Season 1';
+    let daysTxt = '';
+    if (s) {
+      seasonTxt = 'Season ' + (s.number ?? s.season_number ?? 1);
+      if (s.ends_at) {
+        const days = Math.max(0, Math.ceil((new Date(s.ends_at) - new Date()) / 86400000));
+        daysTxt = days + ' days left';
+      }
+    }
+    const parts = [`<b>${c}</b> ${c === 1 ? 'team' : 'teams'}`, seasonTxt];
+    if (daysTxt) parts.push(daysTxt);
+    el.innerHTML = parts.join(' · ');
+  }
+
   async function openPlayerProfile(playerId) {
     if (!supabaseClient || !playerId) {
       goPage('player');
@@ -13721,12 +13843,17 @@
         teamEl.onclick = (e) => { e.preventDefault(); openOpponentTeam(team.name, team.logo_initials, team.logo_color); };
       } else { teamEl.textContent = 'без команды'; teamEl.classList.remove('link'); }
     }
-    setMeta('phReg', p.created_at ? new Date(p.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
+    setMeta('phReg', p.created_at ? new Date(p.created_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—');
 
     // Кнопки в actions
     const actions = page.querySelector('.ph-actions');
+    const isMe = currentUser && currentUser.id === playerId;
+    // «Моё расписание» — только владельцу профиля
+    page.querySelectorAll('.match-card').forEach(c => {
+      const t = c.querySelector('.mc-title');
+      if (t && t.textContent.includes('Моё расписание')) c.style.display = isMe ? '' : 'none';
+    });
     if (actions) {
-      const isMe = currentUser && currentUser.id === playerId;
       const hasTeam = !!(p.team_members?.[0]?.teams);
       if (isMe) {
         actions.innerHTML = `
@@ -13753,7 +13880,46 @@
       set('phKills', kills);
       set('phDeaths', deaths);
       set('phWR', (p.matches_played ? wr + '%' : '—'));
-      set('phBestMap', p.best_map || '—');
+
+      // Дивизион (текущий) + история
+      const teamDiv = p.team_members?.[0]?.teams?.division_id;
+      set('phDiv', teamDiv ? teamDiv.toUpperCase() : 'D0 · BETA');
+
+      // Винрейт по картам (p.map_stats — пока нет данных → пусто)
+      const mapWrEl = document.getElementById('phMapWr');
+      if (mapWrEl) {
+        const ms = p.map_stats; // ожидается { Dune: {w, l}, ... }
+        if (ms && typeof ms === 'object' && Object.keys(ms).length) {
+          mapWrEl.innerHTML = Object.entries(ms).map(([map, v]) => {
+            const w = Number(v.w || 0), l = Number(v.l || 0), tot = w + l;
+            const pct = tot ? Math.round(w / tot * 100) : 0;
+            return `<div class="ph-mapwr-row">
+              <span class="ph-mapwr-name">${map}</span>
+              <span class="ph-mapwr-bar"><span class="ph-mapwr-fill" style="width:${pct}%"></span></span>
+              <span class="ph-mapwr-meta"><b>${pct}%</b> · ${tot} матч.</span>
+            </div>`;
+          }).join('');
+        } else {
+          mapWrEl.innerHTML = '<div class="ph-empty-mini">Сыграй матчи — появится винрейт по картам</div>';
+        }
+      }
+
+      // История дивизионов (p.division_history — пока нет → текущий + пусто)
+      const divHistEl = document.getElementById('phDivHistory');
+      if (divHistEl) {
+        const dh = p.division_history;
+        if (Array.isArray(dh) && dh.length) {
+          divHistEl.innerHTML = dh.map(r => `<div class="ph-divhist-row">
+            <span>Сезон ${r.season || '—'} · ${(r.division || '').toUpperCase()}</span>
+            <span style="color:var(--muted)">${r.games || 0} игр</span>
+          </div>`).join('');
+        } else {
+          divHistEl.innerHTML = `<div class="ph-divhist-row">
+            <span>${teamDiv ? teamDiv.toUpperCase() : 'D0 · BETA'} · текущий</span>
+            <span style="color:var(--muted)">${p.matches_played || 0} игр</span>
+          </div><div class="ph-empty-mini">Прошлых сезонов пока нет</div>`;
+        }
+      }
     }
 
     // Прячем все блоки с хардкодом расписания/истории если у игрока пусто
