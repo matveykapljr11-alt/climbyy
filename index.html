@@ -1443,6 +1443,7 @@
   .hub {
     height: calc(100vh - 58px);
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px;
   }
   .hub::-webkit-scrollbar { width: 6px; }
@@ -1944,7 +1945,21 @@
   .pm-verified {
     color: var(--mint);
     font-size: 13px;
+    cursor: pointer;
   }
+  [data-verified-star] { cursor: pointer; transition: transform .12s; }
+  [data-verified-star]:active { transform: scale(1.4); }
+  .verified-tip {
+    position: fixed;
+    transform: translate(-50%, 4px) scale(0.85);
+    background: linear-gradient(135deg, var(--mint), var(--sky));
+    color: #0a0a0a; font-weight: 900; font-size: 12px;
+    padding: 6px 13px; border-radius: 100px;
+    pointer-events: none; opacity: 0; z-index: 9999; white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(111,251,205,0.35);
+    transition: opacity .18s ease, transform .18s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .verified-tip.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
   .pm-handle {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -1975,6 +1990,11 @@
   .pm-badge.peach { background: rgba(255, 200, 66, 0.18); color: var(--peach); }
   .pm-badge.muted { background: var(--card-2); color: var(--muted); }
   .pm-badge.muted:hover { background: var(--card-3); color: var(--text); }
+  .pm-badge.role { background: rgba(125,211,255,0.16); color: var(--sky); }
+  .pm-badge.role.admin { background: rgba(232,38,42,0.18); color: var(--accent); }
+  .pm-badge.role.coach { background: rgba(255,200,66,0.18); color: var(--lemon); }
+  .pm-badge.division { background: linear-gradient(135deg, rgba(255,138,60,0.22), rgba(155,109,255,0.22)); color: var(--peach); font-weight: 800; }
+  .pm-badge.division:hover { filter: brightness(1.2); }
 
   .pm-stats {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -2915,10 +2935,10 @@
     flex: 1; min-width: 0;
   }
   .th-logo {
-    width: 88px; height: 88px;
-    border-radius: 24px;
+    width: 104px; height: 104px;
+    border-radius: 26px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 32px;
+    font-weight: 800; font-size: 38px;
     color: white;
     box-shadow: 0 14px 36px rgba(232, 38, 42, 0.1);
     flex-shrink: 0;
@@ -3001,6 +3021,19 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     position: relative; z-index: 1;
+  }
+  .th-medals {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    position: relative; z-index: 1;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .th-medal {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; opacity: 0.6;
   }
   .th-stat {
     background: rgba(0, 0, 0, 0.25);
@@ -4985,6 +5018,10 @@
   }
   @media (max-width: 760px) {
     .gs-kbd { display: none; }
+    .page, .hub, .team-page, .match-card, .settings-section { max-width: 100%; overflow-x: hidden; }
+    .th-stats, .ph-stats-rows, .th-medals { min-width: 0; }
+    img, video, table, pre { max-width: 100%; }
+    .support-modal { padding: 20px 18px; border-radius: 18px; }
   }
   .gs-results {
     flex: 1;
@@ -5637,6 +5674,9 @@
     font-weight: 600;
   }
   .sm-upload-text b { color: var(--text); font-weight: 800; }
+  .sup-files-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+  .sup-file-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--text); background: var(--card-2); border-radius: 8px; padding: 6px 10px; }
+  .sup-file-item .x { margin-left: auto; color: var(--muted); cursor: pointer; font-weight: 900; }
 
   /* Callout — предупреждение в репорте/аппеляции */
   .sm-callout {
@@ -5865,11 +5905,11 @@
         <div class="pm-head">
           <div class="pm-avatar">??</div>
           <div class="pm-info">
-            <div class="pm-name">игрок <span class="pm-verified" data-user-verified style="display: none;">★</span></div>
-            <div class="pm-handle">@—</div>
+            <div class="pm-name" id="pmName">игрок <span class="pm-verified" data-verified-star data-user-verified style="display: none;" onclick="showVerifiedTip(event)">★</span></div>
+            <div class="pm-handle" id="pmHandle">ID —</div>
             <div class="pm-badges">
-              <a href="#" class="pm-badge muted" onclick="goPage('settings'); closeProfile(); return false;" title="настройки аккаунта">Аккаунт</a>
-              <a href="#" class="pm-badge muted" onclick="goPage('teams'); closeProfile(); return false;" title="все команды">D0 · BETA</a>
+              <span class="pm-badge role" id="pmRole">Игрок</span>
+              <a href="#" class="pm-badge division" id="pmDivision" onclick="goPage('teams'); closeProfile(); return false;" title="дивизион">Division 0</a>
             </div>
           </div>
         </div>
@@ -5923,6 +5963,11 @@
             <span class="pm-link-emoji">📨</span>
             <span class="pm-link-text">Приглашения</span>
             <span class="pm-link-badge dot" id="pmInvitesBadge" style="display:none"></span>
+          </a>
+          <a class="pm-link" href="#" onclick="openMyTickets(); closeProfile(); return false;">
+            <span class="pm-link-emoji">🎫</span>
+            <span class="pm-link-text">Мои обращения</span>
+            <span class="pm-link-arrow">→</span>
           </a>
           <a class="pm-link" href="#" onclick="goPage('settings'); closeProfile(); return false;">
             <span class="pm-link-emoji">⚙️</span>
@@ -6247,6 +6292,7 @@
         <div>
           <div class="hub-title"><span class="accent">Teams</span></div>
         </div>
+        <button id="teamsCreateBtn" class="btn btn-primary" style="display:none; white-space:nowrap; padding:10px 16px;" onclick="openModal('team')">🚀 Создать команду</button>
       </div>
 
       <div class="hub-tabs" data-tabs="teams">
@@ -6270,45 +6316,6 @@
 
 
 <!-- ========== PAGE: ADMIN ========== -->
-<div class="page" data-page="admin">
-  <div class="hub">
-    <div class="hub-inner">
-      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
-      <div class="hub-head">
-        <div>
-          <div class="hub-title"><span class="emoji">🛠</span>Админ <span class="accent">панель</span></div>
-          <div class="hub-sub">Управление лигой</div>
-        </div>
-      </div>
-
-      <!-- дашборд -->
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px">
-        <div class="match-card" style="padding:16px; text-align:center"><div style="font-size:24px; font-weight:800" id="admStatTeams">—</div><div style="font-size:11px; color:var(--muted); font-weight:700">команд</div></div>
-        <div class="match-card" style="padding:16px; text-align:center"><div style="font-size:24px; font-weight:800" id="admStatActive">—</div><div style="font-size:11px; color:var(--muted); font-weight:700">активных матчей</div></div>
-        <div class="match-card" style="padding:16px; text-align:center"><div style="font-size:24px; font-weight:800" id="admStatDone">—</div><div style="font-size:11px; color:var(--muted); font-weight:700">сыграно</div></div>
-      </div>
-
-      <!-- действия -->
-      <div class="match-card" style="margin-bottom:16px">
-        <div class="mc-head"><div class="mc-title">⚡ Действия</div></div>
-        <div style="padding:14px; display:flex; flex-wrap:wrap; gap:10px">
-          <button class="btn btn-primary" onclick="admRunRound()">🎲 Распределить раунд</button>
-          <button class="btn" style="background:var(--card-2)" onclick="admStartPlayoff()">🏆 Старт плей-офф</button>
-          <button class="btn" style="background:var(--card-2)" onclick="admResetSeason()">♻️ Сбросить сезон</button>
-        </div>
-      </div>
-
-      <!-- табы -->
-      <div class="hub-tabs">
-        <div class="hub-tab active" onclick="admTab('matches', this)">Матчи</div>
-        <div class="hub-tab" onclick="admTab('teams', this)">Команды</div>
-      </div>
-
-      <div id="admMatches"></div>
-      <div id="admTeams" style="display:none"></div>
-    </div>
-  </div>
-</div>
 
 <!-- ========== PAGE: PLAYERS ========== -->
 <div class="page" data-page="players">
@@ -6399,6 +6406,12 @@
         <div class="match-card" style="margin-bottom:14px">
           <div class="mc-head"><div class="mc-title">👥 Команды</div></div>
           <div id="adminTeams" style="padding:8px"></div>
+        </div>
+
+        <!-- ТИКЕТЫ -->
+        <div class="match-card" style="margin-bottom:14px">
+          <div class="mc-head"><div class="mc-title">🎫 Тикеты и репорты</div></div>
+          <div id="adminTickets" style="padding:8px"></div>
         </div>
 
         <!-- ИГРОКИ -->
@@ -6909,11 +6922,22 @@
             </div>
           </div>
           <div class="th-actions" id="teamActions">
+            <!-- Покинуть — только член своей команды -->
+            <button class="th-action danger my-team-action" style="display: none;" onclick="leaveTeam()">🚪 Покинуть</button>
             <!-- Кнопки для чужой команды (скрыты по умолчанию) -->
             <button class="th-action primary other-team-action" style="display: none;" onclick="openApplyModal()">📨 Подать заявку</button>
             <!-- Управление кланом (только создатель) -->
             <button class="th-action ghost founder-action" style="display: none;" onclick="openClanSettings()">⚙️ Управление</button>
           </div>
+        </div>
+
+        <!-- МЕДАЛИ / ТИТУЛЫ -->
+        <div class="th-medals">
+          <div class="th-medal" title="титул сезона">🔒</div>
+          <div class="th-medal" title="плей-офф">🔒</div>
+          <div class="th-medal" title="топ-3 дивизиона">🔒</div>
+          <div class="th-medal" title="winstreak">🔒</div>
+          <div class="th-medal" title="особый титул">🔒</div>
         </div>
 
         <div class="th-stats th-stats-3">
@@ -7120,7 +7144,7 @@
             <div class="ph-verified">✓</div>
           </div>
           <div class="ph-info">
-            <div class="ph-name">Игрок <span style="color: var(--mint); font-size: 0.5em;">★</span></div>
+            <div class="ph-name">Игрок <span data-verified-star style="color: var(--mint); font-size: 0.5em;" onclick="showVerifiedTip(event)">★</span></div>
             <div class="ph-meta-list">
               <div class="ph-meta-item"><span class="ph-meta-k">ID</span><span class="ph-meta-v" id="phGameId">—</span></div>
               <div class="ph-meta-item"><span class="ph-meta-k">Команда</span><a href="#" class="ph-meta-v link" id="phTeam" onclick="goPage('team'); return false;">—</a></div>
@@ -7179,6 +7203,14 @@
       <div class="team-grid">
         <!-- LEFT -->
         <div>
+          <!-- ОПИСАНИЕ -->
+          <div class="match-card" style="margin-bottom: 14px;" id="phBioCard">
+            <div class="mc-head">
+              <div class="mc-title">📝 Описание</div>
+            </div>
+            <div id="phBioText" style="font-size: 14px; line-height: 1.55; color: var(--text); padding: 4px 2px;">—</div>
+          </div>
+
           <!-- РАСПИСАНИЕ -->
           <div class="match-card" style="margin-bottom: 14px;">
             <div class="mc-head">
@@ -7285,58 +7317,7 @@
               <div class="mc-title">📜 Последние матчи</div>
               <div class="mc-sub">статистика игрока</div>
             </div>
-            <div class="history-list">
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--accent)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--accent)');">
-                  <div class="history-opp-logo" style="background: var(--accent)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span> KD</div>
-                <div class="history-pts up">W</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--hot-pink)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--hot-pink)');">
-                  <div class="history-opp-logo" style="background: var(--hot-pink)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span> KD</div>
-                <div class="history-pts up">W</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', '#d4d8e0', '—')">
-                <div class="history-result-dot loss"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', '#d4d8e0');">
-                  <div class="history-opp-logo" style="background: #d4d8e0">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="loss">—</span> KD</div>
-                <div class="history-pts close">−</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--sky)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--sky)');">
-                  <div class="history-opp-logo" style="background: var(--sky)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span> KD</div>
-                <div class="history-pts up">W</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--hot-pink)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--hot-pink)');">
-                  <div class="history-opp-logo" style="background: var(--hot-pink)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span> KD</div>
-                <div class="history-pts up">+10</div>
-              </div>
-            </div>
+            <div class="history-list" id="phRecentMatches"></div>
           </div>
 
           <!-- СТАТА ПО КАРТАМ -->
@@ -7495,6 +7476,21 @@
 </div>
 
 <!-- ========== PAGE: SETTINGS ========== -->
+<div class="page" data-page="support">
+  <div class="hub">
+    <div class="hub-inner">
+      <a class="hub-back" href="#" onclick="goBack(); return false;">← Назад</a>
+      <div class="hub-head">
+        <div>
+          <div class="hub-title">Мои <span class="accent">обращения</span></div>
+          <div class="hub-sub">тикеты, репорты и аппеляции</div>
+        </div>
+      </div>
+      <div id="myTicketsList"></div>
+    </div>
+  </div>
+</div>
+
 <div class="page" data-page="settings">
   <div class="hub">
     <div class="hub-inner">
@@ -7513,10 +7509,6 @@
           <div class="settings-nav-item active" data-target="profile" onclick="scrollToSetting('profile', this)">
             <span class="settings-nav-emoji">👤</span>
             <span>Профиль</span>
-          </div>
-          <div class="settings-nav-item" data-target="notifications" onclick="scrollToSetting('notifications', this)">
-            <span class="settings-nav-emoji">🔔</span>
-            <span>Уведомления</span>
           </div>
           <div class="settings-nav-item" data-target="game" onclick="scrollToSetting('game', this)">
             <span class="settings-nav-emoji">🎮</span>
@@ -7538,7 +7530,7 @@
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Ник</div>
-                <div class="setting-desc">Менять можно раз в 30 дней. Текущий: <code>Игрок</code></div>
+                <div class="setting-desc">Менять можно раз в 30 дней. Текущий: <code id="settingNickCurrent">—</code></div>
               </div>
               <div class="setting-control">
                 <button class="setting-btn ghost" onclick="editNick()">Изменить</button>
@@ -7547,8 +7539,8 @@
 
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-title">Биография</div>
-                <div class="setting-desc">Короткий текст в твоём профиле. Будет виден капитанам команд.</div>
+                <div class="setting-title">Описание</div>
+                <div class="setting-desc">Короткий текст в твоём профиле. Видно всем. Текущее: <span id="settingBioCurrent" style="color:var(--text); font-weight:700">не задано</span></div>
               </div>
               <div class="setting-control">
                 <button class="setting-btn ghost" onclick="editBio()">Редактировать</button>
@@ -7556,59 +7548,6 @@
             </div>
           </div>
 
-          <!-- Уведомления -->
-          <div class="settings-section" id="setting-notifications">
-            <div class="settings-section-title">🔔 Уведомления</div>
-            <div class="settings-section-sub">Что тебе писать в Telegram и на сайте</div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Ready-чек за 10 минут до матча</div>
-                <div class="setting-desc">Критичное напоминание. Если выключить — рискуешь получить warn.</div>
-              </div>
-              <div class="setting-control"><div class="toggle on"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Приглашения в команды</div>
-                <div class="setting-desc">Когда кто-то зовёт тебя в ростер</div>
-              </div>
-              <div class="setting-control"><div class="toggle on"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Результаты матчей</div>
-                <div class="setting-desc">Когда матч закончен и нужно подтвердить</div>
-              </div>
-              <div class="setting-control"><div class="toggle on"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Новости лиги</div>
-                <div class="setting-desc">Обновления, патчи, итоги недели</div>
-              </div>
-              <div class="setting-control"><div class="toggle"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Email-дайджест</div>
-                <div class="setting-desc">Сводка раз в неделю на почту</div>
-              </div>
-              <div class="setting-control"><div class="toggle"></div></div>
-            </div>
-
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Звуковые эффекты</div>
-                <div class="setting-desc">🔔 Тихие тоны при Ready и уведомлениях</div>
-              </div>
-              <div class="setting-control"><div class="toggle on" id="soundToggle" onclick="toggleSound(this.classList.toggle('on')); event.stopPropagation();"></div></div>
-            </div>
-          </div>
 
           <!-- Игровой аккаунт -->
           <div class="settings-section" id="setting-game">
@@ -7620,9 +7559,11 @@
                 <div class="setting-title">Верификация Standoff 2</div>
                 <div class="setting-desc" id="verifyStatusDesc">Укажи игровой <b>ID</b> и <b>никнейм</b> из Standoff 2. ⚠️ Игра под другим ID = бан.</div>
               </div>
-              <input class="input" id="verifyGameId" placeholder="Игровой ID (напр. 1289450137)" style="font-family:'JetBrains Mono',monospace">
-              <input class="input" id="verifySignature" placeholder="Игровой никнейм (как в Standoff 2)">
-              <button class="btn btn-primary" id="verifyAccountBtn" onclick="saveVerification()">Верифицировать</button>
+              <div id="verifyForm" style="display:flex; flex-direction:column; gap:10px">
+                <input class="input" id="verifyGameId" placeholder="Игровой ID (напр. 1289450137)" style="font-family:'JetBrains Mono',monospace">
+                <input class="input" id="verifySignature" placeholder="Игровой никнейм (как в Standoff 2)">
+                <button class="btn btn-primary" id="verifyAccountBtn" onclick="saveVerification()">Верифицировать</button>
+              </div>
             </div>
 
             <div class="setting-row">
@@ -7692,10 +7633,12 @@
 
         <div class="sm-field">
           <label class="sm-label">Скрин / клип</label>
-          <div class="sm-upload" onclick="showToast('Загрузили бы файл 📎')">
+          <label class="sm-upload" for="supFiles-ticket">
             <span class="sm-upload-emoji">📎</span>
-            <div class="sm-upload-text"><b>Перетащи файл</b> или нажми, чтобы выбрать<br>PNG, JPG, MP4 · до 10 МБ</div>
-          </div>
+            <div class="sm-upload-text"><b>Прикрепи скрин или видео</b> или нажми, чтобы выбрать<br>PNG, JPG, MP4 · до 20 МБ · можно несколько</div>
+            <input type="file" id="supFiles-ticket" accept="image/*,video/*" multiple style="display:none" onchange="supFilesPicked(this,'ticket')">
+            <div class="sup-files-list" id="supFilesList-ticket"></div>
+          </label>
         </div>
 
         <div class="sm-callout warn">
@@ -7721,8 +7664,8 @@
 
       <div class="sm-form">
         <div class="sm-field">
-          <label class="sm-label">Ник игрока <span class="req">*</span></label>
-          <input class="sm-input" placeholder="например, toxic_player" style="font-family: 'JetBrains Mono', monospace;">
+          <label class="sm-label">Игровой ID нарушителя <span class="req">*</span></label>
+          <input class="sm-input" placeholder="например, 123456789" inputmode="numeric" style="font-family: 'JetBrains Mono', monospace;">
           <div class="sm-hint">точное написание из профиля</div>
         </div>
 
@@ -7757,10 +7700,12 @@
 
         <div class="sm-field">
           <label class="sm-label">Доказательства</label>
-          <div class="sm-upload" onclick="showToast('Загрузили бы скрин 📎')">
+          <label class="sm-upload" for="supFiles-report">
             <span class="sm-upload-emoji">📎</span>
-            <div class="sm-upload-text"><b>Скрины или клипы</b> сильно помогают<br>PNG, JPG, MP4 · до 10 МБ</div>
-          </div>
+            <div class="sm-upload-text"><b>Скрины или клипы</b> сильно помогают<br>PNG, JPG, MP4 · до 20 МБ · можно несколько</div>
+            <input type="file" id="supFiles-report" accept="image/*,video/*" multiple style="display:none" onchange="supFilesPicked(this,'report')">
+            <div class="sup-files-list" id="supFilesList-report"></div>
+          </label>
         </div>
 
         <div class="sm-callout warn">
@@ -7812,10 +7757,12 @@
 
         <div class="sm-field">
           <label class="sm-label">Доказательства невиновности</label>
-          <div class="sm-upload" onclick="showToast('Загрузили бы доказательство 📎')">
+          <label class="sm-upload" for="supFiles-appeal">
             <span class="sm-upload-emoji">📎</span>
-            <div class="sm-upload-text"><b>Скрины переписки, клипы матча</b><br>всё что подтверждает твою сторону</div>
-          </div>
+            <div class="sm-upload-text"><b>Скрины переписки, клипы матча</b><br>всё что подтверждает твою сторону · до 20 МБ</div>
+            <input type="file" id="supFiles-appeal" accept="image/*,video/*" multiple style="display:none" onchange="supFilesPicked(this,'appeal')">
+            <div class="sup-files-list" id="supFilesList-appeal"></div>
+          </label>
         </div>
 
         <div class="sm-callout warn">
@@ -7898,62 +7845,6 @@
 </div>
 
 <!-- ========== CHALLENGE MODAL (вызвать команду на матч) ========== -->
-<div class="modal-backdrop" id="challengeModal" onclick="if(event.target===this) closeChallengeModal()">
-  <div class="support-modal">
-    <button class="sm-close" onclick="closeChallengeModal()">✕</button>
-
-    <div class="sm-head">
-      <div class="sm-icon" style="background: rgba(255, 200, 66, 0.15)">⚔️</div>
-      <div>
-        <div class="sm-title">Вызвать —</div>
-      </div>
-    </div>
-    <div class="sm-sub">Дружеский матч вне сезона. Очки лиги не меняются, но идёт в статистику. Капы соперника получат твой вызов в TG.</div>
-
-    <!-- VS блок -->
-    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; padding: 18px; background: var(--card-2); border-radius: 14px; margin-bottom: 4px;">
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--peach); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">—</div>
-        <div style="font-weight: 800; font-size: 13px;">—<br>Renegades</div>
-        <div style="font-size: 11px; color: var(--muted); font-weight: 700;">—</div>
-      </div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 28px; color: var(--muted-2);">vs</div>
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--mint); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">—</div>
-        <div style="font-weight: 800; font-size: 13px;">—<br>(твоя)</div>
-        <div style="font-size: 11px; color: var(--muted); font-weight: 700;">—</div>
-      </div>
-    </div>
-
-    <div class="sm-form">
-      <div class="sm-field">
-        <label class="sm-label">Формат <span class="req">*</span></label>
-        <div class="sm-chips" onclick="toggleSingleChip(event)">
-          <span class="sm-chip active">Bo1</span>
-          <span class="sm-chip">Bo3</span>
-          <span class="sm-chip">Bo5</span>
-        </div>
-      </div>
-
-      <div class="sm-field">
-        <label class="sm-label">Когда играть <span class="req">*</span></label>
-        <input class="sm-input" type="datetime-local">
-        <div class="sm-hint">точное время согласуете в TG</div>
-      </div>
-
-      <div class="sm-field">
-        <label class="sm-label">Сообщение капитану</label>
-        <textarea class="sm-textarea" placeholder="«Здарова, давно хотим с вами скатать. Завтра в 21:00 удобно?»"></textarea>
-      </div>
-
-      <div class="sm-actions">
-        <button class="sm-btn cancel" onclick="closeChallengeModal()">Отмена</button>
-        <button class="sm-btn submit" onclick="submitChallenge()">⚔️ Отправить вызов</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ========== MESSAGE MODAL (написать игроку) ========== -->
 <div class="modal-backdrop" id="messageModal" onclick="if(event.target===this) closeMessageModal()">
   <div class="support-modal">
@@ -8575,28 +8466,38 @@
         </div>
         <div style="display:flex; flex-direction:column; gap:10px">
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>1. Вход и команда.</b> Заходишь через нашего Telegram-бота, создаёшь команду или принимаешь приглашение. Создатель — капитан. Состав 5 игроков.
+            <b>1. Начало.</b> Заходишь через нашего Telegram-бота и проходишь верификацию. Дальше создаёшь команду или вступаешь в существующую.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>2. Подбор матча.</b> Система <b>автоматически</b> подбирает соперника рядом с вами в таблице (на 4 позиции выше — 7 ниже) и даёт <b>окно 2 дня</b> на игру. Капитанам в Telegram приходит банпик.
+            <b>2. Подбор.</b> Мы сами подбираем тебе соперника и уведомляем в Telegram-боте. На выбор времени и саму игру даётся <b>2 дня</b>.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>3. Банпик — в Telegram.</b> Обоим капитанам бот присылает 7 карт. Баните по очереди кнопками, последняя оставшаяся — играется.
+            <b>3. Подготовка.</b> Капитаны выбирают хоста и время. За 15 минут до игры, после второго Ready-чека, проводится банпик. Играется десайдер, а сторону выбирает <b>нижняя</b> по топу команда.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>4. Время и хостер.</b> Там же в боте: один капитан предлагает слот, второй подтверждает. Кто нажал «🎮 Я хощу» — создаёт лобби. Бот автоматически анонсирует матч всем 10 игрокам.
+            <b>4. Время и хост.</b> Капитаны выбирают время в рамках выданных 2 дней. Команда <b>выше</b> по топу выбирает хоста — создателя лобби в игре.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>5. Чек-ины ×2.</b> Каждый игрок подтверждает участие на сайте <b>за час</b> и <b>за 10 минут</b> до начала. Бот пришлёт напоминания — не проспишь.
+            <b>5. Ready-чеки.</b> Перед игрой проходят 2 Ready-чека (за <b>1 час</b> и за <b>15 минут</b> до назначенного времени) всем 10 игрокам. Каждый должен нажать «Готов» в течение <b>10 минут</b> после чека. Пропустил — техническое поражение (ТП) за матч.
           </div>
           <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>6. После игры.</b> С каждой команды один игрок пишет запись экрана (демку). Капитан на странице матча: прикрепляет <b>скрин финального счёта</b> (цифры считаются автоматически), статы и демку → «Отправить». Очки начисляются сразу.
+            <b>6. Лобби.</b> Когда останется 5 минут до назначенного времени, хост создаёт лобби в Standoff 2, настраивает его и скидывает ссылку в бота — бот рассылает её остальным игрокам.
           </div>
-          <div style="padding:14px 16px; background:var(--bg-2, var(--card-2)); border:2px solid var(--accent); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>💎 Очки:</b> победа <b>+10</b>. Поражение: набрали 11+ раундов → <b>−5</b>, 8–10 → <b>−6</b>, 7 и меньше → <b>−7</b>. Близкие катки щадят рейтинг.
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>7. Скрины в игре.</b> На фазе закупки при счёте <b>0:0</b> все игроки делают СС и МС. Все ждут финального результата и только потом выходят. Капитаны обеих команд делают скрин финального результата и скрин списка участников матча.
           </div>
-          <div style="padding:14px 16px; background:var(--bg-2, var(--card-2)); border:2px solid var(--accent); border-radius:14px; font-weight:600; line-height:1.55">
-            <b>🏆 Плей-офф:</b> за 3–4 дня до конца сезона топ-8 дивизиона играет double elimination BO3. День 1 — четвертьфиналы + нижняя сетка, дальше по дням до гранд-финала.
+          <div style="padding:14px 16px; background:var(--card); border:2px solid var(--line); border-radius:14px; font-weight:600; line-height:1.55">
+            <b>8. Отправка.</b> Все игроки скидывают СС и МС в бота (придёт уведомление). Капитаны дополнительно скидывают финальный результат матча и список участников. Очки начисляются автоматически.
+          </div>
+          <div style="padding:16px 18px; background:var(--bg-2, var(--card-2)); border:2px solid var(--accent); border-radius:14px; font-weight:600; line-height:1.6">
+            <div style="font-weight:900; font-size:15px; margin-bottom:10px">💎 Распределение очков</div>
+            <div style="margin-bottom:8px">Победа = <b style="color:var(--mint)">+10p</b></div>
+            <div style="margin-bottom:6px">Поражение:</div>
+            <div style="padding-left:6px; display:flex; flex-direction:column; gap:4px">
+              <div>• набрали от <b>11</b> и более раундов = <b>−5p</b></div>
+              <div>• набрали от <b>8 до 10</b> раундов = <b>−6p</b></div>
+              <div>• набрали <b>до 7</b> раундов = <b>−7p</b></div>
+            </div>
           </div>
         </div>
       </div>
@@ -9066,8 +8967,8 @@
         </div>
 
           <div class="login-foot">
-            Ещё нет аккаунта? <a href="#" onclick="goToStep(0); return false;">Зарегаться</a> — займёт 30 секунд.
-            <br>Войдя, ты соглашаешься с <a href="#">правилами</a> лиги.
+            Регистрация = вход через Telegram выше. Один TG = один игрок, займёт 30 секунд.
+            <br>Входя, ты соглашаешься с <a href="#" onclick="goPage('rules'); closeModal(); return false;">правилами</a> лиги.
           </div>
         </div>
 
@@ -9499,7 +9400,7 @@
       currentUser.nick = clean;
       // обновляем видимые места
       document.querySelectorAll('.profile-name, .pm-name').forEach(el => { el.childNodes[0] && (el.childNodes[0].textContent = clean + ' '); });
-      const nickCode = document.querySelector('#setting-profile code');
+      const nickCode = document.querySelector('#settingNickCurrent');
       if (nickCode) nickCode.textContent = clean;
       showToast('✅ Ник изменён на ' + clean);
     } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
@@ -9507,7 +9408,7 @@
 
   async function editBio() {
     if (!supabaseClient || !currentUser?.id) { showToast('Сначала войди', 'error'); return; }
-    const newBio = prompt('Биография (до 150 символов):', currentUser.bio || '');
+    const newBio = prompt('Описание (до 150 символов):', currentUser.bio || '');
     if (newBio === null) return;
     const clean = newBio.trim();
     if (clean.length > 150) { showToast('Максимум 150 символов', 'error'); return; }
@@ -9515,7 +9416,9 @@
       const { error } = await supabaseClient.from('profiles').update({ bio: clean }).eq('id', currentUser.id);
       if (error) throw error;
       currentUser.bio = clean;
-      showToast('✅ Биография обновлена');
+      const sBio = document.getElementById('settingBioCurrent');
+      if (sBio) sBio.textContent = clean || 'не задано';
+      showToast('✅ Описание обновлено');
     } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
   }
 
@@ -10041,14 +9944,12 @@
     else if (bio) bio.style.display = 'none';
     if (bioMeta) bioMeta.style.display = 'none';
 
-    // прячем демо-карточки. «Расписание» — только членам команды (isMine)
-    const demoCards = ['Форма', 'История матчей', 'Статистика по картам', 'Достижения', 'Путь команды'];
+    // прячем демо-карточки. «Расписание» убрано из профиля команды
+    const demoCards = ['Форма', 'История матчей', 'Статистика по картам', 'Достижения', 'Путь команды', 'Расписание'];
     page.querySelectorAll('.match-card').forEach(c => {
       const t = c.querySelector('.mc-title');
       if (!t) return;
-      const txt = t.textContent;
-      if (demoCards.some(x => txt.includes(x))) { c.style.display = 'none'; return; }
-      if (txt.includes('Расписание')) { c.style.display = isMine ? '' : 'none'; }
+      if (demoCards.some(x => t.textContent.includes(x))) c.style.display = 'none';
     });
 
     // кнопки: моя / чужая
@@ -10480,6 +10381,44 @@
     verifiedEls.forEach(el => {
       el.style.display = currentUser.is_verified ? '' : 'none';
     });
+
+    // Мини-профиль (выпадашка): игровой ник + игровой ID + роль
+    const gameNick = currentUser.game_signature || nick;
+    const pmName = document.getElementById('pmName');
+    if (pmName && pmName.childNodes[0]) pmName.childNodes[0].textContent = gameNick + ' ';
+    const pmHandle = document.getElementById('pmHandle');
+    if (pmHandle) pmHandle.textContent = currentUser.standoff_id ? ('ID ' + currentUser.standoff_id) : 'ID —';
+    const pmRole = document.getElementById('pmRole');
+    if (pmRole) {
+      if (currentUser.is_admin) { pmRole.textContent = 'Админ'; pmRole.className = 'pm-badge role admin'; }
+      else if (currentUser.role === 'coach' || currentUser.is_coach) { pmRole.textContent = 'Тренер'; pmRole.className = 'pm-badge role coach'; }
+      else { pmRole.textContent = 'Игрок'; pmRole.className = 'pm-badge role'; }
+    }
+    const pmDivision = document.getElementById('pmDivision');
+    if (pmDivision) {
+      const div = currentTeam?.division_id;
+      pmDivision.textContent = div ? ('Division ' + String(div).replace(/\D/g, '') || 'Division 0') : 'Division 0';
+    }
+
+    // Настройки: текущий ник + описание
+    const sNick = document.getElementById('settingNickCurrent');
+    if (sNick) sNick.textContent = nick;
+    const sBio = document.getElementById('settingBioCurrent');
+    if (sBio) sBio.textContent = currentUser.bio ? currentUser.bio : 'не задано';
+
+    // Настройки: статус верификации
+    const vForm = document.getElementById('verifyForm');
+    const vDesc = document.getElementById('verifyStatusDesc');
+    if (currentUser.is_verified) {
+      if (vForm) vForm.style.display = 'none';
+      if (vDesc) vDesc.innerHTML = `✅ Верифицирован · ID <code>${currentUser.standoff_id || '—'}</code> · ник <b>${currentUser.game_signature || '—'}</b>`;
+    } else if (currentUser.verify_pending) {
+      if (vForm) vForm.style.display = 'none';
+      if (vDesc) vDesc.innerHTML = `⏳ Заявка на модерации · ID <code>${currentUser.standoff_id || '—'}</code>. Ждём подтверждения.`;
+    } else {
+      if (vForm) vForm.style.display = '';
+      if (vDesc) vDesc.innerHTML = 'Укажи игровой <b>ID</b> и <b>никнейм</b> из Standoff 2. ⚠️ Игра под другим ID = бан.';
+    }
   }
 
   // Применяет данные команды на главную (карточка моей команды)
@@ -11531,15 +11470,135 @@
     document.body.style.overflow = '';
   }
 
-  function submitSupport(type) {
+  const _supFiles = { ticket: [], report: [], appeal: [] };
+  function supFilesPicked(input, type) {
+    const max = 20 * 1024 * 1024;
+    const files = [...input.files].filter(f => {
+      if (f.size > max) { showToast(`${f.name} больше 20 МБ`, 'error'); return false; }
+      return true;
+    });
+    _supFiles[type] = files;
+    const list = document.getElementById('supFilesList-' + type);
+    if (list) list.innerHTML = files.map((f, i) =>
+      `<div class="sup-file-item">${f.type.startsWith('video') ? '🎬' : '🖼'} ${f.name} <span class="x" onclick="event.preventDefault();event.stopPropagation();supFileRemove('${type}',${i})">✕</span></div>`
+    ).join('');
+  }
+  function supFileRemove(type, idx) {
+    _supFiles[type].splice(idx, 1);
+    const list = document.getElementById('supFilesList-' + type);
+    if (list) list.innerHTML = _supFiles[type].map((f, i) =>
+      `<div class="sup-file-item">${f.type.startsWith('video') ? '🎬' : '🖼'} ${f.name} <span class="x" onclick="event.preventDefault();event.stopPropagation();supFileRemove('${type}',${i})">✕</span></div>`
+    ).join('');
+  }
+  async function _uploadSupFiles(type) {
+    const files = _supFiles[type] || [];
+    if (!files.length) return [];
+    const urls = [];
+    for (const f of files) {
+      const ext = (f.name.split('.').pop() || 'bin').toLowerCase();
+      const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabaseClient.storage.from('ticket-evidence').upload(path, f, { contentType: f.type });
+      if (error) { console.warn('upload err', error); continue; }
+      const { data } = supabaseClient.storage.from('ticket-evidence').getPublicUrl(path);
+      if (data?.publicUrl) urls.push({ url: data.publicUrl, kind: f.type.startsWith('video') ? 'video' : 'image' });
+    }
+    return urls;
+  }
+
+  async function openMyTickets() {
+    goPage('support');
+    const box = document.getElementById('myTicketsList');
+    if (!box) return;
+    if (!supabaseClient || !currentUser) { box.innerHTML = '<div style="padding:14px; color:var(--muted); font-weight:700">Войди, чтобы видеть обращения</div>'; return; }
+    box.innerHTML = '<div style="padding:14px; color:var(--muted); font-weight:700">Загрузка…</div>';
+    try {
+      const { data, error } = await supabaseClient
+        .from('support_tickets').select('*')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false }).limit(50);
+      if (error) throw error;
+      if (!data || !data.length) {
+        box.innerHTML = `<div style="padding:40px 20px; text-align:center; background:var(--card); border-radius:16px; border:2px dashed var(--line)">
+          <div style="font-size:40px; margin-bottom:8px">🎫</div>
+          <div style="font-weight:800; margin-bottom:4px">Обращений пока нет</div>
+          <div style="font-size:13px; color:var(--muted); font-weight:600">Тикеты, репорты и аппеляции появятся здесь.</div>
+        </div>`;
+        return;
+      }
+      const typeLbl = { ticket: '💬 Тикет', report: '🚩 Репорт', appeal: '⛔ Аппеляция' };
+      const statusLbl = {
+        open: ['🔵 Открыт', 'var(--sky)'], in_progress: ['🟡 В работе', 'var(--lemon)'],
+        resolved: ['🟢 Решён', 'var(--mint)'], rejected: ['🔴 Отклонён', 'var(--hot-pink)'],
+      };
+      box.innerHTML = data.map(t => {
+        const st = statusLbl[t.status] || ['—', 'var(--muted)'];
+        const atts = Array.isArray(t.attachments) ? t.attachments : [];
+        const media = atts.map(a => a.kind === 'video'
+          ? `<a href="${a.url}" target="_blank" style="display:inline-flex; background:var(--card-3); padding:5px 9px; border-radius:7px; font-size:11px; font-weight:700; margin:4px 4px 0 0">🎬 видео</a>`
+          : `<a href="${a.url}" target="_blank"><img src="${a.url}" style="width:54px; height:54px; object-fit:cover; border-radius:7px; margin:4px 4px 0 0; border:1px solid var(--line)"></a>`
+        ).join('');
+        return `
+          <div style="background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px">
+              <b style="font-size:14px">${typeLbl[t.type] || t.type}</b>
+              <span style="font-size:11px; font-weight:800; color:${st[1]}; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:100px">${st[0]}</span>
+              <span style="font-size:11px; color:var(--muted-2); margin-left:auto">${new Date(t.created_at).toLocaleDateString('ru-RU')}</span>
+            </div>
+            ${t.subject ? `<div style="font-weight:700; font-size:13px; margin-bottom:3px">${t.subject.replace(/</g,'&lt;')}</div>` : ''}
+            ${t.target ? `<div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:3px">${t.type === 'report' ? 'ID нарушителя' : 'Аккаунт'}: <b style="color:var(--text)">${t.target}</b>${t.category ? ' · ' + t.category : ''}</div>` : ''}
+            <div style="font-size:13px; line-height:1.5; color:var(--text)">${(t.message || '').replace(/</g,'&lt;')}</div>
+            ${media ? `<div style="display:flex; flex-wrap:wrap; margin-top:6px">${media}</div>` : ''}
+          </div>`;
+      }).join('');
+    } catch (e) { box.innerHTML = '<div style="padding:14px; color:var(--hot-pink)">Ошибка: ' + (e.message || e) + '</div>'; }
+  }
+
+  async function submitSupport(type) {
+    if (!supabaseClient || !currentUser) { showToast('Сначала войди', 'error'); return; }
+    const sec = document.querySelector(`#supportModal [data-support="${type}"]`);
+    if (!sec) { closeSupportModal(); return; }
+
+    const inputs = sec.querySelectorAll('.sm-input');
+    const textarea = sec.querySelector('.sm-textarea');
+    const chips = [...sec.querySelectorAll('.sm-chip.active')].map(c => c.textContent.trim());
+    const message = (textarea?.value || '').trim();
+
+    let payload = { user_id: currentUser.id, type, message, status: 'open' };
+    if (type === 'ticket') {
+      payload.subject = (inputs[0]?.value || '').trim();
+      if (!payload.subject) { showToast('Укажи тему', 'error'); return; }
+    } else if (type === 'report') {
+      payload.target = (inputs[0]?.value || '').trim();
+      payload.category = chips.join(', ');
+      if (!payload.target) { showToast('Укажи игровой ID нарушителя', 'error'); return; }
+      if (!chips.length) { showToast('Выбери причину репорта', 'error'); return; }
+    } else if (type === 'appeal') {
+      payload.target = (inputs[0]?.value || '').trim();
+      if (!payload.target) { showToast('Укажи ник аккаунта', 'error'); return; }
+    }
+    if (!message || message.length < 5) { showToast('Опиши подробнее (мин. 5 символов)', 'error'); return; }
+
     closeSupportModal();
-    const msgs = {
-      ticket: ['Тикет создан · ответим в течение 24ч 💬', 'success'],
-      report: ['Репорт отправлен · модераторы разберут 🚩', 'success'],
-      appeal: ['Аппеляция принята · мы рассмотрим ⛔', 'important']
-    };
-    const [msg, kind] = msgs[type] || ['Отправлено ✓', 'success'];
-    showToast(msg, kind);
+    showToast('Отправляем...', 'default');
+    try {
+      payload.attachments = await _uploadSupFiles(type);
+      const { error } = await supabaseClient.from('support_tickets').insert(payload);
+      if (error) throw error;
+      const okMsg = {
+        ticket: ['✅ Тикет создан · ответим в течение 24ч', 'success'],
+        report: ['✅ Репорт отправлен · модераторы разберут', 'success'],
+        appeal: ['✅ Аппеляция принята · мы рассмотрим', 'important'],
+      }[type] || ['Отправлено ✓', 'success'];
+      showToast(okMsg[0], okMsg[1], 4000);
+      // очистим поля
+      if (textarea) textarea.value = '';
+      inputs.forEach(i => { if (!i.value.startsWith('Игрок')) i.value = ''; });
+      sec.querySelectorAll('.sm-chip.active').forEach(c => c.classList.remove('active'));
+      _supFiles[type] = [];
+      const fl = document.getElementById('supFilesList-' + type); if (fl) fl.innerHTML = '';
+    } catch (e) {
+      showToast('Ошибка: ' + (e.message || e), 'error');
+    }
   }
 
   // ============================================
@@ -11703,7 +11762,6 @@
   // APPLY / CHALLENGE / MESSAGE / FOLLOW
   // ============================================
   const applyModal = document.getElementById('applyModal');
-  const challengeModal = document.getElementById('challengeModal');
   const messageModal = document.getElementById('messageModal');
 
   function openApplyModal() {
@@ -11802,19 +11860,6 @@
     }
   }
 
-  function openChallengeModal() {
-    challengeModal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeChallengeModal() {
-    challengeModal.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  function submitChallenge() {
-    closeChallengeModal();
-    showToast('Вызов отправлен · ждём ответа капитана ⚔️', 'success');
-  }
-
   function openMessageModal(nick) {
     if (nick) document.getElementById('messageTo').textContent = nick;
     messageModal.classList.add('open');
@@ -11824,9 +11869,20 @@
     messageModal.classList.remove('open');
     document.body.style.overflow = '';
   }
-  function submitMessage() {
+  async function submitMessage() {
+    const nick = document.getElementById('messageTo')?.textContent?.trim();
     closeMessageModal();
-    showToast('Сообщение отправлено в Telegram 📨', 'success');
+    if (!supabaseClient || !nick) { showToast('Не удалось определить игрока', 'error'); return; }
+    try {
+      const { data } = await supabaseClient
+        .from('profiles').select('telegram_username').eq('nick', nick).maybeSingle();
+      if (data?.telegram_username) {
+        window.open('https://t.me/' + data.telegram_username.replace(/^@/, ''), '_blank');
+        showToast('Открываю Telegram 📨', 'success');
+      } else {
+        showToast('У игрока не указан Telegram-юзернейм', 'error');
+      }
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
   }
 
   // подписка / отписка
@@ -12071,6 +12127,49 @@
     } catch (e) { console.warn('loadPlayerTopTabs:', e); }
   }
   function selectPlayerSeason(id) { _curSeasonId = id; loadPlayerTopTabs(); }
+  async function loadPlayerRecentMatches(playerId) {
+    const box = document.getElementById('phRecentMatches');
+    if (!box || !supabaseClient) return;
+    try {
+      const { data } = await supabaseClient
+        .from('player_match_stats')
+        .select(`kills, deaths, kd, map, won, created_at,
+          matches:match_id (
+            team_a_id, team_b_id,
+            teams_a:team_a_id (name, logo_initials, logo_color),
+            teams_b:team_b_id (name, logo_initials, logo_color)
+          ),
+          team_id`)
+        .eq('player_id', playerId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      if (!data || !data.length) {
+        box.innerHTML = `<div style="padding:30px 16px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">Сыграй первые матчи — здесь появится история</div>`;
+        return;
+      }
+      box.innerHTML = data.map(r => {
+        const mt = r.matches || {};
+        const oppIsA = r.team_id !== mt.team_a_id; // соперник — другая команда
+        const opp = oppIsA ? mt.teams_a : mt.teams_b;
+        const oppName = opp?.name || '—';
+        const oppLogo = opp?.logo_initials || '—';
+        const oppColor = opp?.logo_color || 'var(--accent)';
+        const date = r.created_at ? new Date(r.created_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) : '—';
+        const kd = Number(r.kd || 0).toFixed(2);
+        return `<div class="history-row">
+          <div class="history-result-dot ${r.won ? 'win' : 'loss'}"></div>
+          <div class="history-date">${date}${r.map ? ' · ' + r.map : ''}</div>
+          <div class="history-opponent">
+            <div class="history-opp-logo" style="background:${oppColor}">${oppLogo}</div>
+            <div class="history-opp-name">${oppName}</div>
+          </div>
+          <div class="history-score"><span class="${r.won ? 'win' : 'loss'}">${r.kills}/${r.deaths}</span> · ${kd} KD</div>
+          <div class="history-pts ${r.won ? 'up' : 'down'}">${r.won ? 'W' : 'L'}</div>
+        </div>`;
+      }).join('');
+    } catch (e) { console.warn('loadPlayerRecentMatches:', e); box.innerHTML = ''; }
+  }
+
   async function loadPlayerTop() {
     const list = document.getElementById('playerTopList');
     if (!list || !supabaseClient) return;
@@ -12117,7 +12216,75 @@
     loadAdminDisputes();
     loadAdminMatches();
     loadAdminTeams();
+    loadAdminTickets();
     loadAdminPlayers();
+  }
+
+  async function loadAdminTickets() {
+    const box = document.getElementById('adminTickets');
+    if (!box) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('support_tickets')
+        .select('*, profiles:user_id(nick)')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      if (!data || !data.length) { box.innerHTML = '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Тикетов нет</div>'; return; }
+      const typeLbl = { ticket: '💬 Тикет', report: '🚩 Репорт', appeal: '⛔ Аппеляция' };
+      const statusLbl = { open: '🔵 открыт', in_progress: '🟡 в работе', resolved: '🟢 решён', rejected: '🔴 отклонён' };
+      box.innerHTML = data.map(t => {
+        const atts = Array.isArray(t.attachments) ? t.attachments : [];
+        const media = atts.map(a => a.kind === 'video'
+          ? `<a href="${a.url}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; background:var(--card-3); padding:6px 10px; border-radius:8px; font-size:12px; font-weight:700; margin:4px 4px 0 0">🎬 видео</a>`
+          : `<a href="${a.url}" target="_blank"><img src="${a.url}" style="width:64px; height:64px; object-fit:cover; border-radius:8px; margin:4px 4px 0 0; border:1px solid var(--line)"></a>`
+        ).join('');
+        return `
+          <div style="background:var(--card-2); border-radius:12px; padding:12px 14px; margin-bottom:10px">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px">
+              <b style="font-size:13px">${typeLbl[t.type] || t.type}</b>
+              <span style="font-size:11px; font-weight:700; color:var(--muted)">${statusLbl[t.status] || t.status}</span>
+              <span style="font-size:11px; color:var(--muted-2); margin-left:auto">${new Date(t.created_at).toLocaleString('ru-RU')}</span>
+            </div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:4px">
+              от ${t.profiles?.nick || '—'}${t.target ? ` · ID: <b style="color:var(--text)">${t.target}</b>` : ''}${t.category ? ` · ${t.category}` : ''}${t.subject ? ` · ${t.subject}` : ''}
+            </div>
+            <div style="font-size:13px; line-height:1.5; margin-bottom:8px">${(t.message || '').replace(/</g, '&lt;')}</div>
+            ${media ? `<div style="display:flex; flex-wrap:wrap">${media}</div>` : ''}
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px">
+              <button class="btn" style="background:var(--card-3); font-size:12px; padding:6px 12px" onclick="setTicketStatus('${t.id}','in_progress')">🟡 В работу</button>
+              <button class="btn" style="background:var(--card-3); font-size:12px; padding:6px 12px" onclick="setTicketStatus('${t.id}','resolved')">🟢 Решён</button>
+              <button class="btn" style="background:var(--card-3); font-size:12px; padding:6px 12px" onclick="setTicketStatus('${t.id}','rejected')">🔴 Отклонить</button>
+            </div>
+          </div>`;
+      }).join('');
+    } catch (e) { box.innerHTML = '<div style="padding:14px; color:var(--hot-pink); font-size:12px">Ошибка: ' + (e.message || e) + '</div>'; }
+  }
+
+  async function setTicketStatus(id, status) {
+    if (!supabaseClient) return;
+    try {
+      const { data: t, error } = await supabaseClient
+        .from('support_tickets').update({ status }).eq('id', id)
+        .select('user_id, type').maybeSingle();
+      if (error) throw error;
+      // уведомляем автора
+      if (t?.user_id) {
+        const typeLbl = { ticket: 'обращение', report: 'репорт', appeal: 'аппеляция' }[t.type] || 'обращение';
+        const statusTxt = {
+          in_progress: ['🟡 Взяли в работу', `Твоё ${typeLbl} рассматривается.`],
+          resolved: ['🟢 Решено', `Твоё ${typeLbl} обработано модераторами.`],
+          rejected: ['🔴 Отклонено', `Твоё ${typeLbl} отклонено.`],
+        }[status];
+        if (statusTxt) {
+          await supabaseClient.from('notifications').insert({
+            user_id: t.user_id, kind: 'system', title: statusTxt[0], body: statusTxt[1], link: 'support',
+          });
+        }
+      }
+      showToast('Статус обновлён', 'success');
+      loadAdminTickets();
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
   }
 
   async function loadAdminStats() {
@@ -12195,16 +12362,48 @@
 
   async function loadAdminPlayers() {
     try {
-      const { data } = await supabaseClient.from('profiles').select('id, nick, is_verified, is_banned')
-        .order('created_at', { ascending: false }).limit(30);
+      const { data } = await supabaseClient.from('profiles')
+        .select('id, nick, standoff_id, game_signature, is_verified, verify_pending, is_banned')
+        .order('verify_pending', { ascending: false })
+        .order('created_at', { ascending: false }).limit(40);
       const box = document.getElementById('adminPlayers');
-      box.innerHTML = (data && data.length) ? data.map(p =>
-        `<div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px">
-          <div style="flex:1; font-weight:700; font-size:13px">${p.nick || '—'} ${p.is_verified ? '✓' : ''} ${p.is_banned ? '🚫' : ''}</div>
-          <button class="btn" style="padding:6px 10px; font-size:12px; background:${p.is_banned ? 'var(--accent)' : 'var(--card-3)'}" onclick="adminAction('admin_ban_player',{p_player_id:'${p.id}',p_banned:${!p.is_banned}},'${p.is_banned ? 'Разбанен' : 'Забанен'}', loadAdmin)">${p.is_banned ? 'разбан' : 'бан'}</button>
-        </div>`).join('')
+      box.innerHTML = (data && data.length) ? data.map(p => {
+        const verifyBtn = p.verify_pending
+          ? `<button class="btn" style="padding:6px 10px; font-size:12px; background:var(--mint); color:#0a0a0a" onclick="approveVerify('${p.id}', true)">✓ верифи</button>
+             <button class="btn" style="padding:6px 10px; font-size:12px; background:var(--card-3)" onclick="approveVerify('${p.id}', false)">✕</button>`
+          : '';
+        const pendingTag = p.verify_pending
+          ? `<div style="font-size:11px; color:var(--lemon); font-weight:700">⏳ заявка: ID ${p.standoff_id || '—'} · ник ${p.game_signature || '—'}</div>`
+          : '';
+        return `<div style="padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+            <div style="flex:1; font-weight:700; font-size:13px; min-width:120px">${p.nick || '—'} ${p.is_verified ? '✓' : ''} ${p.is_banned ? '🚫' : ''}</div>
+            ${verifyBtn}
+            <button class="btn" style="padding:6px 10px; font-size:12px; background:${p.is_banned ? 'var(--accent)' : 'var(--card-3)'}" onclick="adminAction('admin_ban_player',{p_player_id:'${p.id}',p_banned:${!p.is_banned}},'${p.is_banned ? 'Разбанен' : 'Забанен'}', loadAdmin)">${p.is_banned ? 'разбан' : 'бан'}</button>
+          </div>
+          ${pendingTag}
+        </div>`;
+      }).join('')
         : '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Игроков нет</div>';
     } catch (e) { console.warn(e); }
+  }
+
+  async function approveVerify(playerId, approve) {
+    if (!supabaseClient) return;
+    try {
+      const { error } = await supabaseClient.from('profiles')
+        .update({ is_verified: approve, verify_pending: false })
+        .eq('id', playerId);
+      if (error) throw error;
+      await supabaseClient.from('notifications').insert({
+        user_id: playerId, kind: 'system',
+        title: approve ? '✅ Аккаунт верифицирован' : '❌ Верификация отклонена',
+        body: approve ? 'Игровой аккаунт подтверждён модератором.' : 'Проверь правильность ID и ника, подай заявку снова.',
+        link: 'settings',
+      });
+      showToast(approve ? 'Верифицирован' : 'Отклонён', 'success');
+      loadAdminPlayers();
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
   }
 
   // универсальный вызов админ-RPC
@@ -12263,13 +12462,14 @@
     if (!supabaseClient || !currentUser?.id) { showToast('Сначала войди через Telegram', 'error'); return; }
     try {
       const { error } = await supabaseClient.from('profiles').update({
-        standoff_id: gameId, game_signature: sig, is_verified: true,
+        standoff_id: gameId, game_signature: sig, verify_pending: true, is_verified: false,
       }).eq('id', currentUser.id);
       if (error) throw error;
-      if (status) status.innerHTML = `✓ Верифицирован · ID: <code>${gameId}</code>`;
-      const banner = document.getElementById('verifyBanner');
-      if (banner) banner.style.display = 'none';
-      showToast('✅ Профиль верифицирован!', 'success');
+      if (status) status.innerHTML = `⏳ Заявка на модерации · ID <code>${gameId}</code>. Ждём подтверждения.`;
+      currentUser.standoff_id = gameId; currentUser.game_signature = sig; currentUser.verify_pending = true;
+      const vForm = document.getElementById('verifyForm');
+      if (vForm) vForm.style.display = 'none';
+      showToast('📨 Заявка на верификацию отправлена · ждёт модератора', 'success');
     } catch (e) {
       console.error('saveVerification:', e);
       showToast('Ошибка: ' + (e.message || e), 'error');
@@ -13746,6 +13946,27 @@
     const panel = document.getElementById('phWrPanel');
     if (panel) panel.classList.toggle('open');
   }
+  // Всплывающая плашка "verified" по клику на звезду
+  function showVerifiedTip(e) {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
+    let tip = document.getElementById('verifiedTip');
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = 'verifiedTip';
+      tip.className = 'verified-tip';
+      tip.innerHTML = '✓ verified';
+      document.body.appendChild(tip);
+    }
+    const x = (e && e.clientX) || window.innerWidth / 2;
+    const y = (e && e.clientY) || 80;
+    tip.style.left = x + 'px';
+    tip.style.top = (y - 42) + 'px';
+    // перезапуск анимации
+    tip.classList.remove('show'); void tip.offsetWidth; tip.classList.add('show');
+    clearTimeout(window._vtipT);
+    window._vtipT = setTimeout(() => tip.classList.remove('show'), 1800);
+  }
+
   function togglePhDiv() {
     const panel = document.getElementById('phDivPanel');
     if (panel) panel.classList.toggle('open');
@@ -13754,6 +13975,9 @@
   // Мета на странице команд: N teams · Season X · D days left
   function updateTeamsMeta(count) {
     if (typeof count === 'number') window._teamsCount = count;
+    // кнопка «Создать команду» — только если игрок без команды и залогинен
+    const cb = document.getElementById('teamsCreateBtn');
+    if (cb) cb.style.display = (currentUser && !currentTeam) ? '' : 'none';
     const el = document.getElementById('teamsMeta');
     if (!el) return;
     const c = window._teamsCount ?? 0;
@@ -13810,6 +14034,7 @@
 
     window._playerOverrideId = playerId;
     goPage('player');
+    loadPlayerRecentMatches(playerId);
 
     const page = document.querySelector('[data-page="player"]');
     if (!page) return;
@@ -13844,6 +14069,13 @@
       } else { teamEl.textContent = 'без команды'; teamEl.classList.remove('link'); }
     }
     setMeta('phReg', p.created_at ? new Date(p.created_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—');
+
+    // Описание (bio)
+    const bioCard = document.getElementById('phBioCard');
+    const bioText = document.getElementById('phBioText');
+    if (bioText) bioText.textContent = p.bio ? p.bio : 'Игрок пока не добавил описание.';
+    if (bioText && !p.bio) bioText.style.color = 'var(--muted)';
+    else if (bioText) bioText.style.color = 'var(--text)';
 
     // Кнопки в actions
     const actions = page.querySelector('.ph-actions');
@@ -14128,69 +14360,66 @@
 
   async function acceptInvite(inviteId) {
     if (!supabaseClient || !currentUser) return;
-
-    // Защита: нужен привязанный Telegram
     if (!requireTelegram('принять приглашение')) return;
 
-    if (userHasTeam) {
-      showToast('Ты уже в команде — сначала покинь её', 'error');
-      return;
-    }
-
-    showToast('Принимаем приглашение...', 'default');
-
+    showToast('Обрабатываем...', 'default');
     try {
-      // Получаем приглашение
       const { data: inv, error: invErr } = await supabaseClient
         .from('team_invites')
         .select('*')
         .eq('id', inviteId)
         .single();
+      if (invErr || !inv) { showToast('Приглашение не найдено', 'error'); return; }
 
-      if (invErr || !inv) {
-        showToast('Приглашение не найдено', 'error');
+      // ЗАЯВКА: я уже состою в этой команде (я капитан) → принимаю ЗАЯВИТЕЛЯ
+      const isApplication = currentTeam && currentTeam.id === inv.team_id;
+      const joiningPlayerId = isApplication ? inv.inviter_id : currentUser.id;
+
+      // Для обычного инвайта нельзя быть уже в команде
+      if (!isApplication && userHasTeam) {
+        showToast('Ты уже в команде — сначала покинь её', 'error');
         return;
       }
+      // Заявитель не должен уже состоять где-то
+      if (isApplication) {
+        const { data: already } = await supabaseClient
+          .from('team_members')
+          .select('id').eq('player_id', joiningPlayerId).is('left_at', null).maybeSingle();
+        if (already) { showToast('Игрок уже в команде', 'error'); 
+          await supabaseClient.from('team_invites').update({ status: 'declined', responded_at: new Date().toISOString() }).eq('id', inviteId);
+          await loadInvites(); return; }
+      }
 
-      // Меняем статус приглашения
-      await supabaseClient
-        .from('team_invites')
-        .update({
-          status: 'accepted',
-          responded_at: new Date().toISOString(),
-        })
+      // Статус приглашения → accepted
+      await supabaseClient.from('team_invites')
+        .update({ status: 'accepted', responded_at: new Date().toISOString() })
         .eq('id', inviteId);
 
-      // Добавляем юзера в команду
+      // Добавляем нужного игрока в команду
       const { error: memberErr } = await supabaseClient
         .from('team_members')
-        .insert({
-          team_id: inv.team_id,
-          player_id: currentUser.id,
-          role: inv.role || 'substitute',
+        .insert({ team_id: inv.team_id, player_id: joiningPlayerId, role: inv.role || 'substitute' });
+      if (memberErr) { showToast('Ошибка: ' + memberErr.message, 'error'); return; }
+
+      // Уведомление
+      if (isApplication) {
+        await supabaseClient.from('notifications').insert({
+          user_id: joiningPlayerId, kind: 'system', title: '🎉 Тебя приняли в команду',
+          body: `Капитан принял твою заявку`, link: 'team',
         });
-
-      if (memberErr) {
-        showToast('Ошибка: ' + memberErr.message, 'error');
-        return;
+        showToast('✅ Игрок принят в команду', 'success', 4000);
+      } else {
+        await supabaseClient.from('notifications').insert({
+          user_id: inv.inviter_id, kind: 'system', title: '🎉 Игрок принял приглашение',
+          body: `${currentUser.nick} вступил в команду`, link: 'team',
+        });
+        showToast('🎉 Ты принят в команду!', 'success', 4000);
+        if (typeof fireConfetti === 'function') fireConfetti(0.7);
       }
-
-      // Уведомляем капитана команды
-      await supabaseClient.from('notifications').insert({
-        user_id: inv.inviter_id,
-        kind: 'system',
-        title: '🎉 Игрок принял приглашение',
-        body: `${currentUser.nick} вступил в команду`,
-        link: 'team',
-      });
-
-      showToast('🎉 Ты принят в команду!', 'success', 4000);
-      if (typeof fireConfetti === 'function') fireConfetti(0.7);
 
       await refreshUserState();
       await loadInvites();
-
-      setTimeout(() => goPage('team'), 1000);
+      if (!isApplication) setTimeout(() => goPage('team'), 1000);
     } catch (e) {
       console.error('Accept error:', e);
       showToast('Ошибка: ' + String(e), 'error');
