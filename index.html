@@ -617,13 +617,16 @@
     background: var(--bg-2);
     border-radius: 28px;
     box-shadow: 0 30px 80px rgba(232, 38, 42, 0.18);
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    display: flex; flex-direction: column;
     overflow: hidden;
     transform: translateY(20px) scale(0.97);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+  }
+  /* две колонки (форма + preview) только на широком экране */
+  @media (min-width: 961px) {
+    .modal { display: grid; grid-template-columns: 1.4fr 1fr; }
   }
   .modal-backdrop.open .modal {
     transform: translateY(0) scale(1);
@@ -878,8 +881,11 @@
   .preview-panel {
     background: var(--bg-2);
     padding: 28px 24px;
-    display: flex; flex-direction: column;
+    display: none; flex-direction: column;
     gap: 16px; overflow-y: auto;
+  }
+  @media (min-width: 961px) {
+    .preview-panel { display: flex; }
   }
   .preview-panel::-webkit-scrollbar { width: 5px; }
   .preview-panel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 100px; }
