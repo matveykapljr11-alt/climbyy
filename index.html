@@ -3029,6 +3029,26 @@
     padding-bottom: 16px;
     border-bottom: 1px dashed var(--line);
   }
+  .th-roster {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 14px; padding: 10px 12px;
+    background: rgba(0,0,0,0.22); border-radius: 14px;
+    cursor: pointer; position: relative; z-index: 1;
+    transition: background .15s;
+  }
+  .th-roster:active { background: rgba(0,0,0,0.34); }
+  .th-roster-list { display: flex; align-items: center; flex: 1; }
+  .th-roster-ava {
+    width: 36px; height: 36px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px; color: #fff;
+    border: 2px solid var(--bg-2); margin-left: -8px;
+    flex-shrink: 0;
+  }
+  .th-roster-ava:first-child { margin-left: 0; }
+  .th-roster-ava.empty { background: var(--card-3); color: var(--muted); }
+  .th-roster-ava.coach { border-color: var(--lemon); }
+  .th-roster-more { font-size: 12px; font-weight: 800; color: var(--accent); white-space: nowrap; }
   .th-medal {
     width: 42px; height: 42px; border-radius: 12px;
     background: rgba(0,0,0,0.25);
@@ -3387,7 +3407,9 @@
   @media (max-width: 900px) {
     .team-grid { grid-template-columns: 1fr; }
     .th-stats { grid-template-columns: repeat(3, 1fr); }
-    .th-identity { flex-direction: column; align-items: flex-start; }
+    .th-identity { flex-direction: row; align-items: center; gap: 14px; }
+    .th-logo { width: 84px; height: 84px; font-size: 30px; border-radius: 22px; }
+    .th-name { font-size: clamp(22px, 6vw, 30px); }
     .team-bio { flex-direction: column; align-items: flex-start; }
   }
 
@@ -6954,6 +6976,12 @@
             <div class="th-stat-lbl">W-L</div>
           </div>
         </div>
+
+        <!-- МИНИ-РОСТЕР (тап → к составу) -->
+        <div class="th-roster" id="thMiniRoster" onclick="scrollToRoster()" title="состав команды">
+          <div class="th-roster-list" id="thMiniRosterList"></div>
+          <div class="th-roster-more">состав →</div>
+        </div>
       </div>
 
       <!-- BIO -->
@@ -9155,7 +9183,7 @@
       </div>
 
       <div class="form-foot">
-        <a href="#" class="save-draft">↺ сохранить черновик <span style="opacity:.4; font-size:10px; font-weight:700">· build 0614-3</span></a>
+        <a href="#" class="save-draft">↺ сохранить черновик <span style="opacity:.4; font-size:10px; font-weight:700">· b3</span></a>
         <div class="foot-actions">
           <button class="btn btn-ghost btn-big" id="prevBtn" onclick="prevStep()">← Назад</button>
           <button class="btn btn-primary btn-big" id="nextBtn" onclick="nextStep()">Дальше →</button>
@@ -13530,6 +13558,13 @@
   }
 
   // Грузит и рендерит состав открытой сейчас команды
+  function scrollToRoster() {
+    const cards = document.querySelectorAll('[data-page="team"] .match-card');
+    let target = null;
+    cards.forEach(c => { const t = c.querySelector('.mc-title'); if (t && t.textContent.includes('ROSTER')) target = c; });
+    (target || document.getElementById('teamRosterGrid'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   async function loadTeamRoster(teamId) {
     if (!supabaseClient || !teamId) return;
 
@@ -13568,6 +13603,29 @@
     if (sub) {
       const avgKD = members.reduce((s, m) => s + Number(m.profile?.total_kd || 1), 0) / members.length;
       sub.innerHTML = `${members.length}/5 игроков · средний KD <span style="color: var(--mint); font-weight: 800;">${avgKD.toFixed(2)}</span>`;
+    }
+
+    // мини-ростер в шапке команды
+    const miniList = document.getElementById('thMiniRosterList');
+    if (miniList) {
+      const slots = [];
+      const players = members.filter(m => m.role !== 'coach');
+      const coach = members.find(m => m.role === 'coach');
+      players.slice(0, 5).forEach(m => {
+        const p = m.profile || {};
+        const ini = ((p.nick || '??').substring(0, 2)).toUpperCase();
+        const col = p.avatar_color || (m.is_captain ? 'var(--peach)' : 'var(--accent)');
+        slots.push(`<div class="th-roster-ava" style="background:${col}" title="${(p.nick || '').replace(/"/g, '')}">${ini}</div>`);
+      });
+      for (let i = players.length; i < 5; i++) {
+        slots.push(`<div class="th-roster-ava empty">+</div>`);
+      }
+      if (coach) {
+        const cp = coach.profile || {};
+        const cini = ((cp.nick || '??').substring(0, 2)).toUpperCase();
+        slots.push(`<div class="th-roster-ava coach" style="background:${cp.avatar_color || 'var(--lemon)'}" title="тренер">${cini}</div>`);
+      }
+      miniList.innerHTML = slots.join('');
     }
 
     const founderId = window._teamPageData?.created_by;
