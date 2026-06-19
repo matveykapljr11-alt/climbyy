@@ -3413,6 +3413,9 @@
   @media (max-width: 900px) {
     .team-grid { grid-template-columns: 1fr; }
     .th-stats { grid-template-columns: repeat(3, 1fr); }
+    .th-top { flex-direction: column; }
+    .th-actions { width: 100%; }
+    .th-action { flex: 1; justify-content: center; }
     .th-identity { flex-direction: row; align-items: center; gap: 14px; }
     .th-logo { width: 84px; height: 84px; font-size: 30px; border-radius: 22px; }
     .th-name { font-size: clamp(22px, 6vw, 30px); }
@@ -4447,6 +4450,7 @@
   .th-meta-item { display: flex; align-items: baseline; gap: 10px; font-size: 14px; }
   .th-meta-k { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; min-width: 72px; }
   .th-meta-v { font-weight: 800; color: var(--text); }
+  .th-meta-v.th-name { font-size: 15px; line-height: 1.3; letter-spacing: 0; }
   .th-meta-v.th-tag, .th-meta-v.th-created, .th-meta-v.th-ranking { font-family: 'JetBrains Mono', monospace; }
   .th-meta-v.link { color: var(--peach); text-decoration: none; cursor: pointer; border-bottom: 1px dashed var(--peach); }
   .th-meta-v.link:hover { filter: brightness(1.15); }
