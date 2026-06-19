@@ -12446,14 +12446,16 @@
     if (!supabaseClient || !currentUser?.id) { showToast('Сначала войди через Telegram', 'error'); return; }
     try {
       const { error } = await supabaseClient.from('profiles').update({
-        standoff_id: gameId, game_signature: sig, verify_pending: true, is_verified: false,
+        standoff_id: gameId, game_signature: sig, verify_pending: false, is_verified: true,
       }).eq('id', currentUser.id);
       if (error) throw error;
-      if (status) status.innerHTML = `⏳ Заявка на модерации · ID <code>${gameId}</code>. Ждём подтверждения.`;
-      currentUser.standoff_id = gameId; currentUser.game_signature = sig; currentUser.verify_pending = true;
+      currentUser.standoff_id = gameId; currentUser.game_signature = sig;
+      currentUser.verify_pending = false; currentUser.is_verified = true;
+      if (status) status.innerHTML = `✅ Верифицирован · ID <code>${gameId}</code> · ник <b>${sig}</b>`;
       const vForm = document.getElementById('verifyForm');
       if (vForm) vForm.style.display = 'none';
-      showToast('📨 Заявка на верификацию отправлена · ждёт модератора', 'success');
+      document.querySelectorAll('[data-user-verified]').forEach(el => el.style.display = '');
+      showToast('✅ Аккаунт верифицирован!', 'success');
     } catch (e) {
       console.error('saveVerification:', e);
       showToast('Ошибка: ' + (e.message || e), 'error');
