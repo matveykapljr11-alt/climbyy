@@ -5770,9 +5770,9 @@
     .preview-panel { display: none !important; }
     .form-panel {
       width: 100% !important; max-width: 100% !important; min-width: 0 !important;
-      flex: 1 1 auto !important;
+      flex: 0 0 auto !important;
       padding: 56px 16px 16px !important;
-      overflow-x: hidden !important;
+      overflow: visible !important;
     }
     .form-panel::after { display: none !important; }
     .form-body { overflow-x: hidden !important; padding-right: 0 !important; flex: none !important; }
@@ -12822,7 +12822,7 @@
 
     const verifyHint = document.getElementById('verifyHint');
     if (verifyHint) {
-      verifyHint.style.display = (currentFlow === 'team' && currentIdx === 0) ? 'flex' : 'none';
+      verifyHint.style.display = (currentFlow === 'team' && currentIdx === 0 && !currentUser?.is_verified) ? 'flex' : 'none';
     }
 
     document.querySelector('.form-body').scrollTop = 0;
