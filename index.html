@@ -10444,9 +10444,19 @@
     if (currentUser.is_verified) {
       if (vForm) vForm.style.display = 'none';
       if (vDesc) vDesc.innerHTML = `✅ Верифицирован · ID <code>${currentUser.standoff_id || '—'}</code> · ник <b>${currentUser.game_signature || '—'}</b>`;
-    } else if (currentUser.verify_pending) {
-      if (vForm) vForm.style.display = 'none';
-      if (vDesc) vDesc.innerHTML = `⏳ Заявка на модерации · ID <code>${currentUser.standoff_id || '—'}</code>. Ждём подтверждения.`;
+    } else if (currentUser.verify_pending && currentUser.standoff_id && !window._verifyMigrated) {
+      // модерация убрана → старые «ожидающие» заявки апгрейдим в верифицированные сразу
+      window._verifyMigrated = true;
+      if (supabaseClient) {
+        supabaseClient.from('profiles')
+          .update({ is_verified: true, verify_pending: false })
+          .eq('id', currentUser.id)
+          .then(() => {
+            currentUser.is_verified = true; currentUser.verify_pending = false;
+            applyUserData();
+            document.querySelectorAll('[data-user-verified]').forEach(el => el.style.display = '');
+          });
+      }
     } else {
       if (vForm) vForm.style.display = '';
       if (vDesc) vDesc.innerHTML = 'Укажи игровой <b>ID</b> и <b>никнейм</b> из Standoff 2. ⚠️ Игра под другим ID = бан.';
