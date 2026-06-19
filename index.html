@@ -198,7 +198,7 @@
     box-shadow: 0 4px 14px rgba(255, 138, 60, 0.2);
   }
   .btn-primary:hover {
-    background: #8dffdb; transform: translateY(-2px);
+    background: #ff2a36; transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(255, 138, 60, 0.4);
   }
   .btn-ghost { color: var(--text); background: var(--card-2); }
@@ -2480,7 +2480,7 @@
     box-shadow: 0 6px 18px rgba(255, 138, 60, 0.35);
   }
   .rs-btn-primary:hover {
-    background: #8dffdb; transform: translateY(-2px);
+    background: #ff2a36; transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(255, 138, 60, 0.5);
   }
   .rs-btn-primary.done {
@@ -2998,7 +2998,7 @@
     background: var(--mint); color: white;
     box-shadow: 0 6px 18px rgba(255, 138, 60, 0.3);
   }
-  .th-action.primary:hover { background: #8dffdb; transform: translateY(-2px); }
+  .th-action.primary:hover { background: #ff2a36; transform: translateY(-2px); }
   .th-action.ghost { background: var(--card-2); color: var(--text); }
   .th-action.ghost:hover { background: var(--card-3); }
   .th-action.danger {
@@ -4034,7 +4034,7 @@
     background: var(--mint); color: white;
     box-shadow: 0 4px 14px rgba(255, 138, 60, 0.25);
   }
-  .ntc-btn.primary:hover { background: #8dffdb; transform: translateY(-1px); }
+  .ntc-btn.primary:hover { background: #ff2a36; transform: translateY(-1px); }
   .ntc-btn.ghost {
     background: var(--card-3); color: var(--text);
   }
@@ -4624,7 +4624,7 @@
   .iv-btn.accept {
     background: var(--mint); color: white;
   }
-  .iv-btn.accept:hover { background: #8dffdb; transform: translateY(-1px); }
+  .iv-btn.accept:hover { background: #ff2a36; transform: translateY(-1px); }
   .iv-btn.decline {
     background: var(--card-2); color: var(--muted);
   }
@@ -4832,7 +4832,7 @@
   .lm-btn.stay {
     background: var(--mint); color: white;
   }
-  .lm-btn.stay:hover { background: #8dffdb; }
+  .lm-btn.stay:hover { background: #ff2a36; }
   .lm-btn.leave {
     background: var(--card-2); color: var(--hot-pink);
   }
@@ -4973,7 +4973,7 @@
   .notif-row-quick.primary {
     background: var(--mint); color: white;
   }
-  .notif-row-quick.primary:hover { background: #8dffdb; }
+  .notif-row-quick.primary:hover { background: #ff2a36; }
 
   .notif-row-arrow {
     font-size: 18px;
@@ -5743,7 +5743,7 @@
     box-shadow: 0 4px 14px rgba(255, 138, 60, 0.25);
   }
   .sm-btn.submit:hover {
-    background: #8dffdb;
+    background: #ff2a36;
     transform: translateY(-1px);
   }
   .sm-btn.submit.report { background: var(--hot-pink); color: white; box-shadow: 0 4px 14px rgba(196, 24, 32, 0.3); }
@@ -6670,11 +6670,11 @@
               <div class="map-name">PROVINCE</div>
               <div class="map-actor">SH pick</div>
             </div>
-            <div class="map-card" onclick="banMap(this, 'ZONE9', '🏭')">
+            <div class="map-card" onclick="banMapDemo(this, 'ZONE9', '🏭')">
               <div class="map-img">🏭</div>
               <div class="map-name">ZONE9</div>
             </div>
-            <div class="map-card" onclick="banMap(this, 'SAFE', '🌃')">
+            <div class="map-card" onclick="banMapDemo(this, 'SAFE', '🌃')">
               <div class="map-img">🌃</div>
               <div class="map-name">SAFE</div>
             </div>
@@ -8999,7 +8999,6 @@
               <span style="color: var(--muted); font-weight: 600;">Не нужны логины/пароли — твой TG это твой аккаунт.</span>
             </div>
           </div>
-        </div>
 
           <div class="login-foot">
             Регистрация = вход через Telegram выше. Один TG = один игрок, займёт 30 секунд.
@@ -10106,8 +10105,6 @@
     if (!isMyTeam) {
       // прячу секции статы, показываю заглушку
       sectionsToBlur.forEach(el => el.style.display = 'none');
-      // меняю кнопку "Покинуть тиму" на "Подать заявку" (если ты в — - можешь подаваться в чужие)
-      if (heroActionsBtn) heroActionsBtn.dataset.opponent = 'true';
 
       if (!stub) {
         stub = document.createElement('div');
@@ -10820,7 +10817,6 @@
 
   async function banMap(map) {
     if (!smMatch || !currentTeam) return;
-    const bansCount = SM_MAPS.length - document.querySelectorAll('#smMaps button:not([disabled])').length;
     try {
       const { data: bans } = await supabaseClient
         .from('match_banpick').select('step, map').eq('match_id', smMatch.id).order('step');
@@ -10921,53 +10917,6 @@
     } catch (e) {
       console.error('submitCheckin:', e);
       showToast('Ошибка: ' + (e.message || e), 'error');
-    }
-  }
-
-  // Распознавание счёта со скриншота через Claude Vision
-  async function recognizeScore() {
-    const files = document.getElementById('smFiles').files;
-    const img = [...files].find(f => f.type.startsWith('image'));
-    if (!img) { showToast('Сначала прикрепи скрин счёта', 'error'); return; }
-
-    const btn = document.getElementById('smOcrBtn');
-    btn.disabled = true; btn.textContent = '⏳ Распознаём...';
-    try {
-      // даунскейл до 1400px чтобы влезть в лимиты
-      const base64 = await new Promise((resolve, reject) => {
-        const url = URL.createObjectURL(img);
-        const im = new Image();
-        im.onload = () => {
-          const scale = Math.min(1, 1400 / Math.max(im.width, im.height));
-          const c = document.createElement('canvas');
-          c.width = Math.round(im.width * scale);
-          c.height = Math.round(im.height * scale);
-          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-          URL.revokeObjectURL(url);
-          resolve(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
-        };
-        im.onerror = reject;
-        im.src = url;
-      });
-
-      const r = await fetch('/api/analyze-score', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, media_type: 'image/jpeg' }),
-      });
-      const data = await r.json();
-      if (data.error) throw new Error(data.error === 'not_found' ? 'Счёт на скрине не найден' : data.error);
-
-      document.getElementById('smScoreA').value = data.left;
-      document.getElementById('smScoreB').value = data.right;
-      const names = data.team_left || data.team_right
-        ? ` (${data.team_left || '?'} vs ${data.team_right || '?'})` : '';
-      showToast(`🤖 Считано: ${data.left}:${data.right}${names}. Проверь и поменяй ⇄ если команды наоборот`, 'success', 7000);
-    } catch (e) {
-      console.error('recognizeScore:', e);
-      showToast('Не получилось: ' + (e.message || e), 'error');
-    } finally {
-      btn.disabled = false; btn.textContent = '🤖 Считать счёт со скрина';
     }
   }
 
@@ -11663,7 +11612,7 @@
   }
 
   // Бан карты в пик/бан фазе
-  function banMap(card, name, emoji) {
+  function banMapDemo(card, name, emoji) {
     if (card.classList.contains('banned') || card.classList.contains('picked')) return;
     card.classList.add('banned');
     // добавляем подпись "VR ban"
@@ -12549,9 +12498,6 @@
     }
     if (name === 'playoff' && typeof loadPlayoff === 'function') {
       loadPlayoff();
-    }
-    if (name === 'players' && typeof loadPlayers === 'function') {
-      loadPlayers();
     }
     if (name === 'team' && typeof loadTeamRoster === 'function') {
       // Если открыли через openOpponentTeam — она сама вызовет loadTeamRoster
