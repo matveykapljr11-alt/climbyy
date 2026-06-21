@@ -785,6 +785,7 @@
   .tag-row .field-group { flex: 1; margin-bottom: 0; }
 
   .roster { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  @media (max-width: 960px) { .roster { grid-template-columns: 1fr; } }
   .roster-divider { grid-column: 1 / -1; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin: 6px 0 2px; opacity: 0.8; }
   .role-slot {
     background: var(--card-2);
@@ -7027,14 +7028,14 @@
             </div>
             <!-- Кнопка пригласить — видна только если это моя команда и я капитан -->
             <div id="captainInvitePanel" style="display: none; margin-top: 14px; padding: 14px; background: var(--card-2); border-radius: 12px; border: 1px dashed var(--line);">
-              <div style="font-size: 13px; font-weight: 800; margin-bottom: 10px;">⭐ Пригласить игрока</div>
+              <div style="font-size: 13px; font-weight: 800; margin-bottom: 10px;">⭐ Пригласить игрока по ID</div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <input id="invSearchInput" class="input" placeholder="Введи ник игрока..." style="flex: 1; min-width: 180px;">
+                <input id="invSearchInput" class="input" placeholder="ID игрока из Standoff 2 (напр. 121788704)" inputmode="numeric" style="flex: 1; min-width: 180px;">
                 <select id="invRoleSelect" class="input" style="max-width: 160px;">
                   <option value="player">Основа</option>
                   <option value="substitute">Запас</option>
                 </select>
-                <button class="btn btn-primary" onclick="searchAndInvite()" style="white-space: nowrap;">Найти и позвать →</button>
+                <button class="btn btn-primary" onclick="lookupById()" style="white-space: nowrap;">Найти →</button>
               </div>
               <div id="invSearchResults" style="margin-top: 10px;"></div>
             </div>
@@ -9138,20 +9139,20 @@
                 <div class="role-slot-info"><div class="role-slot-name placeholder">свободно</div></div>
                 <div class="role-action">→</div>
               </div>
-              <div class="roster-divider">резерв и тренер · по желанию</div>
-              <div class="role-slot">
-                <div class="role-slot-avatar">+</div>
-                <div class="role-slot-info"><div class="role-position" style="color:var(--muted)">Резерв</div><div class="role-slot-name placeholder">свободно</div></div>
-                <div class="role-action">→</div>
-              </div>
-              <div class="role-slot">
-                <div class="role-slot-avatar">+</div>
-                <div class="role-slot-info"><div class="role-position" style="color:var(--muted)">Резерв</div><div class="role-slot-name placeholder">свободно</div></div>
-                <div class="role-action">→</div>
-              </div>
+              <div class="roster-divider">тренер и резерв · по желанию</div>
               <div class="role-slot">
                 <div class="role-slot-avatar">🎓</div>
                 <div class="role-slot-info"><div class="role-position" style="color:var(--muted)">Тренер</div><div class="role-slot-name placeholder">свободно</div></div>
+                <div class="role-action">→</div>
+              </div>
+              <div class="role-slot">
+                <div class="role-slot-avatar">+</div>
+                <div class="role-slot-info"><div class="role-position" style="color:var(--muted)">Резерв</div><div class="role-slot-name placeholder">свободно</div></div>
+                <div class="role-action">→</div>
+              </div>
+              <div class="role-slot">
+                <div class="role-slot-avatar">+</div>
+                <div class="role-slot-info"><div class="role-position" style="color:var(--muted)">Резерв</div><div class="role-slot-name placeholder">свободно</div></div>
                 <div class="role-action">→</div>
               </div>
             </div>
@@ -10384,21 +10385,33 @@
         .from('profiles')
         .update({ last_seen_at: new Date().toISOString() })
         .eq('id', user.id)
-        .then(() => {});
+        .then(({ error }) => { if (error) console.warn('last_seen update failed:', error.message); },
+              (e) => console.warn('last_seen update failed:', e));
 
-      // Загружаем команду где юзер активный member
-      const { data: membership } = await supabaseClient
+      // Загружаем команду где юзер активный member (без embed-join — надёжнее)
+      const { data: memberships, error: memErr } = await supabaseClient
         .from('team_members')
-        .select(`
-          team_id, role, is_captain,
-          teams (*)
-        `)
+        .select('team_id, role, is_captain')
         .eq('player_id', user.id)
         .is('left_at', null)
-        .maybeSingle();
+        .order('joined_at', { ascending: true })
+        .limit(1);
+      if (memErr) console.warn('membership query error:', memErr);
+      const membership = (memberships && memberships[0]) || null;
 
-      if (membership?.teams) {
-        currentTeam = membership.teams;
+      let teamRow = null;
+      if (membership?.team_id) {
+        const { data: t, error: tErr } = await supabaseClient
+          .from('teams')
+          .select('*')
+          .eq('id', membership.team_id)
+          .maybeSingle();
+        if (tErr) console.warn('team fetch error:', tErr);
+        teamRow = t || null;
+      }
+
+      if (membership && teamRow) {
+        currentTeam = teamRow;
         currentTeam.my_role = membership.role;
         currentTeam.my_is_captain = membership.is_captain;
         userHasTeam = true;
@@ -10777,6 +10790,10 @@
   }
 
   function renderSeasonMatch(m, bans) {
+    if (!m) return;
+    // защита от NULL-связей (teams_a/teams_b могут не подгрузиться)
+    m.teams_a = m.teams_a || { name: '—', tag: '—' };
+    m.teams_b = m.teams_b || { name: '—', tag: '—' };
     const fmt = d => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
     renderSmVsPanel(m);
     renderSmRosters(m);
@@ -10840,8 +10857,8 @@
       picked.style.display = '';
       if (inMatch && iAmCaptain) {
         const sel = document.getElementById('smHost');
-        sel.innerHTML = smMembers.map(x =>
-          `<option value="${x.profiles.id}">${x.profiles.nick} (${x.team_id === m.team_a_id ? m.teams_a.tag : m.teams_b.tag})</option>`
+        sel.innerHTML = smMembers.filter(x => x.profiles?.id).map(x =>
+          `<option value="${x.profiles.id}">${x.profiles.nick || '—'} (${x.team_id === m.team_a_id ? m.teams_a.tag : m.teams_b.tag})</option>`
         ).join('');
         sched.style.display = '';
         statusLine.textContent = 'Выберите время и хостера, затем анонсируйте.';
@@ -10902,14 +10919,14 @@
 
   async function announceMatch() {
     if (!smMatch || !currentTeam?.my_is_captain) return;
-    const time = document.getElementById('smTime').value;
-    const hostId = document.getElementById('smHost').value;
+    const time = document.getElementById('smTime')?.value;
+    const hostId = document.getElementById('smHost')?.value;
     if (!time) { showToast('Выбери время матча', 'error'); return; }
 
     try {
       const { error } = await supabaseClient.from('matches').update({
         scheduled_at: new Date(time).toISOString(),
-        host_player_id: hostId,
+        host_player_id: hostId || null,
         status: 'scheduled'
       }).eq('id', smMatch.id);
       if (error) throw error;
@@ -10917,12 +10934,12 @@
       // нотификации всем игрокам обеих команд
       const host = smMembers.find(x => x.profiles?.id === hostId);
       const fmt = new Date(time).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-      const body = `${smMatch.teams_a.name} vs ${smMatch.teams_b.name} · ${smMatch.map} · ${fmt} · хостер ${host?.profiles?.nick || '—'}`;
-      const notifs = smMembers.map(x => ({
+      const body = `${smMatch.teams_a?.name || '—'} vs ${smMatch.teams_b?.name || '—'} · ${smMatch.map} · ${fmt} · хостер ${host?.profiles?.nick || '—'}`;
+      const notifs = smMembers.filter(x => x.profiles?.id).map(x => ({
         user_id: x.profiles.id, kind: 'match_announce',
         title: '📣 Матч назначен!', body
       }));
-      await supabaseClient.from('notifications').insert(notifs);
+      if (notifs.length) await supabaseClient.from('notifications').insert(notifs);
 
       showToast('📣 Матч анонсирован!', 'success');
       refreshSeasonMatch(smMatch.id);
@@ -10980,20 +10997,21 @@
   function swapScores() {
     const a = document.getElementById('smScoreA');
     const b = document.getElementById('smScoreB');
+    if (!a || !b) return;
     const t = a.value; a.value = b.value; b.value = t;
   }
 
   async function submitResult() {
     if (!smMatch || !currentTeam?.my_is_captain) return;
-    const a = parseInt(document.getElementById('smScoreA').value);
-    const b = parseInt(document.getElementById('smScoreB').value);
+    const a = parseInt(document.getElementById('smScoreA')?.value);
+    const b = parseInt(document.getElementById('smScoreB')?.value);
     if (isNaN(a) || isNaN(b) || a === b) { showToast('Введи корректный счёт (не равный)', 'error'); return; }
 
     const btn = document.getElementById('smSubmitBtn');
-    btn.disabled = true; btn.textContent = '⏳ Отправляем...';
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Отправляем...'; }
     try {
       // загрузка файлов в storage
-      const files = document.getElementById('smFiles').files;
+      const files = document.getElementById('smFiles')?.files || [];
       for (const f of files) {
         const path = `${smMatch.id}/${currentTeam.id}/${Date.now()}_${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
         const { error: upErr } = await supabaseClient.storage.from('evidence').upload(path, f);
@@ -11018,7 +11036,7 @@
       console.error('submitResult:', e);
       showToast('Ошибка: ' + (e.message || e), 'error');
     } finally {
-      btn.disabled = false; btn.textContent = '📤 Отправить результат';
+      if (btn) { btn.disabled = false; btn.textContent = '📤 Отправить результат'; }
     }
   }
 
@@ -11521,14 +11539,14 @@
     _supFiles[type] = files;
     const list = document.getElementById('supFilesList-' + type);
     if (list) list.innerHTML = files.map((f, i) =>
-      `<div class="sup-file-item">${f.type.startsWith('video') ? '🎬' : '🖼'} ${f.name} <span class="x" onclick="event.preventDefault();event.stopPropagation();supFileRemove('${type}',${i})">✕</span></div>`
+      `<div class="sup-file-item">${f.type.startsWith('video') ? '🎬' : '🖼'} ${escHtml(f.name)} <span class="x" onclick="event.preventDefault();event.stopPropagation();supFileRemove('${type}',${i})">✕</span></div>`
     ).join('');
   }
   function supFileRemove(type, idx) {
     _supFiles[type].splice(idx, 1);
     const list = document.getElementById('supFilesList-' + type);
     if (list) list.innerHTML = _supFiles[type].map((f, i) =>
-      `<div class="sup-file-item">${f.type.startsWith('video') ? '🎬' : '🖼'} ${f.name} <span class="x" onclick="event.preventDefault();event.stopPropagation();supFileRemove('${type}',${i})">✕</span></div>`
+      `<div class="sup-file-item">${f.type.startsWith('video') ? '🎬' : '🖼'} ${escHtml(f.name)} <span class="x" onclick="event.preventDefault();event.stopPropagation();supFileRemove('${type}',${i})">✕</span></div>`
     ).join('');
   }
   async function _uploadSupFiles(type) {
@@ -11901,6 +11919,20 @@
     }
   }
 
+  // Экранирование для безопасной вставки в HTML-текст и в JS-строку внутри onclick
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function jsAttr(s) {
+    return String(s == null ? '' : s)
+      .replace(/\\/g, '\\\\').replace(/&/g, '&amp;')
+      .replace(/'/g, "\\'").replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/[\r\n]+/g, ' ');
+  }
+
   function openMessageModal(nick) {
     if (nick) document.getElementById('messageTo').textContent = nick;
     messageModal.classList.add('open');
@@ -12104,7 +12136,7 @@
 
     // кнопка "Написать"
     const msgBtn = page.querySelector('.ph-actions .primary');
-    if (msgBtn) msgBtn.setAttribute('onclick', `openMessageModal('${nick}')`);
+    if (msgBtn) msgBtn.setAttribute('onclick', `openMessageModal('${jsAttr(nick)}')`);
   }
 
   // ============================================
@@ -13440,7 +13472,7 @@
         <div class="lb-name">
           <b>${team.name}</b>
           <div class="lb-stat" style="font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px;">
-            ${team.wins}-${team.losses} · WR ${Math.round(team.wr * 100)}%
+            ${team.wins || 0}-${team.losses || 0} · WR ${((team.wins || 0) + (team.losses || 0)) > 0 ? Math.round((team.wins || 0) / ((team.wins || 0) + (team.losses || 0)) * 100) + '%' : '—'}
           </div>
         </div>
         <div class="lb-points">${team.points}</div>
@@ -13763,6 +13795,72 @@
   }
 
   // Поиск игрока по нику и отправка приглашения
+  // Поиск игрока по ID (standoff_id) → карточка подтверждения
+  async function lookupById() {
+    if (!supabaseClient || !currentUser || !currentTeam) { showToast('Ошибка состояния', 'error'); return; }
+    if (!currentTeam.my_is_captain) { showToast('Только капитан может приглашать', 'error'); return; }
+
+    const input = document.getElementById('invSearchInput');
+    const results = document.getElementById('invSearchResults');
+    const id = (input?.value || '').trim();
+    if (id.length < 3) { showToast('Введи ID игрока', 'error'); return; }
+
+    results.innerHTML = '<div style="font-size:12px; color:var(--muted); padding:8px;">Ищем по ID…</div>';
+    try {
+      const { data: players, error } = await supabaseClient
+        .from('profiles')
+        .select('id, nick, standoff_id, avatar_color, total_kd, total_kills, total_wr, current_elo, division_history, is_verified')
+        .eq('standoff_id', id)
+        .neq('id', currentUser.id)
+        .limit(1);
+
+      if (error) { results.innerHTML = '<div style="font-size:12px; color:var(--hot-pink);">Ошибка поиска</div>'; return; }
+      if (!players || !players.length) {
+        results.innerHTML = `<div style="font-size:12px; color:var(--muted); padding:12px; text-align:center;">😔 Игрок с ID <b>${id}</b> не найден.<br>Он должен зарегаться на сайте и указать этот ID в профиле.</div>`;
+        return;
+      }
+
+      const p = players[0];
+      const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
+      const color = p.avatar_color || 'var(--accent)';
+      let league = 'D0 · BETA';
+      try {
+        const dh = Array.isArray(p.division_history) ? p.division_history : [];
+        if (dh.length) {
+          const last = dh[dh.length - 1];
+          league = (last.division || 'D0') + (last.season ? ' · сезон ' + last.season : '');
+        }
+      } catch (_) {}
+      const role = document.getElementById('invRoleSelect')?.value || 'player';
+      const nickEsc = jsAttr(p.nick);
+
+      results.innerHTML = `
+        <div style="padding:14px; background:var(--card-3); border-radius:12px; border:1px solid var(--line);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:${color}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px;">${initials}</div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:15px; font-weight:800;">${p.nick || '—'} ${p.is_verified ? '★' : ''}</div>
+              <div style="font-size:11px; color:var(--muted); font-weight:700;">ID ${p.standoff_id || '—'}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; font-size:11px; font-weight:700; color:var(--muted);">
+            <span style="padding:5px 9px; background:var(--card-2); border-radius:8px;">🏆 ${league}</span>
+            <span style="padding:5px 9px; background:var(--card-2); border-radius:8px;">ELO ${p.current_elo ?? '—'}</span>
+            <span style="padding:5px 9px; background:var(--card-2); border-radius:8px;">KD ${Number(p.total_kd || 0).toFixed(2)}</span>
+            <span style="padding:5px 9px; background:var(--card-2); border-radius:8px;">${p.total_kills || 0} kills</span>
+          </div>
+          <div style="font-size:13px; font-weight:800; margin-bottom:10px;">Это правильный человек?</div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="sendInvite('${p.id}', '${nickEsc}', '${role}')">✅ Да, позвать</button>
+            <button class="btn" style="flex:1; justify-content:center;" onclick="document.getElementById('invSearchResults').innerHTML=''; document.getElementById('invSearchInput').value='';">✕ Нет</button>
+          </div>
+        </div>`;
+    } catch (e) {
+      console.error('lookupById error:', e);
+      results.innerHTML = '<div style="font-size:12px; color:var(--hot-pink);">Ошибка</div>';
+    }
+  }
+
   async function searchAndInvite() {
     if (!supabaseClient || !currentUser || !currentTeam) {
       showToast('Ошибка состояния', 'error');
@@ -13833,15 +13931,16 @@
 
     try {
       // Проверяем не в команде ли он уже
-      const { data: existing } = await supabaseClient
+      const { data: existingArr, error: existErr } = await supabaseClient
         .from('team_members')
-        .select('team_id, teams (name)')
+        .select('team_id')
         .eq('player_id', playerId)
         .is('left_at', null)
-        .maybeSingle();
+        .limit(1);
 
-      if (existing) {
-        showToast(playerNick + ' уже в команде ' + (existing.teams?.name || ''), 'error');
+      if (existErr) { showToast('Ошибка проверки: ' + existErr.message, 'error'); return; }
+      if (existingArr && existingArr.length) {
+        showToast(playerNick + ' уже в команде', 'error');
         return;
       }
 
@@ -14504,12 +14603,13 @@
         showToast('Ты уже в команде — сначала покинь её', 'error');
         return;
       }
-      // Заявитель не должен уже состоять где-то
+      // Заявитель не должен уже состоять где-то (повторная проверка на момент принятия — защита от гонки)
       if (isApplication) {
-        const { data: already } = await supabaseClient
+        const { data: alreadyArr, error: alreadyErr } = await supabaseClient
           .from('team_members')
-          .select('id').eq('player_id', joiningPlayerId).is('left_at', null).maybeSingle();
-        if (already) { showToast('Игрок уже в команде', 'error'); 
+          .select('id').eq('player_id', joiningPlayerId).is('left_at', null).limit(1);
+        if (alreadyErr) { showToast('Ошибка проверки: ' + alreadyErr.message, 'error'); return; }
+        if (alreadyArr && alreadyArr.length) { showToast('Игрок уже в команде', 'error');
           await supabaseClient.from('team_invites').update({ status: 'declined', responded_at: new Date().toISOString() }).eq('id', inviteId);
           await loadInvites(); return; }
       }
@@ -14518,6 +14618,13 @@
       await supabaseClient.from('team_invites')
         .update({ status: 'accepted', responded_at: new Date().toISOString() })
         .eq('id', inviteId);
+
+      // финальная проверка членства перед вставкой (анти-гонка, оба пути)
+      const { data: memArr, error: memChkErr } = await supabaseClient
+        .from('team_members')
+        .select('id').eq('player_id', joiningPlayerId).is('left_at', null).limit(1);
+      if (memChkErr) { showToast('Ошибка проверки: ' + memChkErr.message, 'error'); return; }
+      if (memArr && memArr.length) { showToast('Игрок уже в команде', 'error'); await loadInvites(); return; }
 
       // Добавляем нужного игрока в команду
       const { error: memberErr } = await supabaseClient
