@@ -5879,6 +5879,17 @@
   }
 
   // Запускаем сразу при загрузке
+  // Захват ?join=CODE в localStorage (переживёт цепочку логина)
+  try {
+    const _jp = new URLSearchParams(window.location.search);
+    const _jc = _jp.get('join');
+    if (_jc) {
+      localStorage.setItem('pendingJoinCode', _jc);
+      _jp.delete('join');
+      const _q = _jp.toString();
+      window.history.replaceState({}, '', window.location.origin + window.location.pathname + (_q ? '?' + _q : ''));
+    }
+  } catch (_) {}
   if (supabaseClient) {
     handleTgLoginFromUrl();
   }
@@ -7036,6 +7047,10 @@
                   <option value="substitute">Запас</option>
                 </select>
                 <button class="btn btn-primary" onclick="lookupById()" style="white-space: nowrap;">Найти →</button>
+              </div>
+              <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button class="btn" onclick="copyInviteLink()" style="font-size: 12px;">🔗 Скопировать ссылку-приглашение</button>
+                <span style="font-size: 11px; color: var(--muted); font-weight: 600;">кинь её игроку — вступит по ней</span>
               </div>
               <div id="invSearchResults" style="margin-top: 10px;"></div>
             </div>
@@ -10434,6 +10449,9 @@
       }
 
       console.log('✅ Юзер:', currentUser.nick, '| Команда:', currentTeam?.name || 'нет');
+
+      // отложенное вступление по ссылке (если открывали ?join=CODE)
+      processPendingJoin();
     } catch (e) {
       console.error('refreshUserState error:', e);
     }
@@ -13925,6 +13943,124 @@
     }
   }
 
+  // ============================================
+  // ВСТУПЛЕНИЕ ПО ССЫЛКЕ (как в Киберхиро)
+  // ============================================
+  function genInviteCode() {
+    return Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
+  }
+
+  // Захват ?join=CODE при загрузке → в localStorage (переживёт цепочку логина)
+  function captureJoinFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('join');
+      if (code) {
+        localStorage.setItem('pendingJoinCode', code);
+        params.delete('join');
+        const q = params.toString();
+        window.history.replaceState({}, '', window.location.origin + window.location.pathname + (q ? '?' + q : ''));
+      }
+    } catch (_) {}
+  }
+
+  // Капитан: получить/создать код и скопировать ссылку
+  async function copyInviteLink() {
+    if (!supabaseClient || !currentTeam) { showToast('Ошибка состояния', 'error'); return; }
+    if (!currentTeam.my_is_captain) { showToast('Только капитан может звать', 'error'); return; }
+    try {
+      let code = currentTeam.invite_code;
+      if (!code) {
+        code = genInviteCode();
+        const { error } = await supabaseClient.from('teams').update({ invite_code: code }).eq('id', currentTeam.id);
+        if (error) { showToast('Прогони SQL 41 (invite_code). ' + error.message, 'error', 5000); return; }
+        currentTeam.invite_code = code;
+      }
+      const link = `${window.location.origin}${window.location.pathname}?join=${code}`;
+      try { await navigator.clipboard.writeText(link); showToast('🔗 Ссылка скопирована! Кидай её игрокам', 'success', 4000); }
+      catch (_) { window.prompt('Скопируй ссылку-приглашение:', link); }
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
+  }
+
+  // После авторизации: если есть отложенный join — обрабатываем
+  async function processPendingJoin() {
+    if (window._joinProcessing) return;
+    let code = null;
+    try { code = localStorage.getItem('pendingJoinCode'); } catch (_) {}
+    if (!code || !supabaseClient || !currentUser) return;
+    window._joinProcessing = true;
+    try {
+      const { data: teamsArr, error } = await supabaseClient
+        .from('teams')
+        .select('id, name, tag, logo_initials, logo_color, logo_url, invite_code')
+        .eq('invite_code', code).limit(1);
+      if (error) { console.warn('join lookup error:', error); window._joinProcessing = false; return; }
+      const team = teamsArr && teamsArr[0];
+      if (!team) {
+        showToast('Ссылка-приглашение недействительна', 'error');
+        localStorage.removeItem('pendingJoinCode'); window._joinProcessing = false; return;
+      }
+      if (currentTeam && currentTeam.id === team.id) { localStorage.removeItem('pendingJoinCode'); window._joinProcessing = false; return; }
+      if (userHasTeam) {
+        showToast('Ты уже в команде — сначала покинь её, чтобы вступить в ' + team.name, 'error', 5000);
+        localStorage.removeItem('pendingJoinCode'); window._joinProcessing = false; return;
+      }
+      showJoinConfirm(team);
+    } catch (e) { console.warn('processPendingJoin:', e); window._joinProcessing = false; }
+  }
+
+  function cleanupJoin() {
+    try { localStorage.removeItem('pendingJoinCode'); } catch (_) {}
+    window._joinProcessing = false;
+    const ov = document.getElementById('joinConfirmOverlay');
+    if (ov) ov.remove();
+  }
+
+  function showJoinConfirm(team) {
+    const ex = document.getElementById('joinConfirmOverlay');
+    if (ex) ex.remove();
+    const initials = team.logo_initials || (team.tag || '??').substring(0, 2).toUpperCase();
+    const logoInner = team.logo_url ? `<img src="${team.logo_url}" style="width:100%;height:100%;object-fit:cover">` : initials;
+    const ov = document.createElement('div');
+    ov.id = 'joinConfirmOverlay';
+    ov.style.cssText = 'position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:20px;';
+    ov.innerHTML = `
+      <div style="background:var(--card); border:1px solid var(--line); border-radius:20px; padding:24px; max-width:360px; width:100%; text-align:center;">
+        <div style="width:72px; height:72px; border-radius:20px; margin:0 auto 14px; overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:26px; color:#fff; background:${team.logo_color || 'var(--accent)'}">${logoInner}</div>
+        <div style="font-size:13px; color:var(--muted); font-weight:700; margin-bottom:4px;">Приглашение в команду</div>
+        <div style="font-size:22px; font-weight:900; margin-bottom:2px;">${escHtml(team.name)}</div>
+        <div style="font-size:13px; color:var(--muted); font-weight:700; margin-bottom:20px;">[${escHtml(team.tag)}]</div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" style="flex:1; justify-content:center;" id="joinNoBtn">Не сейчас</button>
+          <button class="btn btn-primary" style="flex:1; justify-content:center;" id="joinYesBtn">✅ Вступить</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    document.getElementById('joinYesBtn').onclick = () => joinTeamByLink(team);
+    document.getElementById('joinNoBtn').onclick = () => cleanupJoin();
+  }
+
+  async function joinTeamByLink(team) {
+    if (!supabaseClient || !currentUser) return;
+    if (!requireTelegram('вступить в команду')) return;
+    try {
+      const { data: memArr, error: memErr } = await supabaseClient
+        .from('team_members').select('id').eq('player_id', currentUser.id).is('left_at', null).limit(1);
+      if (memErr) { showToast('Ошибка проверки: ' + memErr.message, 'error'); return; }
+      if (memArr && memArr.length) { showToast('Ты уже в команде', 'error'); cleanupJoin(); return; }
+
+      const { error } = await supabaseClient.from('team_members')
+        .insert({ team_id: team.id, player_id: currentUser.id, role: 'player' });
+      if (error) { showToast('Ошибка вступления: ' + error.message, 'error'); return; }
+
+      showToast('🎉 Ты вступил в команду ' + team.name + '!', 'success', 4000);
+      if (typeof fireConfetti === 'function') fireConfetti(0.7);
+      cleanupJoin();
+      await refreshUserState();
+      setTimeout(() => goPage('team'), 800);
+    } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
+  }
+
   // Отправка приглашения игроку
   async function sendInvite(playerId, playerNick, role) {
     if (!supabaseClient || !currentUser || !currentTeam) return;
@@ -14694,6 +14830,12 @@
     loadLeaderboardHome();
     // Проверяем есть ли уже залогиненный юзер
     await refreshUserState();
+    // если пришли по ссылке-приглашению, но не залогинены — подскажем войти
+    try {
+      if (!currentUser && localStorage.getItem('pendingJoinCode')) {
+        showToast('Войди через Telegram, чтобы вступить в команду 👇', 'default', 6000);
+      }
+    } catch (_) {}
     // Подписываемся на изменения авторизации
     if (supabaseClient) {
       supabaseClient.auth.onAuthStateChange((event, session) => {
