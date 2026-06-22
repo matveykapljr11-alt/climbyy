@@ -260,6 +260,7 @@ select.big{cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns
 .asset-disp .price-ton{font-family:var(--font-d); font-weight:700; font-size:clamp(38px,12vw,60px); color:#fff; letter-spacing:-2px; line-height:1; margin-top:22px; position:relative; z-index:1}
 .asset-disp .price-ton .u{font-size:.32em; color:rgba(255,255,255,.85); margin-left:8px; letter-spacing:0; font-weight:600}
 .price-fiat{display:flex; align-items:center; gap:10px; margin-top:12px; position:relative; z-index:1}
+.price-stars{margin-top:6px; font-family:var(--font-m); font-weight:700; font-size:12.5px; color:var(--txt-3); position:relative; z-index:1}
 .price-range{position:relative;z-index:1;font-size:12px;font-weight:600;color:rgba(255,255,255,.82);margin-top:6px}
 .act.portf{color:var(--ton)}
 .price-fiat .v{font-family:var(--font-m); font-size:15px; color:rgba(255,255,255,.95); font-weight:700}
@@ -1304,6 +1305,7 @@ header{border-bottom:0;background:none}
 ======================================================================== */
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 const RATE = { usd: 1.76, eur: 1.63 };           // TON -> fiat (calibrated May 2026; refreshed at runtime)
+const STAR_USD = 0.013;                          // ~USD value of one Telegram Star (reference)
 const FX_LABEL = { usd:'$', eur:'€' };
 // Converter currencies (value bridged through TON). flag + symbol + name.
 const CURRENCIES = [
@@ -2290,6 +2292,7 @@ function valueFor(cat, prefix){
 }
 function fmtTON(n){ n=Math.round(n); return n>=1000?n.toLocaleString('en-US'):String(n); }
 function fmtFiat(ton){ const v=Math.round(ton*RATE[S.currency]); return FX_LABEL[S.currency]+v.toLocaleString('en-US'); }
+function fmtStars(ton){ const n=Math.round(ton*RATE.usd/STAR_USD); return n.toLocaleString('en-US').replace(/,/g,' '); }
 
 let lastResult=null;
 function doEvaluate(){
@@ -2344,7 +2347,7 @@ function applyGiftCross(r, d, hasTrait){
   const sp=estSpread(r);
   const pr=document.getElementById('prange'); if(pr) pr.textContent=t('estLabel')+': '+fmtTON(Math.round(frag*(1-sp)))+'–'+fmtTON(Math.round(frag*(1+sp)))+' TON';
   // bump confidence: an exact live listing is a fact -> show it as high
-  const cv=document.getElementById('confVal'); if(cv){ const c=confOf(r); cv.textContent=t(c.k); cv.style.color=c.c; } const lv=document.getElementById('liqVal'); if(lv){ const l=liqOf(r); lv.textContent=t(l.k); lv.style.color=l.c; }
+  const cv=document.getElementById('confVal'); if(cv){ const c=confOf(r); cv.textContent=t(c.k); cv.style.color=c.c; } const lv=document.getElementById('liqVal'); if(lv){ const l=liqOf(r); lv.textContent=t(l.k); lv.style.color=l.c; } const sv=document.getElementById('starsVal'); if(sv) sv.textContent='\u2248 '+fmtStars(r.priceTON)+' \u2b50';
   // discreet buy CTA -> collection page (not the exact lot), neutral label, no ref
   const box=document.getElementById('xmkt');
   if(box && d.slug){
@@ -2475,6 +2478,7 @@ function resultCardHTML(r){
       (r.cat==='gifts'?'<div id="xmkt"></div>':'')+
       '<div class="price-fiat"><span class="v" id="fiatVal">'+fmtFiat(r.priceTON)+'</span>'+
         '<span class="cur-toggle"><button class="'+(S.currency==='usd'?'on':'')+'" onclick="setCurrency(\'usd\')">USD</button><button class="'+(S.currency==='eur'?'on':'')+'" onclick="setCurrency(\'eur\')">EUR</button></span></div>'+
+      ((r.cat==='gifts'||r.cat==='stickers')?'<div class="price-stars" id="starsVal">\u2248 '+fmtStars(r.priceTON)+' \u2b50</div>':'')+
       '<div class="cert-foot">Monet · '+t('apprHouse')+' · '+apprDate()+'</div>'+
     '</div>'+
     '<div class="rbody">'+
