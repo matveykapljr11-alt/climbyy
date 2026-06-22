@@ -961,6 +961,14 @@ header{border-bottom:0;background:none}
 .evp-chip{border:1px solid var(--line-2);background:var(--surface-2);color:var(--txt);font-family:var(--font-m);font-weight:700;font-size:13px;padding:9px 14px;border-radius:999px;cursor:pointer;transition:.18s}
 .evp-chip:hover{border-color:var(--ton-soft);color:var(--ton);box-shadow:0 8px 18px -10px rgba(31,77,61,.4);transform:translateY(-1px)}
 .evp-foot{margin-top:6px;font-family:var(--font-b);font-weight:800;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.why-line{margin:14px 2px 2px;font-size:13.5px;line-height:1.55;color:var(--txt-2)}
+.why-line .wl{font-weight:800;color:var(--txt)}
+.cert-specs{margin:2px 0 0;border-top:1px solid var(--hair-gold);border-bottom:1px solid var(--hair-gold)}
+.cs-row{display:flex;align-items:center;justify-content:space-between;padding:10px 2px;border-bottom:1px solid var(--line)}
+.cs-row:last-child{border-bottom:0}
+.cs-l{font-family:var(--font-b);font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-3)}
+.cs-v{font-family:var(--font-d);font-weight:700;font-size:15.5px;color:var(--txt)}
+.evp-pulse{margin-top:2px;font-family:var(--font-m);font-size:11.5px;font-weight:700;color:var(--txt-3)}
 @media (min-width:1340px){
   body[data-view="evaluate"] .wrap{ max-width:980px; margin-left:max(332px, calc((100% - 980px)/2)); margin-right:24px }
   #view-evaluate .hero-card{ max-width:600px }
@@ -1376,7 +1384,7 @@ function save(){ lsSet('monet', JSON.stringify(S)); }
 const I18N = {
 ru:{
   tagline:'оценочный дом · TON', heroSub:'Оценка по реальным сделкам · TON',
-  heroPitch:'Оценка · Рынок · Капитал · TON', confLabel:'Уверенность', confHigh:'высокая', confMid:'средняя', confLow:'низкая',
+  heroPitch:'Оценка · Рынок · Капитал · TON', confLabel:'Уверенность', confHigh:'высокая', confMid:'средняя', confLow:'низкая', estLabel:'Ориентир', liqLabel:'Ликвидность', liqLow:'низкая', liqMid:'средняя', liqHigh:'высокая', whyLabel:'Почему', tierLabel:'Категория',
   navEval:'Оценка', navCompare:'Сравнить', navGame:'Игра', navMore:'Ещё', navMarket:'Рынок', navPortfolio:'Портфель',
   pfTitle:'Мой портфель', pfTotal:'Стоимость портфеля', pfEmpty:'Добавьте свои Telegram-активы и следите за их стоимостью',
   pfAdd:'Добавить актив', pfAddBtn:'В портфель', pfInPf:'В портфеле', pfRemove:'Убрать', pfQty:'Кол-во',
@@ -1472,7 +1480,7 @@ ru:{
 },
 en:{
   tagline:'appraisal house · TON', heroSub:'Valued on real market deals · TON',
-  heroPitch:'Appraise · Market · Capital · TON', confLabel:'Confidence', confHigh:'high', confMid:'medium', confLow:'low',
+  heroPitch:'Appraise · Market · Capital · TON', confLabel:'Confidence', confHigh:'high', confMid:'medium', confLow:'low', estLabel:'Range', liqLabel:'Liquidity', liqLow:'low', liqMid:'medium', liqHigh:'high', whyLabel:'Why', tierLabel:'Tier',
   navEval:'Evaluate', navCompare:'Compare', navGame:'Game', navMore:'More', navMarket:'Market', navPortfolio:'Portfolio',
   pfTitle:'My portfolio', pfTotal:'Portfolio value', pfEmpty:'Add your Telegram assets and track their value',
   pfAdd:'Add asset', pfAddBtn:'To portfolio', pfInPf:'In portfolio', pfRemove:'Remove', pfQty:'Qty',
@@ -2224,7 +2232,7 @@ function evalPlaceholder(){
       '<button class="evp-chip" onclick="evalExample(\'numbers\',\'77777777\')">+888 777 7777</button>'+
       '<button class="evp-chip" onclick="evalExample(\'gift\',\'plushpepe\')">Plush Pepe</button>'+
     '</div>'+
-    '<div class="evp-foot">'+(ru?'Оценка · Рынок · Капитал · TON':'Value · Market · Capital · TON')+'</div></div>';
+    '<div class="evp-pulse">'+(ru?'Рынок: ':'Market: ')+'Plush Pepe 11 000 · Heroic Helmet 215 · Signet Ring 45 TON</div>'+'<div class="evp-foot">'+(ru?'Оценка · Рынок · Капитал · TON':'Value · Market · Capital · TON')+'</div></div>';
 }
 function evalExample(kind,val){
   if(kind==='gift'){ pickCat('gifts'); try{ pickGift('e_', val); }catch(e){} setTimeout(function(){ try{doEvaluate();}catch(e){} },90); return; }
@@ -2334,9 +2342,9 @@ function applyGiftCross(r, d, hasTrait){
   const fv=document.getElementById('fiatVal'); if(fv) fv.textContent=fmtFiat(frag);
   // re-fit the Est. range around the new price (tight when it's an exact live match)
   const sp=estSpread(r);
-  const pr=document.getElementById('prange'); if(pr) pr.textContent='Est. '+fmtTON(Math.round(frag*(1-sp)))+'–'+fmtTON(Math.round(frag*(1+sp)))+' TON';
+  const pr=document.getElementById('prange'); if(pr) pr.textContent=t('estLabel')+': '+fmtTON(Math.round(frag*(1-sp)))+'–'+fmtTON(Math.round(frag*(1+sp)))+' TON';
   // bump confidence: an exact live listing is a fact -> show it as high
-  const cw=document.getElementById('confChipWrap'); if(cw) cw.innerHTML=confChipHTML(r);
+  const cv=document.getElementById('confVal'); if(cv){ const c=confOf(r); cv.textContent=t(c.k); cv.style.color=c.c; } const lv=document.getElementById('liqVal'); if(lv){ const l=liqOf(r); lv.textContent=t(l.k); lv.style.color=l.c; }
   // discreet buy CTA -> collection page (not the exact lot), neutral label, no ref
   const box=document.getElementById('xmkt');
   if(box && d.slug){
@@ -2435,6 +2443,9 @@ function confOf(r){ const s=estSpread(r);
   return {k:'confLow',c:'var(--bad)'}; }
 function confChipHTML(r){ const c=confOf(r);
   return '<span class="conf-pill" style="color:'+c.c+'"><span class="cd"></span>'+t('confLabel')+': '+t(c.k)+'</span>'; }
+function liqOf(r){ let lvl; if(r&&r.fragExact) lvl=2; else { const p=r?r.priceTON:0; lvl=p<150?2:(p<3000?1:0); } if(r&&r.rarity&&r.rarity.oneIn>500&&lvl>0) lvl--; return [{k:'liqLow',c:'var(--bad)'},{k:'liqMid',c:'var(--warn)'},{k:'liqHigh',c:'var(--good)'}][lvl]; }
+function liqChipHTML(r){ const c=liqOf(r); return '<span class="conf-pill" style="color:'+c.c+'"><span class="cd"></span>'+t('liqLabel')+': '+t(c.k)+'</span>'; }
+function whyText(r){ const plus=r.factors.filter(f=>f.cls==='plus').map(f=>t(f.k).toLowerCase()); if(plus.length) return plus.slice(0,3).join(', '); const neu=r.factors.slice(0,2).map(f=>t(f.k).toLowerCase()); return neu.join(', ')||(S.lang==='ru'?'базовая рыночная оценка':'baseline market estimate'); }
 /* honest estimate spread — wider for pricier / rarer / less-liquid assets */
 function estSpread(r){
   // an exact live match on the market = a hard fact, not a guess -> tight band, high confidence
@@ -2452,6 +2463,7 @@ function resultCardHTML(r){
   // honest uncertainty: liquid/cheap = tight, expensive/rare/illiquid = wide
   const spread=estSpread(r);
   const lo=Math.round(r.priceTON*(1-spread)), hi=Math.round(r.priceTON*(1+spread));
+  const cc=confOf(r), lq=liqOf(r);
   return '<div class="rcard">'+
     '<div class="asset-disp">'+
       '<div class="wax-seal">'+sealSVG()+'</div>'+
@@ -2459,14 +2471,14 @@ function resultCardHTML(r){
       '<div class="arow"><div class="asset">'+escapeHTML(r.display)+'</div></div>'+
       '<div class="sub">'+subline+'</div>'+
       '<div class="price-ton"><span id="ptonNum">'+fmtTON(r.priceTON)+'</span><span class="u">TON</span></div>'+
-      '<div class="price-range" id="prange">Est. '+fmtTON(lo)+'–'+fmtTON(hi)+' TON</div>'+
+      '<div class="price-range" id="prange">'+t('estLabel')+': '+fmtTON(lo)+'–'+fmtTON(hi)+' TON</div>'+
       (r.cat==='gifts'?'<div id="xmkt"></div>':'')+
       '<div class="price-fiat"><span class="v" id="fiatVal">'+fmtFiat(r.priceTON)+'</span>'+
         '<span class="cur-toggle"><button class="'+(S.currency==='usd'?'on':'')+'" onclick="setCurrency(\'usd\')">USD</button><button class="'+(S.currency==='eur'?'on':'')+'" onclick="setCurrency(\'eur\')">EUR</button></span></div>'+
       '<div class="cert-foot">Monet · '+t('apprHouse')+' · '+apprDate()+'</div>'+
     '</div>'+
     '<div class="rbody">'+
-      '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:'+tier.c+'"><span class="tier-badge"><span class="dot"></span>'+t(tier.k)+'</span><span id="confChipWrap">'+confChipHTML(r)+'</span></div>'+
+      '<div class="cert-specs">'+'<div class="cs-row"><span class="cs-l">'+t('confLabel')+'</span><span class="cs-v" id="confVal" style="color:'+cc.c+'">'+t(cc.k)+'</span></div>'+'<div class="cs-row"><span class="cs-l">'+t('liqLabel')+'</span><span class="cs-v" id="liqVal" style="color:'+lq.c+'">'+t(lq.k)+'</span></div>'+'<div class="cs-row"><span class="cs-l">'+t('tierLabel')+'</span><span class="cs-v" style="color:'+tier.c+'">'+t(tier.k)+'</span></div>'+'</div>'+'<div class="why-line"><span class="wl">'+t('whyLabel')+':</span> '+whyText(r)+'</div>'+
       (r.rarity?'<div class="rarity-line"><span class="rrank" style="background:'+r.rarity.color+'1f;color:'+r.rarity.color+'"><span class="rd" style="background:'+r.rarity.color+'"></span>'+t(r.rarity.key)+'</span><span class="rone">'+t('rarityOneIn')+' '+r.rarity.oneIn.toLocaleString('en-US').replace(/,/g,' ')+'</span></div>':'')+
       '<div class="scale"><div class="scale-track"><div class="scale-fill" style="width:'+Math.max(4,Math.min(100,tier.pct)).toFixed(0)+'%"></div></div>'+
         '<div class="scale-marks"><span>'+t('tierCommon')+'</span><span>'+t('tierPremium')+'</span><span>VIP</span><span>'+t('tierTop')+'</span></div></div>'+
@@ -2476,8 +2488,8 @@ function resultCardHTML(r){
       (r.cat==='username' && proxyURL() ? '<div class="comps" id="usernameComps"><div class="comps-load">'+t('compsLoading')+'</div></div>' : '')+
       '<div class="acts">'+
         '<button class="act portf" onclick="addEvalToPortfolio()"><span>📁</span>'+t('pfAddBtn')+'</button>'+
-        '<button class="act fav" id="favBtn" onclick="toggleFav()"><span>⭐</span><span id="favLbl">'+t('favAdd')+'</span></button>'+
         '<button class="act" onclick="exportCard()"><span>📤</span>'+t('share')+'</button>'+
+        '<button class="act fav" id="favBtn" onclick="toggleFav()"><span>⭐</span><span id="favLbl">'+t('favAdd')+'</span></button>'+
         '<button class="act" onclick="toggleExplain()"><span>💡</span>'+t('explainBtn')+'</button>'+
         '<button class="act frag" onclick="openFragment()"><span>🌐</span>'+t('checkFrag')+'</button>'+
       '</div>'+
@@ -2846,7 +2858,7 @@ async function exportCard(){
   x.fillText(fmtTON(r.priceTON),540,600);
   x.fillStyle='#19211A'; x.font='600 50px "Fraunces", serif'; x.fillText('TON',540,688);
   const _sp=estSpread(r), elo=Math.round(r.priceTON*(1-_sp)), ehi=Math.round(r.priceTON*(1+_sp));
-  x.fillStyle='#7E8C78'; x.font='600 33px "Hanken Grotesk", sans-serif'; x.fillText('Est. '+fmtTON(elo)+'–'+fmtTON(ehi)+' TON  ·  '+fmtFiat(r.priceTON),540,748);
+  x.fillStyle='#7E8C78'; x.font='600 33px "Hanken Grotesk", sans-serif'; x.fillText(t('estLabel')+': '+fmtTON(elo)+'–'+fmtTON(ehi)+' TON  ·  '+fmtFiat(r.priceTON),540,748);
   // factors (room kept on the right for the seal)
   x.textAlign='left'; let fy=858;
   r.factors.filter(f=>f.cls==='plus').slice(0,3).forEach(f=>{
