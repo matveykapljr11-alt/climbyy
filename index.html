@@ -3789,16 +3789,16 @@ window.ONB = (function(){
   function slides(){ const ru=S.lang==='ru'; const H=heroes(ru); return [
     {bg:'s0', kr:(ru?'01 · ОЦЕНОЧНЫЙ ДОМ':'01 · APPRAISAL HOUSE'), dc:['#43A87C','#2E7D5E','#7FE0B4'], hero:H[0],
       fl:[G('🧸','#E86FA6'),U('@durov'),G('💎','#6B8BE8'),Nm('0142'),G('🌹','#E05670'),G('👑','#D9A441'),U('@nft'),G('🔮','#A06BE8'),G('🦋','#3FA9C2'),Nm('8888'),G('🪅','#E07FB0'),U('@gift')],
-      t:ru?'Добро пожаловать в Monet':'Welcome to Monet', s:ru?'Оценивай подарки, юзернеймы и +888-номера Telegram по реальной цене.':'Appraise Telegram gifts, usernames and +888 numbers at real value.'},
+      t:ru?'Твой Telegram-капитал начинается здесь':'Your Telegram capital starts here', s:ru?'Оцени gifts, usernames и +888-номера по рыночным данным.':'Value gifts, usernames and +888 numbers on real market data.'},
     {bg:'s1', kr:(ru?'02 · ОЦЕНКА':'02 · APPRAISAL'), dc:['#D9A441','#C8A24B','#F0D27A'], hero:H[1],
       fl:[G('💎','#6B8BE8'),G('💍','#D9A441'),U('@whale'),G('🔮','#A06BE8'),Nm('0007'),G('🧸','#E86FA6'),G('🎩','#46B27E'),U('@crypto'),G('🪙','#D9A441'),G('🌹','#E05670'),Nm('1337'),G('👑','#D9A441')],
-      t:ru?'Оценка за секунды':'Instant appraisal', s:ru?'Выбери предмет и трейты — стоимость считается по реальным сделкам рынка.':'Pick an item and traits — value comes from real market deals.'},
+      t:ru?'Узнай цену за секунды':'Know the price in seconds', s:ru?'Получай диапазон, уверенность и причины оценки.':'Get a range, confidence and the reasons behind it.'},
     {bg:'s2', kr:(ru?'03 · РЫНОК':'03 · MARKET'), dc:['#2F9EA8','#2F7E86','#7FD8E0'], hero:H[2],
       fl:[G('🦋','#3FA9C2'),G('💎','#6B8BE8'),U('@durov'),G('🌹','#E05670'),Nm('0142'),G('🎩','#46B27E'),G('🪅','#E07FB0'),U('@monet'),G('🔮','#A06BE8'),G('🪙','#D9A441'),Nm('8888'),G('🧸','#E86FA6')],
-      t:ru?'Дешевле всего по рынку':'Cheapest across markets', s:ru?'Сравниваем площадки и показываем, где купить выгоднее — со ссылкой на сделку.':'We compare markets and show where it is cheapest — with a link to buy.'},
+      t:ru?'Покупай не дороже рынка':'Never overpay the market', s:ru?'Сравниваем площадки и показываем, где актив дешевле.':'We compare marketplaces and show where an asset is cheaper.'},
     {bg:'s3', kr:(ru?'04 · КАПИТАЛ':'04 · CAPITAL'), dc:['#43A87C','#3A7D63','#7FE0B4'], hero:H[3],
       fl:[G('👑','#D9A441'),G('🧸','#E86FA6'),U('@durov'),G('🪙','#D9A441'),Nm('0007'),G('💎','#6B8BE8'),G('🦋','#3FA9C2'),U('@nft'),G('🌹','#E05670'),G('🎩','#46B27E'),Nm('1337'),G('🔮','#A06BE8')],
-      t:ru?'Твой Telegram-капитал':'Your Telegram net worth', s:ru?'Собери портфель активов и следи за капиталом, статусом и целью.':'Build a portfolio and track your capital, status and goals.'}
+      t:ru?'Собери свой портфель':'Build your portfolio', s:ru?'Следи за капиталом, статусом и движением рынка в TON.':'Track your capital, status and the market — in TON.'}
   ]; }
   function render(){ const ru=S.lang==='ru'; const sl=slides(); const last=i===N-1;
     const cards=sl.map(s=>'<div class="onb-slide '+s.bg+'"><div class="onb-stage"><div class="onb-bg"></div>'+decor(s.dc[0],s.dc[1],s.dc[2])+'<div class="onb-stars"></div><div class="onb-ring"></div>'+floaters(s.fl)+'<div class="onb-center">'+s.hero+'</div></div><div class="onb-cap"><div class="onb-kicker">'+s.kr+'</div><h2>'+s.t+'</h2><p>'+s.s+'</p></div></div>').join('');
@@ -3808,7 +3808,7 @@ window.ONB = (function(){
       '<button class="onb-skip" onclick="ONB.finish()">'+(ru?'Пропустить':'Skip')+'</button>'+
       '<div class="onb-viewport"><div class="onb-track" id="onb-track" style="transform:translateX(-'+(i*100)+'%)">'+cards+'</div></div>'+
       '<div class="onb-ctl"><div class="onb-dots">'+dots+'</div><div class="onb-row">'+back+
-        '<button class="onb-btn pri" onclick="ONB.next()">'+(last?(ru?'Поехали!':'Get started'):(ru?'Далее':'Next'))+'</button></div></div>';
+        '<button class="onb-btn pri" onclick="'+(last?'ONB.startEval()':'ONB.next()')+'">'+(last?(ru?'Оценить первый актив':'Value your first asset'):(ru?'Далее':'Next'))+'</button></div></div>';
     bindSwipe();
   }
   function bindSwipe(){ const vp=document.getElementById('onb-track'); if(!vp) return; let x0=null;
@@ -3819,9 +3819,10 @@ window.ONB = (function(){
   function open(){ i=0; const el=document.getElementById('onb'); if(!el) return; el.style.display='flex'; render(); }
   function next(){ if(i<N-1){ i++; render(); if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.selectionChanged();}catch(e){}} } else finish(); }
   function goto(k){ i=Math.max(0,Math.min(N-1,k)); render(); }
+  function startEval(){ finish(); setTimeout(function(){ try{ if(typeof setView==='function') setView('evaluate'); var m=document.getElementById('e_main'); if(m){ m.focus(); m.scrollIntoView({behavior:'smooth',block:'center'}); } }catch(e){} },430); }
   function openRealCard(){ try{finish();}catch(e){} setTimeout(function(){ try{ if(window.BANK) BANK.openCard(); }catch(e){} },400); }
-  function finish(){ S.onboarded=true; S.onbVer=13; save(); const el=document.getElementById('onb'); if(!el)return; el.style.opacity='0'; setTimeout(()=>{ el.style.display='none'; el.style.opacity=''; },350); if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('medium');}catch(e){}} }
-  return { open, next, goto, finish, openRealCard };
+  function finish(){ S.onboarded=true; S.onbVer=14; save(); const el=document.getElementById('onb'); if(!el)return; el.style.opacity='0'; setTimeout(()=>{ el.style.display='none'; el.style.opacity=''; },350); if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.impactOccurred('medium');}catch(e){}} }
+  return { open, next, goto, finish, openRealCard, startEval };
 })();
 function initTelegram(){
   if(!tg) return;
@@ -3859,7 +3860,7 @@ function init(){
   initTelegram();
   refreshRate();
   updateFloorBadge(); refreshFloors(false);
-  if(window.ONB && (S.onbVer||0) < 13) ONB.open();   // first-launch onboarding (once)
+  if(window.ONB && (S.onbVer||0) < 14) ONB.open();   // first-launch onboarding (once)
 }
 init();
 </script>
