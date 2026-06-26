@@ -28,7 +28,8 @@
     --peach: #ff5050;         /* светло-красный */
     --sky: #0a0a0a;           /* чёрный (вместо синего) */
     --lemon: #e30613;         /* красный */
-
+    --win: #14a85a;           /* зелёный — победа / +очки */
+    --lose: #e30613;          /* красный — поражение / −очки */
     --d1: #a8a8a8;
     --d2: #6b6b6b;
     --d3: #e30613;
@@ -56,6 +57,8 @@
     --peach: #ff7878;
     --sky: #f5f5f5;
     --lemon: #ff3838;
+    --win: #2ee27f;
+    --lose: #ff4d4d;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -3131,44 +3134,56 @@
   /* Ростер карточки */
   .roster-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
   .roster-card {
     background: var(--card-2);
-    border-radius: 14px;
-    padding: 14px;
-    text-align: center;
+    border-radius: 12px;
+    padding: 9px 10px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-align: left;
     transition: all 0.15s;
     cursor: pointer;
     position: relative;
+    min-width: 0;
   }
-  .roster-card:hover { background: var(--card-3); transform: translateY(-2px); }
+  .roster-card:hover { background: var(--card-3); }
   .roster-card.captain {
     background: linear-gradient(135deg, rgba(255, 200, 66, 0.12) 0%, var(--card-2) 100%);
     border: 1px solid rgba(255, 200, 66, 0.4);
   }
   .rc-cap-badge {
-    position: absolute;
-    top: -7px; right: -7px;
-    background: var(--peach);
-    color: white;
-    font-size: 10px; font-weight: 800;
-    padding: 3px 9px;
-    border-radius: 100px;
-    display: inline-flex; align-items: center; gap: 3px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--peach); color: white;
+    font-size: 9px; font-weight: 800;
+    width: 15px; height: 15px; border-radius: 5px;
+    margin-left: 4px; vertical-align: middle;
+  }
+  .rc-body { min-width: 0; flex: 1; }
+  .rc-sub {
+    font-size: 10.5px; color: var(--muted); font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  .rc-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .rc-mini-btn {
+    background: var(--card-3); border: none; border-radius: 6px;
+    padding: 4px 7px; font-size: 11px; font-weight: 700; cursor: pointer; line-height: 1;
   }
   .rc-avatar {
-    width: 56px; height: 56px;
-    border-radius: 16px;
+    width: 40px; height: 40px;
+    border-radius: 11px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 18px;
+    font-weight: 800; font-size: 15px;
     color: white;
-    margin: 0 auto 10px;
+    flex-shrink: 0;
   }
   .rc-name {
-    font-weight: 800; font-size: 14px;
-    margin-bottom: 4px;
+    font-weight: 800; font-size: 13px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .rc-role-row {
     font-size: 11px;
@@ -3218,8 +3233,8 @@
     width: 8px; height: 8px;
     border-radius: 50%;
   }
-  .history-result-dot.win { background: var(--mint); box-shadow: 0 0 6px var(--mint); }
-  .history-result-dot.loss { background: var(--hot-pink); box-shadow: 0 0 6px var(--hot-pink); }
+  .history-result-dot.win { background: var(--win); box-shadow: 0 0 6px var(--win); }
+  .history-result-dot.loss { background: var(--lose); box-shadow: 0 0 6px var(--lose); }
   .history-date {
     font-size: 11px;
     color: var(--muted);
@@ -3276,8 +3291,8 @@
     text-align: right;
     min-width: 50px;
   }
-  .history-score .win { color: var(--mint); }
-  .history-score .loss { color: var(--hot-pink); }
+  .history-score .win { color: var(--win); }
+  .history-score .loss { color: var(--lose); }
   .history-pts {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 800; font-size: 11.5px;
@@ -3285,9 +3300,9 @@
     border-radius: 100px;
     min-width: 40px; text-align: center;
   }
-  .history-pts.up { background: rgba(255, 138, 60, 0.15); color: var(--mint); }
-  .history-pts.down { background: rgba(196, 24, 32, 0.15); color: var(--hot-pink); }
-  .history-pts.close { background: rgba(255, 200, 66, 0.15); color: var(--peach); }
+  .history-pts.up { background: rgba(20, 168, 90, 0.15); color: var(--win); }
+  .history-pts.down { background: rgba(227, 6, 19, 0.15); color: var(--lose); }
+  .history-pts.close { background: rgba(227, 6, 19, 0.15); color: var(--lose); }
 
   /* Карты статистика */
   .maps-stats {
@@ -3409,8 +3424,8 @@
     font-weight: 800; font-size: 12px;
     color: white;
   }
-  .form-cell.W { background: var(--mint); }
-  .form-cell.L { background: var(--hot-pink); color: white; }
+  .form-cell.W { background: var(--win); }
+  .form-cell.L { background: var(--lose); color: white; }
 
   @media (max-width: 900px) {
     .team-grid { grid-template-columns: 1fr; }
@@ -4420,6 +4435,7 @@
     padding-top: 10px; border-top: 1px dashed var(--line);
   }
   .ph-kd-panel.open .ph-kd-dots { color: var(--peach); }
+  .ph-scope { display: block; font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 7px; opacity: .85; }
   .ph-stats-rows .ph-kd-panel + .ph-kd-panel { margin-top: 8px; }
   /* винрейт по картам */
   .ph-mapwr-list, .ph-divhist-list { display: flex; flex-direction: column; gap: 7px; }
@@ -4438,6 +4454,44 @@
   .ph-meta-v { font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; }
   .ph-meta-v.link { color: var(--peach); text-decoration: none; cursor: pointer; }
   .ph-meta-v.link:hover { filter: brightness(1.15); }
+
+  /* О СЕБЕ */
+  .ph-about {
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .ph-about-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .ph-about-title { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .ph-about-edit {
+    background: var(--card-3); border: none; color: var(--text);
+    font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 8px; cursor: pointer;
+  }
+  .ph-about-edit:hover { background: var(--accent); color: #fff; }
+  .ph-about-bio { font-size: 14px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+  .ph-about-socials { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .ph-social {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card-3); border-radius: 10px;
+    padding: 8px 12px; font-size: 12px; font-weight: 800;
+    color: var(--text); text-decoration: none; cursor: pointer;
+    border: 1px solid var(--line); transition: all .15s;
+  }
+  .ph-social:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  /* Модалка редактора О себе */
+  .about-row { margin-bottom: 12px; }
+  .about-row label { display: block; font-size: 12px; font-weight: 800; margin-bottom: 5px; color: var(--text); }
+  .about-row .input { width: 100%; }
+  .about-row .hint { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 3px; }
+  .ab-avatar-prev { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff; flex-shrink: 0; }
+  .ab-colors { display: flex; gap: 9px; flex-wrap: wrap; }
+  .ab-color { width: 34px; height: 34px; border-radius: 10px; cursor: pointer; border: 3px solid transparent; transition: transform .1s; }
+  .ab-color:hover { transform: scale(1.08); }
+  .ab-color.sel { border-color: var(--text); }
   /* слоты медалей */
   .ph-medals { display: flex; gap: 8px; margin: 14px 0; position: relative; z-index: 1; }
   .ph-medal {
@@ -5791,7 +5845,7 @@
 <!-- ============================================
      SUPABASE INTEGRATION
      ============================================ -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2.108.2"></script>
 <script>
   // ⚠️ ПОДМЕНИ НА СВОИ КЛЮЧИ (Project Settings → API в Supabase)
   const SUPABASE_URL      = 'https://tgxhagytnjfrjjptngbj.supabase.co';
@@ -6559,6 +6613,17 @@
                 <button class="btn btn-primary" onclick="submitResult()" id="smSubmitBtn">📤 Отправить результат</button>
               </div>
             </div>
+
+            <!-- ПОДТВЕРЖДЕНИЕ РЕЗУЛЬТАТА (вторая команда) -->
+            <div id="smConfirm" style="display:none; padding:14px; background:var(--card-2); border-radius:12px">
+              <div style="font-weight:800; margin-bottom:6px">🤝 Подтверждение результата</div>
+              <div id="smConfirmScore" style="font-weight:800; font-size:18px; margin-bottom:4px"></div>
+              <div id="smConfirmSub" style="font-size:13px; color:var(--muted); font-weight:600; margin-bottom:12px">Соперник отправил счёт. Если верный — подтверди, иначе оспорь.</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="confirmResult()" id="smConfirmBtn">✅ Подтвердить</button>
+                <button class="btn" onclick="disputeResult()" style="background:var(--card-3)">⚠️ Оспорить</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6566,16 +6631,16 @@
         <div id="smRosters" style="display:flex; flex-direction:column; gap:14px"></div>
       </div>
 
-      <!-- Демо-переключатель состояний -->
-      <div class="match-state-switcher">
+      <!-- Демо-переключатель состояний (прототип, скрыт) -->
+      <div class="match-state-switcher" style="display:none">
         <div class="switcher-label">фазы:</div>
         <button class="state-btn active" data-state="prep" onclick="switchMatchState('prep')">⏱️ До матча</button>
         <button class="state-btn" data-state="live" onclick="switchMatchState('live')">🔴 LIVE</button>
         <button class="state-btn" data-state="result" onclick="switchMatchState('result')">🏆 Финиш</button>
       </div>
 
-      <!-- ========== HERO МАТЧА ========== -->
-      <div class="match-hero">
+      <!-- ========== HERO МАТЧА (прототип, скрыт) ========== -->
+      <div class="match-hero" style="display:none">
         <div class="mh-top">
           <div class="mh-meta">
             <span class="pill">D0 · BETA</span>
@@ -7008,11 +7073,11 @@
         </div>
       </div>
 
-      <!-- BIO -->
-      <div class="team-bio">
-        <div class="team-bio-emoji">🦊</div>
-        <div class="team-bio-text">«Играем для души, целимся в плей-офф.»</div>
-        <div class="team-bio-meta">
+      <!-- BIO (показывается только если у команды есть реальное описание) -->
+      <div class="team-bio" style="display:none">
+        <div class="team-bio-emoji">💬</div>
+        <div class="team-bio-text"></div>
+        <div class="team-bio-meta" style="display:none">
           <div>след. матч: <b>—</b></div>
         </div>
       </div>
@@ -7038,19 +7103,19 @@
               <!-- Карточки игроков рендерятся через loadTeamRoster() -->
             </div>
             <!-- Кнопка пригласить — видна только если это моя команда и я капитан -->
-            <div id="captainInvitePanel" style="display: none; margin-top: 14px; padding: 14px; background: var(--card-2); border-radius: 12px; border: 1px dashed var(--line);">
+            <div id="captainInvitePanel" style="display: none; margin-top: 14px; padding: 16px; background: linear-gradient(180deg, rgba(227, 6, 19, 0.07) 0%, var(--card-2) 100%); border-radius: 14px; border: 2px solid rgba(227, 6, 19, 0.45);">
               <div style="font-size: 13px; font-weight: 800; margin-bottom: 10px;">⭐ Пригласить игрока по ID</div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <input id="invSearchInput" class="input" placeholder="ID игрока из Standoff 2 (напр. 121788704)" inputmode="numeric" style="flex: 1; min-width: 180px;">
+                <input id="invSearchInput" class="input" placeholder="ID игрока из Standoff 2 (напр. 121788704)" inputmode="numeric" style="flex: 1; min-width: 180px; border: 2.5px solid var(--accent); background: var(--card-3); border-radius: 11px; padding: 13px 14px; box-shadow: 0 0 0 4px rgba(227, 6, 19, 0.18);">
                 <select id="invRoleSelect" class="input" style="max-width: 160px;">
                   <option value="player">Основа</option>
                   <option value="substitute">Запас</option>
                 </select>
                 <button class="btn btn-primary" onclick="lookupById()" style="white-space: nowrap;">Найти →</button>
               </div>
-              <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <button class="btn" onclick="copyInviteLink()" style="font-size: 12px;">🔗 Скопировать ссылку-приглашение</button>
-                <span style="font-size: 11px; color: var(--muted); font-weight: 600;">кинь её игроку — вступит по ней</span>
+              <div style="margin-top: 12px;">
+                <button class="btn" onclick="copyInviteLink()" style="width: 100%; justify-content: center; font-size: 13.5px; border: 2.5px solid var(--accent); color: var(--accent); background: rgba(227, 6, 19, 0.12); font-weight: 800; border-radius: 11px; padding: 13px 16px; box-shadow: 0 0 0 4px rgba(227, 6, 19, 0.10);">🔗 Скопировать ссылку-приглашение</button>
+                <div style="font-size: 11.5px; color: var(--muted); font-weight: 600; margin-top: 8px; text-align: center;">кинь её игроку — вступит по ней</div>
               </div>
               <div id="invSearchResults" style="margin-top: 10px;"></div>
             </div>
@@ -7070,87 +7135,8 @@
               <div class="mc-title">📜 История матчей</div>
               <div class="mc-sub">последние 8</div>
             </div>
-            <div class="history-list">
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--accent)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--accent)');">
-                  <div class="history-opp-logo" style="background: var(--accent)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span></div>
-                <div class="history-pts up">+10</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--hot-pink)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--hot-pink)');">
-                  <div class="history-opp-logo" style="background: var(--hot-pink)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span></div>
-                <div class="history-pts up">+10</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', '#d4d8e0', '—')">
-                <div class="history-result-dot loss"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', '#d4d8e0');">
-                  <div class="history-opp-logo" style="background: #d4d8e0">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score">11 : <span class="loss">13</span></div>
-                <div class="history-pts close">−5</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--sky)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--sky)');">
-                  <div class="history-opp-logo" style="background: var(--sky)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span></div>
-                <div class="history-pts up">+10</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--hot-pink)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--hot-pink)');">
-                  <div class="history-opp-logo" style="background: var(--hot-pink)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span></div>
-                <div class="history-pts up">+10</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('Rebels.', 'RB', '#b88a5f', '1 мая')">
-                <div class="history-result-dot loss"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('Rebels.', 'RB', '#b88a5f');">
-                  <div class="history-opp-logo" style="background: #b88a5f">—</div>
-                  <div class="history-opp-name">Rebels.</div>
-                </div>
-                <div class="history-score">9 : <span class="loss">13</span></div>
-                <div class="history-pts down">−7</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('—', '—', 'var(--sky)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('—', '—', 'var(--sky)');">
-                  <div class="history-opp-logo" style="background: var(--sky)">—</div>
-                  <div class="history-opp-name">—</div>
-                </div>
-                <div class="history-score"><span class="win">—</span></div>
-                <div class="history-pts up">+10</div>
-              </div>
-              <div class="history-row" onclick="openMatchVs('9th Hour', '9H', 'var(--lemon)', '—')">
-                <div class="history-result-dot win"></div>
-                <div class="history-date">—</div>
-                <div class="history-opponent history-opponent-clickable" onclick="event.stopPropagation(); openOpponentTeam('9th Hour', '9H', 'var(--lemon)');">
-                  <div class="history-opp-logo" style="background: var(--lemon)">9H</div>
-                  <div class="history-opp-name">9th Hour</div>
-                </div>
-                <div class="history-score"><span class="win">—</span></div>
-                <div class="history-pts up">+10</div>
-              </div>
+            <div style="padding:28px 18px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">
+              История появится после первых матчей
             </div>
           </div>
 
@@ -7168,12 +7154,8 @@
               <div class="mc-title">🔥 Форма</div>
               <div class="mc-sub">последние 5</div>
             </div>
-            <div class="form-block">
-              <div class="form-cell W">W</div>
-              <div class="form-cell W">W</div>
-              <div class="form-cell L">L</div>
-              <div class="form-cell W">W</div>
-              <div class="form-cell W">W</div>
+            <div style="padding:28px 18px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">
+              Появится после первых матчей
             </div>
             <div style="text-align: center; margin-top: 10px; font-size: 12px; color: var(--mint); font-weight: 700;">
               
@@ -7207,9 +7189,20 @@
               <div class="ph-meta-item"><span class="ph-meta-k">На проекте с</span><span class="ph-meta-v" id="phReg">—</span></div>
             </div>
           </div>
-          <div class="ph-actions">
-            <button class="th-action primary" onclick="openMessageModal('Игрок')">📨 Написать</button>
+        </div>
+
+        <!-- О СЕБЕ -->
+        <div class="ph-about" id="phAbout">
+          <div class="ph-about-head">
+            <span class="ph-about-title">📋 О себе</span>
+            <button class="ph-about-edit" id="phAboutEdit" onclick="openAboutEditor()" style="display:none">✏️ изменить</button>
           </div>
+          <div class="ph-about-bio" id="phAboutBio">—</div>
+          <div class="ph-about-socials" id="phAboutSocials"></div>
+        </div>
+
+        <div class="ph-actions" style="margin-bottom:18px">
+          <button class="th-action primary" onclick="openMessageModal('Игрок')">📨 Написать</button>
         </div>
 
         <!-- СЛОТЫ МЕДАЛЕЙ -->
@@ -7224,6 +7217,7 @@
         <div class="ph-stats-rows">
           <div class="ph-kd-panel" id="phKdPanel" onclick="togglePhKd()" title="нажми, чтобы показать киллы и смерти">
             <span class="ph-kd-dots">⋯</span>
+            <span class="ph-scope">за всё время</span>
             <div class="ph-srow">
               <div class="ph-scell"><span class="ph-sval pos" id="phKD">—</span><span class="ph-slbl">KD</span></div>
               <div class="ph-sdiv"></div>
@@ -7237,8 +7231,11 @@
           </div>
           <div class="ph-kd-panel" id="phWrPanel" onclick="togglePhWr()" title="нажми — винрейт по картам">
             <span class="ph-kd-dots">⋯</span>
+            <span class="ph-scope">за всё время</span>
             <div class="ph-srow">
               <div class="ph-scell"><span class="ph-sval" id="phWR">—</span><span class="ph-slbl">Winrate</span></div>
+              <div class="ph-sdiv"></div>
+              <div class="ph-scell"><span class="ph-sval" id="phMatches">0</span><span class="ph-slbl">matches</span></div>
             </div>
             <div class="ph-kd-detail" id="phWrDetail">
               <div class="ph-mapwr-list" id="phMapWr"></div>
@@ -7274,96 +7271,9 @@
               <div class="mc-sub">матчи команды —</div>
             </div>
             <div class="schedule-list">
-
-              <div class="schedule-row soon" onclick="openMatchFromSchedule(this)" data-opp="—" data-opp-color="var(--sky)" data-opp-initials="—" data-datetime="—" data-mapinfo="—">
-                <div class="sch-date">
-                  <div class="sch-day">—</div><div class="sch-time">—</div>
-                </div>
-                <div class="sch-opponent">
-                  <span class="sch-vs">vs</span>
-                  <div class="sch-opp-logo" style="background: var(--sky)">—</div>
-                  <div class="sch-opp-info">
-                    <div class="sch-opp-name">—</div>
-                    <div class="sch-opp-meta">
-                      <span class="sch-map-pill">PROVINCE</span>
-                      <span>· Bo3</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="sch-status">
-                  <span class="sch-badge soon">⏱️ скоро</span>
-                  <div class="sch-countdown urgent">через 1ч 23м</div>
-                </div>
+              <div style="padding:28px 18px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">
+                Расписание появится после первых матчей
               </div>
-
-              <div class="schedule-row" onclick="openMatchFromSchedule(this)" data-opp="—" data-opp-color="var(--mint)" data-opp-initials="SP" data-datetime="—" data-mapinfo="Breeze · Bo1">
-                <div class="sch-date">
-                  <div class="sch-day">15</div>
-                  <div class="sch-month">МАЯ</div>
-                  <div class="sch-time">19:30</div>
-                </div>
-                <div class="sch-opponent">
-                  <span class="sch-vs">vs</span>
-                  <div class="sch-opp-logo" style="background: var(--mint)">—</div>
-                  <div class="sch-opp-info">
-                    <div class="sch-opp-name">—</div>
-                    <div class="sch-opp-meta">
-                      <span class="sch-map-pill">Breeze</span>
-                      <span>· Bo1</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="sch-status">
-                  <span class="sch-badge scheduled">подтверждён</span>
-                  <div class="sch-countdown">через 2 дня</div>
-                </div>
-              </div>
-
-              <div class="schedule-row" onclick="openMatchFromSchedule(this)" data-opp="9th Hour" data-opp-color="var(--lemon)" data-opp-initials="9H" data-datetime="1— · 20:00" data-mapinfo="SAKURA · Bo3">
-                <div class="sch-date">
-                  <div class="sch-day">17</div>
-                  <div class="sch-month">МАЯ</div>
-                  <div class="sch-time">20:00</div>
-                </div>
-                <div class="sch-opponent">
-                  <span class="sch-vs">vs</span>
-                  <div class="sch-opp-logo" style="background: var(--lemon)">9H</div>
-                  <div class="sch-opp-info">
-                    <div class="sch-opp-name">9th Hour</div>
-                    <div class="sch-opp-meta">
-                      <span class="sch-map-pill">SAKURA</span>
-                      <span>· Bo3</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="sch-status">
-                  <span class="sch-badge scheduled">подтверждён</span>
-                  <div class="sch-countdown">через 4 дня</div>
-                </div>
-              </div>
-
-              <div class="schedule-row" onclick="openMatchFromSchedule(this)" data-opp="Krypto" data-opp-color="var(--accent)" data-opp-initials="KR" data-datetime="20-22 мая" data-mapinfo="карта будет позже">
-                <div class="sch-date">
-                  <div class="sch-day">20-22</div>
-                  <div class="sch-month">МАЯ</div>
-                  <div class="sch-time">дедлайн</div>
-                </div>
-                <div class="sch-opponent">
-                  <span class="sch-vs">vs</span>
-                  <div class="sch-opp-logo" style="background: var(--accent)">KR</div>
-                  <div class="sch-opp-info">
-                    <div class="sch-opp-name">Krypto</div>
-                    <div class="sch-opp-meta">
-                      <span>⏳ согласовываем время</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="sch-status">
-                  <span class="sch-badge scheduled">не назначен</span>
-                  <div class="sch-countdown">через 7 дней</div>
-                </div>
-              </div>
-
             </div>
           </div>
 
@@ -7391,15 +7301,11 @@
               <div class="mc-title">🔥 Форма</div>
               <div class="mc-sub">последние 5</div>
             </div>
-            <div class="form-block">
-              <div class="form-cell W">W</div>
-              <div class="form-cell W">W</div>
-              <div class="form-cell L">L</div>
-              <div class="form-cell W">W</div>
-              <div class="form-cell W">W</div>
+            <div style="padding:28px 18px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">
+              Появится после первых матчей
             </div>
             <div style="text-align: center; margin-top: 10px; font-size: 12px; color: var(--mint); font-weight: 700;">
-              серия побед 🔥
+              
             </div>
           </div>
 
@@ -7629,6 +7535,32 @@
               </div>
               <div class="setting-control">
                 <button class="setting-btn ghost">Отвязать</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Приватность -->
+          <div class="settings-section" id="setting-privacy">
+            <div class="settings-section-title">🔒 Приватность</div>
+            <div class="settings-section-sub">Что видят другие игроки в твоём профиле</div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Скрывать игровой ID</div>
+                <div class="setting-desc">Твой Standoff 2 ID не будет виден в публичном профиле. Капитаны всё равно смогут позвать тебя по ID.</div>
+              </div>
+              <div class="setting-control">
+                <div class="toggle" id="togHideGameId" onclick="togglePrivacy('hide_game_id', this)"></div>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Скрывать статистику</div>
+                <div class="setting-desc">KD, винрейт и убийства будут скрыты от других в твоём профиле.</div>
+              </div>
+              <div class="setting-control">
+                <div class="toggle" id="togHideStats" onclick="togglePrivacy('hide_stats', this)"></div>
               </div>
             </div>
           </div>
@@ -7951,6 +7883,52 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="aboutModal" onclick="if(event.target===this) closeAboutModal()">
+  <div class="support-modal">
+    <button class="sm-close" onclick="closeAboutModal()">✕</button>
+    <div class="sm-head">
+      <div class="sm-icon" style="background: rgba(232, 38, 42, 0.15)">📋</div>
+      <div><div class="sm-title">О себе</div></div>
+    </div>
+    <div class="sm-sub">Описание и ссылки на соцсети — видно всем в твоём профиле.</div>
+
+    <div class="sm-form">
+      <div class="about-row">
+        <label>Аватар — цвет фона</label>
+        <div style="display:flex; align-items:center; gap:14px">
+          <div class="ab-avatar-prev" id="abAvatarPrev" style="background:var(--accent)">—</div>
+          <div class="ab-colors" id="abColors"></div>
+        </div>
+      </div>
+      <div class="about-row">
+        <label>Описание</label>
+        <textarea id="abBio" class="sm-textarea" maxlength="200" placeholder="Пару слов о себе, ролях, целях..."></textarea>
+      </div>
+      <div class="about-row">
+        <label>✈️ Telegram</label>
+        <input id="abTelegram" class="input" placeholder="@username или ссылка t.me/...">
+        <div class="hint">можно просто @ник</div>
+      </div>
+      <div class="about-row">
+        <label>🎮 Discord</label>
+        <input id="abDiscord" class="input" placeholder="username или ссылка-приглашение">
+      </div>
+      <div class="about-row">
+        <label>🔷 VK</label>
+        <input id="abVk" class="input" placeholder="id или ссылка vk.com/...">
+      </div>
+      <div class="about-row">
+        <label>🎯 Rankoff</label>
+        <input id="abRankoff" class="input" placeholder="ссылка на профиль Rankoff">
+      </div>
+      <div class="sm-actions">
+        <button class="sm-btn cancel" onclick="closeAboutModal()">Отмена</button>
+        <button class="sm-btn submit" onclick="saveAbout()">💾 Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== ACHIEVEMENT MODAL ========== -->
 <div class="modal-backdrop" id="achievementModal" onclick="if(event.target===this) closeAchievement()">
   <div class="support-modal" style="max-width: 420px; text-align: center;">
@@ -8146,7 +8124,7 @@
                 <span class="th-pill">SEASON-01</span>
                 <span class="th-pill region">📅 — — —</span>
                 <span class="th-pill div">🚧 D0 · BETA</span>
-                <span>· неделя 2/4</span>
+                <span id="seasonWeekPill">· неделя —</span>
               </div>
             </div>
           </div>
@@ -8158,27 +8136,23 @@
 
         <div class="th-stats">
           <div class="th-stat">
-            <div class="th-stat-val medal" style="font-size: 16px;">2/4</div>
+            <div class="th-stat-val medal" id="seasonWeek" style="font-size: 16px;">—</div>
             <div class="th-stat-lbl">неделя</div>
           </div>
           <div class="th-stat">
-            <div class="th-stat-val points">50</div>
+            <div class="th-stat-val points" id="seasonTeams">—</div>
             <div class="th-stat-lbl">команд</div>
           </div>
           <div class="th-stat">
-            <div class="th-stat-val">248</div>
+            <div class="th-stat-val" id="seasonPlayers">—</div>
             <div class="th-stat-lbl">игроков</div>
           </div>
           <div class="th-stat">
-            <div class="th-stat-val pos">189</div>
+            <div class="th-stat-val pos" id="seasonMatches">—</div>
             <div class="th-stat-lbl">матчей сыграно</div>
           </div>
           <div class="th-stat">
-            <div class="th-stat-val">312</div>
-            <div class="th-stat-lbl">впереди</div>
-          </div>
-          <div class="th-stat">
-            <div class="th-stat-val pos">18</div>
+            <div class="th-stat-val pos" id="seasonDaysLeft">—</div>
             <div class="th-stat-lbl">дней до конца</div>
           </div>
         </div>
@@ -8199,19 +8173,19 @@
           <div class="match-card" style="margin-bottom: 14px;">
             <div class="mc-head">
               <div class="mc-title">📊 Прогресс сезона</div>
-              <div class="mc-sub">38% завершено</div>
+              <div class="mc-sub" id="seasonProgPct">— завершено</div>
             </div>
             <div style="background: var(--card-2); border-radius: 14px; padding: 16px; margin-bottom: 14px;">
               <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: 700;">
-                <span style="color: var(--mint);">189 / 501 матчей</span>
+                <span style="color: var(--mint);" id="seasonProgText">— матчей</span>
                 <span style="color: var(--muted);"></span>
               </div>
               <div style="height: 10px; background: var(--card-3); border-radius: 100px; overflow: hidden;">
-                <div style="width: 38%; height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--peach) 100%); border-radius: 100px; box-shadow: 0 0 10px rgba(227, 6, 19, 0.3);"></div>
+                <div id="seasonProgFill" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--peach) 100%); border-radius: 100px; box-shadow: 0 0 10px rgba(227, 6, 19, 0.3); transition: width .4s;"></div>
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+            <div id="seasonWeeks" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
               <div style="background: var(--card-2); padding: 10px; border-radius: 10px; text-align: center; border-left: 3px solid var(--mint);">
                 <div style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px;">Нед 1</div>
                 <div style="font-size: 10px; color: var(--mint); font-weight: 700; margin-top: 4px;">✓ сыграна</div>
@@ -8235,9 +8209,9 @@
           <div class="match-card" style="margin-bottom: 14px;">
             <div class="mc-head">
               <div class="mc-title">🏆 Лидеры сезона</div>
-              <div class="mc-sub">топ-5 из 50 команд</div>
+              <div class="mc-sub" id="seasonLeadersSub">топ команд</div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div id="seasonLeaders" style="display: flex; flex-direction: column; gap: 8px;">
               <div onclick="goPage('team')" style="display: grid; grid-template-columns: 36px 38px 1fr auto auto; gap: 12px; align-items: center; padding: 11px 13px; background: linear-gradient(90deg, rgba(255, 200, 66, 0.1) 0%, var(--card-2) 70%); border-radius: 11px; cursor: pointer; transition: all 0.15s;">
                 <div style="font-size: 22px; text-align: center;">🥇</div>
                 <div style="width: 38px; height: 38px; border-radius: 11px; background: var(--peach); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">—</div>
@@ -9502,21 +9476,6 @@
     { type: 'page', label: 'Настройки', emoji: '⚙️', action: () => goPage('settings') },
     { type: 'page', label: 'Сезон 1', emoji: '🐣', action: () => goPage('season') },
     { type: 'page', label: 'Приглашения', emoji: '📨', action: () => goPage('invites') },
-    // команды
-    { type: 'team', label: '—', emoji: '🦊', action: () => goPage('team') },
-    { type: 'team', label: '—', emoji: '🌑', action: () => openOpponentTeam('—', '—', 'var(--sky)') },
-    { type: 'team', label: '—', emoji: '🎮', action: () => openOpponentTeam('—', '—', 'var(--accent)') },
-    { type: 'team', label: '—', emoji: '⚔️', action: () => openOpponentTeam('—', '—', 'var(--hot-pink)') },
-    { type: 'team', label: '—', emoji: '✨', action: () => goPage('teams') },
-    { type: 'team', label: '9th Hour', emoji: '🕒', action: () => goPage('teams') },
-    { type: 'team', label: '—', emoji: '🦊', action: () => goPage('teams') },
-    { type: 'team', label: 'Krypto', emoji: '🔐', action: () => goPage('teams') },
-    // игроки
-    { type: 'player', label: 'Игрок', emoji: '🎯', action: () => goPage('player') },
-    { type: 'player', label: 'Игрок', emoji: '⚡', action: () => goPage('player') },
-    { type: 'player', label: 'Игрок', emoji: '🎯', action: () => goPage('player') },
-    { type: 'player', label: 'Игрок', emoji: '🧠', action: () => goPage('player') },
-    { type: 'player', label: 'Игрок', emoji: '⭐', action: () => goPage('player') },
     // действия
     { type: 'action', label: 'Подать заявку в команду', emoji: '📨', action: () => openApplyModal() },
     { type: 'action', label: 'Создать новую тиму', emoji: '🚀', action: () => openModal('team') },
@@ -9551,7 +9510,7 @@
       : SEARCHABLE.slice(0, 8);
 
     if (filtered.length === 0) {
-      list.innerHTML = '<div style="padding: 30px 16px; text-align: center; color: var(--muted); font-weight: 600; font-size: 13px;">🔎 Ничего не нашли по запросу «' + query + '»</div>';
+      list.innerHTML = '<div style="padding: 30px 16px; text-align: center; color: var(--muted); font-weight: 600; font-size: 13px;">🔎 Ничего не нашли по запросу «' + escHtml(query) + '»</div>';
       return;
     }
 
@@ -9564,9 +9523,9 @@
 
     list.innerHTML = filtered.map((item, i) => `
       <div class="gs-item${i === 0 ? ' selected' : ''}" onclick="executeSearchAction(${SEARCHABLE.indexOf(item)})">
-        <div class="gs-item-emoji">${item.emoji}</div>
+        <div class="gs-item-emoji">${escHtml(item.emoji)}</div>
         <div class="gs-item-body">
-          <div class="gs-item-label">${item.label}</div>
+          <div class="gs-item-label">${escHtml(item.label)}</div>
           <div class="gs-item-type">${typeLabels[item.type]}</div>
         </div>
         <div class="gs-item-arrow">↵</div>
@@ -9875,11 +9834,11 @@
         <div style="display:flex; flex-direction:column; gap:14px; margin-top:6px">
           <div>
             <div style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px">Название</div>
-            <input id="csName" class="input" value="${(team.name || '').replace(/"/g, '&quot;')}" maxlength="24">
+            <input id="csName" class="input" value="${escHtml(team.name)}" maxlength="24">
           </div>
           <div>
             <div style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px">Тег (2–5 симв.)</div>
-            <input id="csTag" class="input" value="${(team.tag || '').replace(/"/g, '&quot;')}" maxlength="5" style="text-transform:uppercase">
+            <input id="csTag" class="input" value="${escHtml(team.tag)}" maxlength="5" style="text-transform:uppercase">
           </div>
           <div>
             <div style="font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px">Лого (картинка, необязательно)</div>
@@ -10019,7 +9978,7 @@
     }
 
     const nameEl = page.querySelector('.th-meta-list .th-name');
-    if (nameEl) nameEl.innerHTML = (team.name || '—') + (isMine ? ' <span style="color:var(--accent); font-size:12px; font-weight:900">· твоя</span>' : '');
+    if (nameEl) nameEl.innerHTML = escHtml(team.name || '—') + (isMine ? ' <span style="color:var(--accent); font-size:12px; font-weight:900">· твоя</span>' : '');
     const tagEl = page.querySelector('.th-meta-list .th-tag');
     if (tagEl) tagEl.textContent = team.tag ? '[' + team.tag + ']' : '[—]';
     const createdEl = page.querySelector('.th-meta-list .th-created');
@@ -10539,6 +10498,8 @@
       if (vForm) vForm.style.display = '';
       if (vDesc) vDesc.innerHTML = 'Укажи игровой <b>ID</b> и <b>никнейм</b> из Standoff 2. ⚠️ Игра под другим ID = бан.';
     }
+
+    applyPrivacyToggles();
   }
 
   // Применяет данные команды на главную (карточка моей команды)
@@ -10786,7 +10747,7 @@
         const deaths = kd > 0 ? Math.round(kills / kd) : 0;
         totKills += kills; totDeaths += deaths;
         return `<div class="sm-rp">
-          <div class="sm-rp-name">${x.is_captain ? '<span class="sm-cap-badge">C</span> ' : ''}${p.nick || 'player'}</div>
+          <div class="sm-rp-name">${x.is_captain ? '<span class="sm-cap-badge">C</span> ' : ''}${escHtml(p.nick || 'player')}</div>
           <div class="sm-rp-stat">${kills}<small>kills</small></div>
           <div class="sm-rp-stat">${deaths}<small>death</small></div>
           <div class="sm-rp-stat">${kd ? kd.toFixed(2) : '—'}<small>kd</small></div>
@@ -10797,8 +10758,8 @@
       const kdTxt = (diff >= 0 ? '+' : '') + diff;
       return `<div class="sm-roster-card">
         <div class="sm-roster-head">
-          <div class="sm-roster-logo" style="background:${t.logo_color || 'var(--accent)'}">${t.logo_initials || (t.name||'?').substring(0,2).toUpperCase()}</div>
-          <div class="sm-roster-name">${t.name || '—'}</div>
+          <div class="sm-roster-logo" style="background:${t.logo_url ? 'var(--card-3)' : (t.logo_color || 'var(--accent)')};overflow:hidden;">${teamLogoInner(t)}</div>
+          <div class="sm-roster-name">${escHtml(t.name || '—')}</div>
           <div class="sm-roster-kd ${kdCls}" title="суммарно киллов − смертей">${kdTxt}</div>
         </div>
         ${rows}
@@ -10842,9 +10803,10 @@
     sched.style.display = 'none'; ann.style.display = 'none';
     document.getElementById('smCheckins').style.display = 'none';
     document.getElementById('smResult').style.display = 'none';
+    document.getElementById('smConfirm').style.display = 'none';
 
     if (m.status === 'completed') {
-      ann.innerHTML = `🏆 <b>${m.teams_a.name}</b> ${m.team_a_score} : ${m.team_b_score} <b>${m.teams_b.name}</b><br>победа ${m.winner_id === m.team_a_id ? m.teams_a.name : m.teams_b.name} · очки: ${m.points_a > 0 ? '+' : ''}${m.points_a} / ${m.points_b > 0 ? '+' : ''}${m.points_b}`;
+      ann.innerHTML = `🏆 <b>${escHtml(m.teams_a.name)}</b> ${m.team_a_score} : ${m.team_b_score} <b>${escHtml(m.teams_b.name)}</b><br>победа ${escHtml(m.winner_id === m.team_a_id ? m.teams_a.name : m.teams_b.name)} · очки: ${m.points_a > 0 ? '+' : ''}${m.points_a} / ${m.points_b > 0 ? '+' : ''}${m.points_b}`;
       ann.style.display = '';
       statusLine.textContent = 'Матч завершён.';
       return;
@@ -10852,12 +10814,34 @@
 
     if (m.status === 'scheduled') {
       const host = smMembers.find(x => x.profiles?.id === m.host_player_id);
-      ann.innerHTML = `📣 <b>${m.teams_a.name}</b> vs <b>${m.teams_b.name}</b><br>🗺️ ${m.map} · 🕐 ${fmt(m.scheduled_at)}<br>🎮 хостер: ${host?.profiles?.nick || '—'}`;
+      ann.innerHTML = `📣 <b>${escHtml(m.teams_a.name)}</b> vs <b>${escHtml(m.teams_b.name)}</b><br>🗺️ ${escHtml(m.map)} · 🕐 ${fmt(m.scheduled_at)}<br>🎮 хостер: ${escHtml(host?.profiles?.nick || '—')}`;
       ann.style.display = '';
       renderCheckins(m, inMatch);
 
       // после времени матча капитан может отправить результат
       const started = new Date(m.scheduled_at) <= new Date();
+
+      // === Этап подтверждения результата ===
+      if (m.result_status === 'disputed') {
+        ann.innerHTML += '<br>⚠️ Результат оспорен — рассматривает админ.';
+        statusLine.textContent = 'Результат оспорен. Ждите решения админа.';
+        return;
+      }
+      if (m.result_status === 'reported') {
+        const sa = m.reported_score_a, sb = m.reported_score_b;
+        const iReported = currentUser && m.reported_by === currentUser.id;
+        if (inMatch && iAmCaptain && !iReported) {
+          document.getElementById('smConfirmScore').textContent = `${m.teams_a.name} ${sa} : ${sb} ${m.teams_b.name}`;
+          document.getElementById('smConfirm').style.display = '';
+          statusLine.textContent = 'Соперник отправил счёт — подтверди или оспорь.';
+        } else if (iReported) {
+          statusLine.textContent = `Ты отправил счёт ${sa}:${sb}. Ждём подтверждения соперника.`;
+        } else {
+          statusLine.textContent = `Счёт ${sa}:${sb} отправлен. Ждём подтверждения соперника.`;
+        }
+        return;
+      }
+
       if (started && inMatch && iAmCaptain) {
         document.getElementById('smResA').textContent = m.teams_a.name;
         document.getElementById('smResB').textContent = m.teams_b.name;
@@ -10876,7 +10860,7 @@
       if (inMatch && iAmCaptain) {
         const sel = document.getElementById('smHost');
         sel.innerHTML = smMembers.filter(x => x.profiles?.id).map(x =>
-          `<option value="${x.profiles.id}">${x.profiles.nick || '—'} (${x.team_id === m.team_a_id ? m.teams_a.tag : m.teams_b.tag})</option>`
+          `<option value="${x.profiles.id}">${escHtml(x.profiles.nick || '—')} (${escHtml(x.team_id === m.team_a_id ? m.teams_a.tag : m.teams_b.tag)})</option>`
         ).join('');
         sched.style.display = '';
         statusLine.textContent = 'Выберите время и хостера, затем анонсируйте.';
@@ -10896,7 +10880,7 @@
 
     document.getElementById('smBpTurn').innerHTML = myTurn
       ? '<span style="color:var(--accent)">твоя очередь банить!</span>'
-      : `банит ${turnName}`;
+      : `банит ${escHtml(turnName)}`;
     document.getElementById('smMaps').innerHTML = SM_MAPS.map(map => {
       const banned = bannedMaps.includes(map);
       return `<button onclick="banMap('${map}')" ${banned || !myTurn ? 'disabled' : ''}
@@ -11034,27 +11018,58 @@
         const path = `${smMatch.id}/${currentTeam.id}/${Date.now()}_${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
         const { error: upErr } = await supabaseClient.storage.from('evidence').upload(path, f);
         if (upErr) throw upErr;
-        const { data: pub } = supabaseClient.storage.from('evidence').getPublicUrl(path);
+        // evidence-бакет приватный → храним путь (подписывается при необходимости)
         await supabaseClient.from('match_evidence').insert({
           match_id: smMatch.id, team_id: currentTeam.id, uploaded_by: currentUser.id,
           kind: f.type.startsWith('video') ? 'demo' : 'score_screenshot',
-          url: pub.publicUrl
+          url: path
         });
       }
 
-      // применяем результат (очки, ранги, wr)
-      const { error } = await supabaseClient.rpc('apply_match_result', {
+      // отправляем счёт на подтверждение сопернику (не начисляем сразу)
+      const { error } = await supabaseClient.rpc('report_result', {
         p_match_id: smMatch.id, p_score_a: a, p_score_b: b
       });
       if (error) throw error;
 
-      showToast('🏆 Результат принят! Очки начислены', 'success');
+      showToast('📨 Счёт отправлен — ждём подтверждения соперника', 'success');
       refreshSeasonMatch(smMatch.id);
     } catch (e) {
       console.error('submitResult:', e);
       showToast('Ошибка: ' + (e.message || e), 'error');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = '📤 Отправить результат'; }
+    }
+  }
+
+  async function confirmResult() {
+    if (!smMatch) return;
+    const btn = document.getElementById('smConfirmBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
+    try {
+      const { error } = await supabaseClient.rpc('confirm_result', { p_match_id: smMatch.id });
+      if (error) throw error;
+      showToast('🏆 Результат подтверждён! Очки начислены', 'success');
+      refreshSeasonMatch(smMatch.id);
+    } catch (e) {
+      console.error('confirmResult:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '✅ Подтвердить'; }
+    }
+  }
+
+  async function disputeResult() {
+    if (!smMatch) return;
+    if (!confirm('Оспорить результат? Матч уйдёт на рассмотрение админу.')) return;
+    try {
+      const { error } = await supabaseClient.rpc('dispute_result', { p_match_id: smMatch.id });
+      if (error) throw error;
+      showToast('⚠️ Результат оспорен — рассматривает админ', 'important');
+      refreshSeasonMatch(smMatch.id);
+    } catch (e) {
+      console.error('disputeResult:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
     }
   }
 
@@ -11173,7 +11188,7 @@
 
   function goMyTeam() {
     // Есть команда → на страницу команды с реальными данными, нет → на список команд
-    if (window.currentTeam && currentTeam.id) {
+    if (currentTeam && currentTeam.id) {
       openTeamPage(currentTeam);
     } else {
       goPage('teams');
@@ -11186,7 +11201,7 @@
     setTimeout(() => {
       const subtitle = document.querySelector('[data-page="matches"] .hub-sub');
       if (subtitle) {
-        if (window.currentTeam && currentTeam.name) {
+        if (currentTeam && currentTeam.name) {
           subtitle.innerHTML = '🎮 показаны только матчи <b style="color: var(--text)">' + currentTeam.name + '</b> · <a href="#" onclick="resetMatchesFilter(); return false;" style="color: var(--mint); font-weight: 800;">показать все →</a>';
         } else {
           subtitle.innerHTML = '🎮 у тебя пока нет матчей — <a href="#" onclick="goPage(\'teams\'); return false;" style="color: var(--mint); font-weight: 800;">найди команду →</a>';
@@ -11576,10 +11591,40 @@
       const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       const { error } = await supabaseClient.storage.from('ticket-evidence').upload(path, f, { contentType: f.type });
       if (error) { console.warn('upload err', error); continue; }
-      const { data } = supabaseClient.storage.from('ticket-evidence').getPublicUrl(path);
-      if (data?.publicUrl) urls.push({ url: data.publicUrl, kind: f.type.startsWith('video') ? 'video' : 'image' });
+      // бакет приватный → храним путь, ссылку подписываем при показе
+      urls.push({ path, kind: f.type.startsWith('video') ? 'video' : 'image' });
     }
     return urls;
+  }
+
+  // Подписывает приватные медиа (.sgn-media[data-path]) после рендера innerHTML
+  async function hydrateSignedMedia(root) {
+    if (!supabaseClient || !root) return;
+    const els = root.querySelectorAll('.sgn-media[data-path]');
+    for (const el of els) {
+      const path = el.getAttribute('data-path');
+      const bucket = el.getAttribute('data-bucket') || 'ticket-evidence';
+      if (!path) continue;
+      try {
+        const { data, error } = await supabaseClient.storage.from(bucket).createSignedUrl(path, 3600);
+        if (error || !data?.signedUrl) continue;
+        if (el.tagName === 'IMG') el.src = data.signedUrl;
+        else el.href = data.signedUrl;
+      } catch (e) { /* graceful */ }
+    }
+  }
+
+  // Разметка одного вложения тикета (signed URL по path; fallback на старый .url)
+  function ticketAttHtml(a) {
+    if (a.path) {
+      return a.kind === 'video'
+        ? `<a class="sgn-media" data-bucket="ticket-evidence" data-path="${escHtml(a.path)}" href="#" target="_blank" style="display:inline-flex; background:var(--card-3); padding:5px 9px; border-radius:7px; font-size:11px; font-weight:700; margin:4px 4px 0 0">🎬 видео</a>`
+        : `<a class="sgn-media" data-bucket="ticket-evidence" data-path="${escHtml(a.path)}" href="#" target="_blank"><img class="sgn-media" data-bucket="ticket-evidence" data-path="${escHtml(a.path)}" src="" style="width:54px; height:54px; object-fit:cover; border-radius:7px; margin:4px 4px 0 0; border:1px solid var(--line)"></a>`;
+    }
+    // backward-compat: старые публичные URL
+    return a.kind === 'video'
+      ? `<a href="${escHtml(a.url || '')}" target="_blank" style="display:inline-flex; background:var(--card-3); padding:5px 9px; border-radius:7px; font-size:11px; font-weight:700; margin:4px 4px 0 0">🎬 видео</a>`
+      : `<a href="${escHtml(a.url || '')}" target="_blank"><img src="${escHtml(a.url || '')}" style="width:54px; height:54px; object-fit:cover; border-radius:7px; margin:4px 4px 0 0; border:1px solid var(--line)"></a>`;
   }
 
   async function openMyTickets() {
@@ -11610,10 +11655,7 @@
       box.innerHTML = data.map(t => {
         const st = statusLbl[t.status] || ['—', 'var(--muted)'];
         const atts = Array.isArray(t.attachments) ? t.attachments : [];
-        const media = atts.map(a => a.kind === 'video'
-          ? `<a href="${a.url}" target="_blank" style="display:inline-flex; background:var(--card-3); padding:5px 9px; border-radius:7px; font-size:11px; font-weight:700; margin:4px 4px 0 0">🎬 видео</a>`
-          : `<a href="${a.url}" target="_blank"><img src="${a.url}" style="width:54px; height:54px; object-fit:cover; border-radius:7px; margin:4px 4px 0 0; border:1px solid var(--line)"></a>`
-        ).join('');
+        const media = atts.map(ticketAttHtml).join('');
         return `
           <div style="background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px">
@@ -11621,12 +11663,13 @@
               <span style="font-size:11px; font-weight:800; color:${st[1]}; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:100px">${st[0]}</span>
               <span style="font-size:11px; color:var(--muted-2); margin-left:auto">${new Date(t.created_at).toLocaleDateString('ru-RU')}</span>
             </div>
-            ${t.subject ? `<div style="font-weight:700; font-size:13px; margin-bottom:3px">${t.subject.replace(/</g,'&lt;')}</div>` : ''}
-            ${t.target ? `<div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:3px">${t.type === 'report' ? 'ID нарушителя' : 'Аккаунт'}: <b style="color:var(--text)">${t.target}</b>${t.category ? ' · ' + t.category : ''}</div>` : ''}
-            <div style="font-size:13px; line-height:1.5; color:var(--text)">${(t.message || '').replace(/</g,'&lt;')}</div>
+            ${t.subject ? `<div style="font-weight:700; font-size:13px; margin-bottom:3px">${escHtml(t.subject)}</div>` : ''}
+            ${t.target ? `<div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:3px">${t.type === 'report' ? 'ID нарушителя' : 'Аккаунт'}: <b style="color:var(--text)">${escHtml(t.target)}</b>${t.category ? ' · ' + escHtml(t.category) : ''}</div>` : ''}
+            <div style="font-size:13px; line-height:1.5; color:var(--text)">${escHtml(t.message)}</div>
             ${media ? `<div style="display:flex; flex-wrap:wrap; margin-top:6px">${media}</div>` : ''}
           </div>`;
       }).join('');
+      hydrateSignedMedia(box);
     } catch (e) { box.innerHTML = '<div style="padding:14px; color:var(--hot-pink)">Ошибка: ' + (e.message || e) + '</div>'; }
   }
 
@@ -11937,6 +11980,71 @@
     }
   }
 
+  const AB_PALETTE = ['#e30613', '#ff8a3c', '#ffc842', '#2ee27f', '#14b8a6', '#3b82f6', '#a855f7', '#ec4899', '#f43f5e', '#64748b'];
+  function abRenderColors() {
+    const box = document.getElementById('abColors');
+    const prev = document.getElementById('abAvatarPrev');
+    if (prev) {
+      prev.textContent = ((currentUser?.nick || '??').substring(0, 2)).toUpperCase();
+      prev.style.background = window._abColor || 'var(--accent)';
+    }
+    if (!box) return;
+    box.innerHTML = AB_PALETTE.map(c =>
+      `<div class="ab-color${c === window._abColor ? ' sel' : ''}" style="background:${c}" onclick="selectAbColor('${c}')"></div>`
+    ).join('');
+  }
+  function selectAbColor(c) {
+    window._abColor = c;
+    abRenderColors();
+  }
+  function openAboutEditor() {
+    if (!currentUser) { showToast('Сначала войди', 'error'); return; }
+    const v = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    v('abBio', currentUser.bio);
+    v('abTelegram', currentUser.link_telegram);
+    v('abDiscord', currentUser.link_discord);
+    v('abVk', currentUser.link_vk);
+    v('abRankoff', currentUser.link_rankoff);
+    window._abColor = currentUser.avatar_color || AB_PALETTE[0];
+    abRenderColors();
+    const m = document.getElementById('aboutModal');
+    if (m) m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAboutModal() {
+    const m = document.getElementById('aboutModal');
+    if (m) m.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  async function saveAbout() {
+    if (!supabaseClient || !currentUser) { showToast('Сначала войди', 'error'); return; }
+    const val = (id) => (document.getElementById(id)?.value || '').trim() || null;
+    const upd = {
+      bio: val('abBio'),
+      link_telegram: val('abTelegram'),
+      link_discord: val('abDiscord'),
+      link_vk: val('abVk'),
+      link_rankoff: val('abRankoff'),
+      avatar_color: window._abColor || currentUser.avatar_color || null,
+    };
+    const btn = document.querySelector('#aboutModal .sm-btn.submit');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
+    try {
+      const { error } = await supabaseClient.from('profiles').update(upd).eq('id', currentUser.id);
+      if (error) throw error;
+      Object.assign(currentUser, upd);
+      applyUserData();
+      showToast('Сохранено ✓', 'success');
+      closeAboutModal();
+      openPlayerProfile(currentUser.id);
+    } catch (e) {
+      console.error('saveAbout:', e);
+      showToast('Ошибка: ' + (e.message || e), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '💾 Сохранить'; }
+    }
+  }
+
   // Экранирование для безопасной вставки в HTML-текст и в JS-строку внутри onclick
   function escHtml(s) {
     return String(s == null ? '' : s)
@@ -11949,6 +12057,14 @@
       .replace(/'/g, "\\'").replace(/"/g, '&quot;')
       .replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/[\r\n]+/g, ' ');
+  }
+
+  // Лого команды: <img> если есть logo_url, иначе инициалы. Фон гасим под картинкой.
+  function teamLogoInner(team) {
+    if (team && team.logo_url) {
+      return `<img src="${escHtml(team.logo_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block">`;
+    }
+    return escHtml((team && team.logo_initials) || (team && team.name ? team.name.substring(0,2).toUpperCase() : '?'));
   }
 
   function openMessageModal(nick) {
@@ -12279,7 +12395,7 @@
         const avg = p.matches_played ? (Number(p.total_kills || 0) / p.matches_played).toFixed(1) : '0';
         return `<div onclick="openPlayerProfile('${p.id}')" style="display:grid; grid-template-columns:34px 1fr 56px 56px 56px 56px; gap:8px; align-items:center; padding:12px 14px; border-radius:12px; cursor:pointer; background:${i % 2 ? 'transparent' : 'var(--card-2)'}">
           <div style="font-weight:800">${rank}</div>
-          <div style="font-weight:800; display:flex; align-items:center; gap:8px"><span style="width:28px;height:28px;border-radius:8px;background:${p.avatar_color || 'var(--accent)'};display:flex;align-items:center;justify-content:center;font-size:14px">${p.avatar_emoji || '🎮'}</span>${p.nick || '—'}</div>
+          <div style="font-weight:800; display:flex; align-items:center; gap:8px"><span style="width:28px;height:28px;border-radius:8px;background:${p.avatar_color || 'var(--accent)'};display:flex;align-items:center;justify-content:center;font-size:14px">${escHtml(p.avatar_emoji || '🎮')}</span>${escHtml(p.nick || '—')}</div>
           <div style="text-align:right; font-weight:800; color:${Number(kd) >= 1.2 ? 'var(--accent)' : 'inherit'}">${kd}</div>
           <div style="text-align:right; font-weight:700">${wr}</div>
           <div style="text-align:right; font-weight:700">${avg}</div>
@@ -12326,10 +12442,7 @@
       const statusLbl = { open: '🔵 открыт', in_progress: '🟡 в работе', resolved: '🟢 решён', rejected: '🔴 отклонён' };
       box.innerHTML = data.map(t => {
         const atts = Array.isArray(t.attachments) ? t.attachments : [];
-        const media = atts.map(a => a.kind === 'video'
-          ? `<a href="${a.url}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; background:var(--card-3); padding:6px 10px; border-radius:8px; font-size:12px; font-weight:700; margin:4px 4px 0 0">🎬 видео</a>`
-          : `<a href="${a.url}" target="_blank"><img src="${a.url}" style="width:64px; height:64px; object-fit:cover; border-radius:8px; margin:4px 4px 0 0; border:1px solid var(--line)"></a>`
-        ).join('');
+        const media = atts.map(ticketAttHtml).join('');
         return `
           <div style="background:var(--card-2); border-radius:12px; padding:12px 14px; margin-bottom:10px">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px">
@@ -12338,9 +12451,9 @@
               <span style="font-size:11px; color:var(--muted-2); margin-left:auto">${new Date(t.created_at).toLocaleString('ru-RU')}</span>
             </div>
             <div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:4px">
-              от ${t.profiles?.nick || '—'}${t.target ? ` · ID: <b style="color:var(--text)">${t.target}</b>` : ''}${t.category ? ` · ${t.category}` : ''}${t.subject ? ` · ${t.subject}` : ''}
+              от ${escHtml(t.profiles?.nick || '—')}${t.target ? ` · ID: <b style="color:var(--text)">${escHtml(t.target)}</b>` : ''}${t.category ? ` · ${escHtml(t.category)}` : ''}${t.subject ? ` · ${escHtml(t.subject)}` : ''}
             </div>
-            <div style="font-size:13px; line-height:1.5; margin-bottom:8px">${(t.message || '').replace(/</g, '&lt;')}</div>
+            <div style="font-size:13px; line-height:1.5; margin-bottom:8px">${escHtml(t.message)}</div>
             ${media ? `<div style="display:flex; flex-wrap:wrap">${media}</div>` : ''}
             <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px">
               <button class="btn" style="background:var(--card-3); font-size:12px; padding:6px 12px" onclick="setTicketStatus('${t.id}','in_progress')">🟡 В работу</button>
@@ -12349,6 +12462,7 @@
             </div>
           </div>`;
       }).join('');
+      hydrateSignedMedia(box);
     } catch (e) { box.innerHTML = '<div style="padding:14px; color:var(--hot-pink); font-size:12px">Ошибка: ' + (e.message || e) + '</div>'; }
   }
 
@@ -12415,7 +12529,7 @@
     try {
       const { data } = await supabaseClient.from('matches')
         .select('*, teams_a:team_a_id(name), teams_b:team_b_id(name)')
-        .eq('status', 'disputed').order('created_at', { ascending: false }).limit(20);
+        .eq('result_status', 'disputed').neq('status', 'completed').order('created_at', { ascending: false }).limit(20);
       const box = document.getElementById('adminDisputes');
       document.getElementById('disputeCount').textContent = (data?.length || 0) + ' активных';
       box.innerHTML = (data && data.length)
@@ -12443,9 +12557,9 @@
       const box = document.getElementById('adminTeams');
       box.innerHTML = (data && data.length) ? data.map(t =>
         `<div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px">
-          <div style="flex:1; font-weight:700; font-size:13px">[${t.tag}] ${t.name} <span style="color:var(--muted)">· ${t.points} pts</span></div>
+          <div style="flex:1; font-weight:700; font-size:13px">[${escHtml(t.tag)}] ${escHtml(t.name)} <span style="color:var(--muted)">· ${t.points} pts</span></div>
           <button class="btn" style="padding:6px 10px; font-size:12px; background:var(--card-3)" onclick="adminAdjustPoints('${t.id}', ${t.points})">±очки</button>
-          <button class="btn btn-danger" style="padding:6px 10px; font-size:12px" onclick="adminDeleteTeam('${t.id}','${t.name.replace(/'/g,"")}')">🗑️</button>
+          <button class="btn btn-danger" style="padding:6px 10px; font-size:12px" onclick="adminDeleteTeam('${t.id}','${jsAttr(t.name)}')">🗑️</button>
         </div>`).join('')
         : '<div style="padding:14px; color:var(--muted); font-weight:700; font-size:13px">Команд нет</div>';
     } catch (e) { console.warn(e); }
@@ -12468,7 +12582,7 @@
           : '';
         return `<div style="padding:10px 12px; background:var(--card-2); border-radius:10px; margin-bottom:8px">
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
-            <div style="flex:1; font-weight:700; font-size:13px; min-width:120px">${p.nick || '—'} ${p.is_verified ? '✓' : ''} ${p.is_banned ? '🚫' : ''}</div>
+            <div style="flex:1; font-weight:700; font-size:13px; min-width:120px">${escHtml(p.nick || '—')} ${p.is_verified ? '✓' : ''} ${p.is_banned ? '🚫' : ''}</div>
             ${verifyBtn}
             <button class="btn" style="padding:6px 10px; font-size:12px; background:${p.is_banned ? 'var(--accent)' : 'var(--card-3)'}" onclick="adminAction('admin_ban_player',{p_player_id:'${p.id}',p_banned:${!p.is_banned}},'${p.is_banned ? 'Разбанен' : 'Забанен'}', loadAdmin)">${p.is_banned ? 'разбан' : 'бан'}</button>
           </div>
@@ -12619,7 +12733,7 @@
     // При прямом переходе на /team: есть моя команда → показываем её реальные данные.
     // Демо-— остаётся только для гостей без команды.
     if (name === 'team' && !window._teamOverride) {
-      if (window.currentTeam && currentTeam.id && typeof populateTeamPage === 'function') {
+      if (currentTeam && currentTeam.id && typeof populateTeamPage === 'function') {
         populateTeamPage(currentTeam);
       } else {
       const page = document.querySelector('[data-page="team"]');
@@ -13287,11 +13401,11 @@
       card.onclick = () => openTeamPage(team);
       card.innerHTML = `
         <div class="tcl-rank" style="color: ${rankColor(rank)};">#${String(rank).padStart(2, '0')}</div>
-        <div class="tcl-logo" style="background: ${team.logo_color};">${team.logo_initials}</div>
+        <div class="tcl-logo" style="background:${team.logo_url ? 'var(--card-3)' : team.logo_color};overflow:hidden;">${teamLogoInner(team)}</div>
         <div class="tcl-info">
-          <div class="tcl-name">${team.name} ${isMine ? '<span style="color: var(--accent); font-size: 11px; font-weight: 900;">· твоя</span>' : (team.is_recruiting ? '<span style="color: var(--mint); font-size: 11px; font-weight: 800;">↗ recruiting</span>' : '')}</div>
+          <div class="tcl-name">${escHtml(team.name)} ${isMine ? '<span style="color: var(--accent); font-size: 11px; font-weight: 900;">· твоя</span>' : (team.is_recruiting ? '<span style="color: var(--mint); font-size: 11px; font-weight: 800;">↗ recruiting</span>' : '')}</div>
           <div class="tcl-meta">
-            <span class="tcl-tag">${team.tag}</span>
+            <span class="tcl-tag">${escHtml(team.tag)}</span>
             <span>· ${team.region}</span>
             <span>· ${record}</span>
             ${streakBadge(team.current_streak || 0)}
@@ -13384,8 +13498,8 @@
             <span>·</span>
             <span>${timeAgo}</span>
           </div>
-          <div class="news-card-title">${news.title}</div>
-          <div class="news-card-desc">${news.preview}</div>
+          <div class="news-card-title">${escHtml(news.title)}</div>
+          <div class="news-card-desc">${escHtml(news.preview)}</div>
           <div class="news-card-meta">
             <span>📖 ${news.reading_min} мин чтения</span>
             <span>·</span>
@@ -13455,6 +13569,70 @@
       badge.insertBefore(textNode, progressEl);
       if (fillEl) fillEl.style.width = Math.min(100, Math.max(0, progress)) + '%';
     }
+
+    // ===== Наполняем страницу сезона реальными данными =====
+    const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setTxt('seasonWeek', `${currentWeek}/${totalWeeks}`);
+    const wp = document.getElementById('seasonWeekPill');
+    if (wp) wp.textContent = `· неделя ${currentWeek}/${totalWeeks}`;
+    setTxt('seasonDaysLeft', Math.max(0, Math.ceil((endDate - now) / (24 * 3600 * 1000))));
+    setTxt('seasonProgPct', `${Math.min(100, Math.max(0, progress))}% завершено`);
+    const pf = document.getElementById('seasonProgFill');
+    if (pf) pf.style.width = Math.min(100, Math.max(0, progress)) + '%';
+
+    // Недели — генерим динамически
+    const weeksEl = document.getElementById('seasonWeeks');
+    if (weeksEl && totalWeeks > 0) {
+      let wh = '';
+      for (let w = 1; w <= totalWeeks; w++) {
+        const done = w < currentWeek, cur = w === currentWeek;
+        const label = done ? '✓ сыграна' : (cur ? '▶ идёт' : 'скоро');
+        const col = done ? 'var(--mint)' : (cur ? 'var(--accent)' : 'var(--muted)');
+        const edge = (done || cur) ? `border-left:3px solid ${col};` : 'opacity:0.6;';
+        wh += `<div style="background:var(--card-2);padding:10px;border-radius:10px;text-align:center;${edge}"><div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:14px;">Нед ${w}</div><div style="font-size:10px;color:${col};font-weight:700;margin-top:4px;">${label}</div></div>`;
+      }
+      weeksEl.innerHTML = wh;
+      weeksEl.style.gridTemplateColumns = `repeat(${Math.min(totalWeeks, 4)},1fr)`;
+    }
+
+    // Счётчики + прогресс по матчам + лидеры (всё с guard'ами)
+    try {
+      const cnt = (q) => q.then(r => (r && typeof r.count === 'number') ? r.count : null);
+      const teamsCount = await cnt(supabaseClient.from('teams').select('id', { count: 'exact', head: true }));
+      if (teamsCount != null) setTxt('seasonTeams', teamsCount);
+      const playersCount = await cnt(supabaseClient.from('profiles').select('id', { count: 'exact', head: true }));
+      if (playersCount != null) setTxt('seasonPlayers', playersCount);
+      const playedCount = await cnt(supabaseClient.from('matches').select('id', { count: 'exact', head: true }).eq('season_id', data.id).eq('status', 'completed'));
+      const totalMatches = await cnt(supabaseClient.from('matches').select('id', { count: 'exact', head: true }).eq('season_id', data.id));
+      setTxt('seasonMatches', playedCount != null ? playedCount : 0);
+      const ptEl = document.getElementById('seasonProgText');
+      if (ptEl) ptEl.textContent = `${playedCount || 0} / ${totalMatches || 0} матчей`;
+    } catch (e) { console.warn('season counts', e); }
+
+    const ldEl = document.getElementById('seasonLeaders');
+    if (ldEl) {
+      try {
+        const { data: tops } = await supabaseClient
+          .from('teams').select('*').eq('division_id', 'd1')
+          .order('points', { ascending: false }).limit(5);
+        window._seasonTops = tops || [];
+        if (tops && tops.length) {
+          const medals = ['🥇', '🥈', '🥉'];
+          ldEl.innerHTML = tops.map((t, i) => {
+            const w = t.wins || 0, l = t.losses || 0;
+            const rankCell = i < 3 ? `<div style="font-size:20px;text-align:center;">${medals[i]}</div>`
+              : `<div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:13px;color:var(--muted);text-align:center;">${String(i + 1).padStart(2, '0')}</div>`;
+            return `<div onclick="openTeamPage(window._seasonTops[${i}])" style="display:grid;grid-template-columns:36px 38px 1fr auto auto;gap:12px;align-items:center;padding:11px 13px;background:var(--card-2);border-radius:11px;cursor:pointer;">${rankCell}<div style="width:38px;height:38px;border-radius:11px;overflow:hidden;background:${t.logo_url ? 'var(--card-3)' : (t.logo_color || 'var(--accent)')};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">${teamLogoInner(t)}</div><div><div style="font-weight:800;font-size:14px;">${escHtml(t.name)}</div><div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:2px;">${w}-${l}</div></div><div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:16px;">${t.points || 0}</div><div style="font-size:10px;color:var(--muted);font-weight:700;">PTS</div></div>`;
+          }).join('');
+          const sub = document.getElementById('seasonLeadersSub');
+          if (sub) sub.textContent = `топ-${tops.length}`;
+        } else {
+          ldEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:18px;font-weight:700;font-size:13px;">Пока нет команд в таблице</div>';
+          const sub = document.getElementById('seasonLeadersSub');
+          if (sub) sub.textContent = '';
+        }
+      } catch (e) { console.warn('season leaders', e); }
+    }
   }
 
   // =====================================
@@ -13486,9 +13664,9 @@
       row.style.cursor = 'pointer';
       row.innerHTML = `
         <div class="lb-rank">${medal}</div>
-        <div class="lb-logo" style="background: ${team.logo_color}">${team.logo_initials}</div>
+        <div class="lb-logo" style="background:${team.logo_url ? 'var(--card-3)' : team.logo_color};overflow:hidden;">${teamLogoInner(team)}</div>
         <div class="lb-name">
-          <b>${team.name}</b>
+          <b>${escHtml(team.name)}</b>
           <div class="lb-stat" style="font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px;">
             ${team.wins || 0}-${team.losses || 0} · WR ${((team.wins || 0) + (team.losses || 0)) > 0 ? Math.round((team.wins || 0) / ((team.wins || 0) + (team.losses || 0)) * 100) + '%' : '—'}
           </div>
@@ -13563,7 +13741,7 @@
         <a href="#" class="nm-item ${n.is_read ? '' : 'unread'}" onclick="${link}; closeNotif(); markOneNotifRead('${n.id}'); return false;">
           <div class="nm-item-icon" style="background: ${iconBg}; color: ${iconColor}">${icon}</div>
           <div class="nm-item-body">
-            <div class="nm-item-text"><b>${n.title}</b>${n.body ? ' — ' + n.body : ''}</div>
+            <div class="nm-item-text"><b>${escHtml(n.title)}</b>${n.body ? ' — ' + escHtml(n.body) : ''}</div>
             <div class="nm-item-time">${time}</div>
           </div>
           ${n.is_read ? '' : '<span class="nm-item-dot"></span>'}
@@ -13731,7 +13909,7 @@
         const p = m.profile || {};
         const ini = ((p.nick || '??').substring(0, 2)).toUpperCase();
         const col = p.avatar_color || (m.is_captain ? 'var(--peach)' : 'var(--accent)');
-        slots.push(`<div class="th-roster-ava" style="background:${col}" title="${(p.nick || '').replace(/"/g, '')}">${ini}</div>`);
+        slots.push(`<div class="th-roster-ava" style="background:${col}" title="${escHtml(p.nick)}">${ini}</div>`);
       });
       for (let i = players.length; i < 5; i++) {
         slots.push(`<div class="th-roster-ava empty">+</div>`);
@@ -13745,62 +13923,47 @@
     }
 
     const founderId = window._teamPageData?.created_by;
-    grid.innerHTML = members.map((m, idx) => {
+    const canManage = currentTeam && currentTeam.id === teamId && currentTeam.my_is_captain;
+    const mains = members.filter(m => m.role !== 'coach' && m.role !== 'substitute');
+    const reserves = members.filter(m => m.role === 'substitute');
+    const coachM = members.find(m => m.role === 'coach');
+
+    const filledCard = (m, roleLabel) => {
       const p = m.profile || {};
       const initials = ((p.nick || '??').substring(0, 2)).toUpperCase();
       const isFounder = founderId && p.id === founderId;
       const color = p.avatar_color || (m.is_captain ? 'var(--peach)' : 'var(--accent)');
       const kd = Number(p.total_kd || 1).toFixed(2);
-      const wr = Math.round((Number(p.total_wr || 0)) * 100);
-      const kills = p.total_kills || 0;
-
-      // Кнопка удаления — видна капитану на своих игроках (не на себе)
-      const showKick = currentTeam &&
-                       currentTeam.id === teamId &&
-                       currentTeam.my_is_captain &&
-                       !m.is_captain &&
-                       p.id !== currentUser?.id;
-
-      const kickBtn = showKick
-        ? `<button onclick="event.stopPropagation(); kickPlayer('${p.id}', '${(p.nick || '').replace(/'/g, "\\'")}')" style="position: absolute; top: 8px; right: 8px; background: var(--card-3); border: none; color: var(--hot-pink); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Удалить из команды">✕</button>`
-        : '';
-
-      const passCapBtn = (currentTeam && currentTeam.id === teamId && currentTeam.my_is_captain && !m.is_captain && p.id !== currentUser?.id)
-        ? `<button onclick="event.stopPropagation(); passCaptaincy('${p.id}', '${(p.nick || '').replace(/'/g, "\\'")}')" style="position: absolute; top: 8px; right: 36px; background: var(--card-3); border: none; color: var(--lemon); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Передать капитанство">👑</button>`
-        : '';
-
+      const roleTxt = isFounder ? '\u{1F451} Создатель' : (m.is_captain ? 'Капитан' : roleLabel);
+      const manage = canManage && !m.is_captain && p.id !== currentUser?.id;
+      const actions = manage ? `<div class="rc-actions">
+            <button class="rc-mini-btn" style="color:var(--lemon)" title="Передать капитанство" onclick="event.stopPropagation(); passCaptaincy('${p.id}', '${jsAttr(p.nick)}')">\u{1F451}</button>
+            <button class="rc-mini-btn" style="color:var(--hot-pink)" title="Удалить" onclick="event.stopPropagation(); kickPlayer('${p.id}', '${jsAttr(p.nick)}')">\u2715</button>
+          </div>` : '';
       return `
-        <div class="roster-card ${m.is_captain ? 'captain' : ''}" data-player="${p.nick}" style="position: relative; cursor: pointer;" onclick="openPlayerProfile('${p.id}')">
-          <span class="rc-num">${idx + 1}</span>
-          ${isFounder ? '<span class="rc-crown" title="создатель команды">👑</span>' : (m.is_captain ? '<span class="rc-cap-badge">C</span>' : '')}
-          ${passCapBtn}
-          ${kickBtn}
-          <div class="rc-avatar" style="background: ${color}">${initials}</div>
-          <div class="rc-name">${p.nick || 'player'}</div>
-          <div class="rc-role-row">${isFounder ? '<span style="color:var(--lemon); font-weight:800">👑 Создатель</span>' : (m.is_captain ? '<span class="rc-cap-badge">C</span> Капитан' : '<span style="color:var(--muted)">Игрок</span>')}</div>
-          <div class="rc-mini-stats">
-            <div><div class="rc-mini-stat-val">${kd}</div><div class="rc-mini-stat-lbl">KD</div></div>
-            <div><div class="rc-mini-stat-val">${kills}</div><div class="rc-mini-stat-lbl">Kills</div></div>
+        <div class="roster-card ${m.is_captain ? 'captain' : ''}" data-player="${escHtml(p.nick)}" onclick="openPlayerProfile('${p.id}')">
+          <div class="rc-avatar" style="background:${color}">${initials}</div>
+          <div class="rc-body">
+            <div class="rc-name">${escHtml(p.nick || 'player')}${m.is_captain ? '<span class="rc-cap-badge">C</span>' : ''}</div>
+            <div class="rc-sub">${roleTxt} \u00B7 ${kd} KD</div>
           </div>
-        </div>
-      `;
-    }).join('') + `
-      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
-        <div class="rc-avatar" style="background:var(--card-3)">🎓</div>
-        <div class="rc-name">Coach</div>
-        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
-      </div>
-      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
-        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
-        <div class="rc-name">Reserve</div>
-        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
-      </div>
-      <div class="roster-card empty-slot" style="opacity:.55; border:1.5px dashed var(--line); cursor:default">
-        <div class="rc-avatar" style="background:var(--card-3)">🔄</div>
-        <div class="rc-name">Reserve</div>
-        <div class="rc-role-row" style="color:var(--muted)">свободно</div>
-      </div>
-    `;
+          ${actions}
+        </div>`;
+    };
+    const emptyCard = (label, icon) => `
+        <div class="roster-card empty-slot" style="opacity:.5; border:1.5px dashed var(--line); cursor:default">
+          <div class="rc-avatar" style="background:var(--card-3); color:var(--muted)">${icon}</div>
+          <div class="rc-body">
+            <div class="rc-name" style="color:var(--muted)">${label}</div>
+            <div class="rc-sub">свободно</div>
+          </div>
+        </div>`;
+
+    let rosterHtml = '';
+    for (let i = 0; i < 5; i++) rosterHtml += mains[i] ? filledCard(mains[i], 'Основа') : emptyCard('Основа', '+');
+    for (let i = 0; i < 2; i++) rosterHtml += reserves[i] ? filledCard(reserves[i], 'Резерв') : emptyCard('Резерв', '\u{1F504}');
+    rosterHtml += coachM ? filledCard(coachM, 'Тренер') : emptyCard('Тренер', '\u{1F393}');
+    grid.innerHTML = rosterHtml;
 
     // Показываем панель приглашения только если я капитан этой команды
     const invitePanel = document.getElementById('captainInvitePanel');
@@ -13857,7 +14020,7 @@
           <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
             <div style="width:48px; height:48px; border-radius:50%; background:${color}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px;">${initials}</div>
             <div style="flex:1; min-width:0;">
-              <div style="font-size:15px; font-weight:800;">${p.nick || '—'} ${p.is_verified ? '★' : ''}</div>
+              <div style="font-size:15px; font-weight:800;">${escHtml(p.nick || '—')} ${p.is_verified ? '★' : ''}</div>
               <div style="font-size:11px; color:var(--muted); font-weight:700;">ID ${p.standoff_id || '—'}</div>
             </div>
           </div>
@@ -13929,7 +14092,7 @@
           <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--card-3); border-radius: 10px; margin-bottom: 6px;">
             <div style="width: 36px; height: 36px; border-radius: 50%; background: ${color}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">${initials}</div>
             <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 13px; font-weight: 800;">${p.nick} ${p.is_verified ? '★' : ''}</div>
+              <div style="font-size: 13px; font-weight: 800;">${escHtml(p.nick)} ${p.is_verified ? '★' : ''}</div>
               <div style="font-size: 11px; color: var(--muted); font-weight: 600;">KD ${Number(p.total_kd || 1).toFixed(2)} · ${p.total_kills || 0} kills</div>
             </div>
             <button class="btn btn-primary" style="font-size: 11px; padding: 6px 12px;" onclick="sendInvite('${p.id}', '${p.nick.replace(/'/g, "\\'")}', '${role}')">📨 Позвать</button>
@@ -14140,52 +14303,10 @@
     showToast('Покидаем команду...', 'default');
 
     try {
-      // Помечаем выход (мягкое удаление через left_at)
-      const { error: leaveErr } = await supabaseClient
-        .from('team_members')
-        .update({ left_at: new Date().toISOString() })
-        .eq('team_id', currentTeam.id)
-        .eq('player_id', currentUser.id);
-
-      if (leaveErr) {
-        showToast('Ошибка: ' + leaveErr.message, 'error');
-        return;
-      }
-
-      // Если я был капитаном — нужно передать роль или удалить команду
-      if (isCaptain) {
-        const { data: remaining } = await supabaseClient
-          .from('team_members')
-          .select('player_id')
-          .eq('team_id', currentTeam.id)
-          .is('left_at', null)
-          .order('joined_at', { ascending: true })
-          .limit(1);
-
-        if (!remaining || remaining.length === 0) {
-          // Команда пустая — удаляем
-          await supabaseClient.from('teams').delete().eq('id', currentTeam.id);
-          showToast('Команда удалена (ты был последним)', 'important');
-        } else {
-          // Передаём капитанство первому из оставшихся
-          await supabaseClient
-            .from('team_members')
-            .update({ is_captain: true, role: 'captain' })
-            .eq('team_id', currentTeam.id)
-            .eq('player_id', remaining[0].player_id);
-
-          await supabaseClient.from('notifications').insert({
-            user_id: remaining[0].player_id,
-            kind: 'system',
-            title: '👑 Ты теперь капитан!',
-            body: `${currentUser.nick} покинул команду и передал тебе капитанство`,
-            link: 'team',
-            is_urgent: true,
-          });
-        }
-      }
-
-      showToast('Ты покинул команду 👋', 'success', 3000);
+      const { data, error } = await supabaseClient.rpc('leave_team');
+      if (error) { showToast('Ошибка: ' + error.message, 'error'); return; }
+      if (data && data.team_deleted) showToast('Команда удалена (ты был последним)', 'important');
+      else showToast('Ты покинул команду 👋', 'success', 3000);
       await refreshUserState();
       goPage('home');
     } catch (e) {
@@ -14206,26 +14327,8 @@
     if (!confirm(`Удалить ${playerNick} из команды?`)) return;
 
     try {
-      const { error } = await supabaseClient
-        .from('team_members')
-        .update({ left_at: new Date().toISOString() })
-        .eq('team_id', currentTeam.id)
-        .eq('player_id', playerId);
-
-      if (error) {
-        showToast('Ошибка: ' + error.message, 'error');
-        return;
-      }
-
-      // Уведомление удалённому игроку
-      await supabaseClient.from('notifications').insert({
-        user_id: playerId,
-        kind: 'system',
-        title: '👋 Тебя удалили из команды',
-        body: `Капитан ${currentUser.nick} удалил тебя из ${currentTeam.name}`,
-        is_urgent: true,
-      });
-
+      const { error } = await supabaseClient.rpc('kick_player', { p_player_id: playerId });
+      if (error) { showToast('Ошибка: ' + error.message, 'error'); return; }
       showToast(playerNick + ' удалён из команды', 'important', 3000);
       await loadTeamRoster(currentTeam.id);
     } catch (e) {
@@ -14243,45 +14346,8 @@
     if (!confirm(`Передать капитанство ${playerNick}?\n\nТы перестанешь быть капитаном, ${playerNick} получит права управления командой.`)) return;
 
     try {
-      // Снимаем капитанство с меня
-      const { error: e1 } = await supabaseClient
-        .from('team_members')
-        .update({ is_captain: false, role: 'entry' })
-        .eq('team_id', currentTeam.id)
-        .eq('player_id', currentUser.id);
-
-      if (e1) {
-        showToast('Ошибка: ' + e1.message, 'error');
-        return;
-      }
-
-      // Назначаем нового капитана
-      const { error: e2 } = await supabaseClient
-        .from('team_members')
-        .update({ is_captain: true, role: 'captain' })
-        .eq('team_id', currentTeam.id)
-        .eq('player_id', playerId);
-
-      if (e2) {
-        // Откатываем
-        await supabaseClient
-          .from('team_members')
-          .update({ is_captain: true, role: 'captain' })
-          .eq('team_id', currentTeam.id)
-          .eq('player_id', currentUser.id);
-        showToast('Ошибка: ' + e2.message, 'error');
-        return;
-      }
-
-      // Уведомление новому капитану
-      await supabaseClient.from('notifications').insert({
-        user_id: playerId,
-        kind: 'system',
-        title: '👑 Ты теперь капитан!',
-        body: `${currentUser.nick} передал тебе капитанство ${currentTeam.name}`,
-        is_urgent: true,
-      });
-
+      const { error } = await supabaseClient.rpc('pass_captaincy', { p_new_captain_id: playerId });
+      if (error) { showToast('Ошибка: ' + error.message, 'error'); return; }
       showToast('👑 Капитанство передано ' + playerNick, 'success', 3500);
       await refreshUserState();
       await loadTeamRoster(currentTeam.id);
@@ -14355,6 +14421,27 @@
     el.innerHTML = parts.join(' · ');
   }
 
+  async function togglePrivacy(field, el) {
+    if (!supabaseClient || !currentUser) { showToast('Нужно войти', 'error'); return; }
+    const newVal = !el.classList.contains('on');
+    el.classList.toggle('on', newVal);
+    currentUser[field] = newVal;
+    const { error } = await supabaseClient.from('profiles').update({ [field]: newVal }).eq('id', currentUser.id);
+    if (error) {
+      el.classList.toggle('on', !newVal);
+      currentUser[field] = !newVal;
+      showToast('Не сохранилось: ' + error.message, 'error');
+    } else {
+      showToast('Сохранено', 'success', 1500);
+    }
+  }
+  function applyPrivacyToggles() {
+    const g = document.getElementById('togHideGameId');
+    if (g) g.classList.toggle('on', !!(currentUser && currentUser.hide_game_id));
+    const s = document.getElementById('togHideStats');
+    if (s) s.classList.toggle('on', !!(currentUser && currentUser.hide_stats));
+  }
+
   async function openPlayerProfile(playerId) {
     if (!supabaseClient || !playerId) {
       goPage('player');
@@ -14413,13 +14500,13 @@
     const name = page.querySelector('.ph-name');
     if (name) {
       const star = p.is_verified ? ' <span style="color: var(--mint); font-size: 0.5em;">★</span>' : '';
-      name.innerHTML = (p.nick || 'player') + star;
+      name.innerHTML = escHtml(p.nick || 'player') + star;
     }
 
     // Мета: ID, команда, дата регистрации
     const team = p.team_members?.[0]?.teams;
     const setMeta = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    setMeta('phGameId', p.standoff_id || '—');
+    setMeta('phGameId', ((currentUser && currentUser.id === playerId) || !p.hide_game_id) ? (p.standoff_id || '—') : 'скрыт');
     const teamEl = document.getElementById('phTeam');
     if (teamEl) {
       if (team) {
@@ -14439,6 +14526,41 @@
     // Кнопки в actions
     const actions = page.querySelector('.ph-actions');
     const isMe = currentUser && currentUser.id === playerId;
+
+    // О себе: описание + соцсети
+    const aboutBio = document.getElementById('phAboutBio');
+    if (aboutBio) {
+      aboutBio.textContent = p.bio || (isMe ? 'Добавь описание и ссылки на соцсети →' : 'Игрок пока не добавил описание.');
+      aboutBio.style.color = p.bio ? 'var(--text)' : 'var(--muted)';
+    }
+    const aboutEdit = document.getElementById('phAboutEdit');
+    if (aboutEdit) aboutEdit.style.display = isMe ? '' : 'none';
+    const socialsEl = document.getElementById('phAboutSocials');
+    if (socialsEl) {
+      const socials = [
+        { key: 'link_telegram', label: 'Telegram', icon: '✈️', base: 'https://t.me/' },
+        { key: 'link_discord', label: 'Discord', icon: '🎮', base: '' },
+        { key: 'link_vk', label: 'VK', icon: '🔷', base: 'https://vk.com/' },
+        { key: 'link_rankoff', label: 'Rankoff', icon: '🎯', base: '' },
+      ];
+      let sh = '';
+      socials.forEach(s => {
+        const raw = (p[s.key] || '').trim();
+        if (!raw) return;
+        const isUrl = /^https?:\/\//i.test(raw);
+        const href = isUrl ? raw : (s.base ? s.base + raw.replace(/^@/, '') : '');
+        if (href) {
+          sh += `<a class="ph-social" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">${s.icon} ${s.label}</a>`;
+        } else {
+          sh += `<span class="ph-social" onclick="navigator.clipboard && navigator.clipboard.writeText('${jsAttr(raw)}'); showToast('Скопировано','success',1500)">${s.icon} ${escHtml(raw)}</span>`;
+        }
+      });
+      if (!sh) sh = `<span style="font-size:12px;color:var(--muted);font-weight:600">${isMe ? 'Ссылки на соцсети ещё не добавлены' : 'Нет ссылок'}</span>`;
+      socialsEl.innerHTML = sh;
+    }
+    // старую карточку «Описание» прячем — теперь оно в «О себе»
+    const oldBioCard = document.getElementById('phBioCard');
+    if (oldBioCard) oldBioCard.style.display = 'none';
     // «Моё расписание» — только владельцу профиля
     page.querySelectorAll('.match-card').forEach(c => {
       const t = c.querySelector('.mc-title');
@@ -14466,11 +14588,13 @@
       const deaths = kd > 0 ? Math.round(kills / kd) : 0;
       const avg = p.matches_played ? (kills / p.matches_played).toFixed(1) : '0';
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-      set('phKD', kd ? kd.toFixed(2) : '—');
-      set('phAVG', avg);
-      set('phKills', kills);
-      set('phDeaths', deaths);
-      set('phWR', (p.matches_played ? wr + '%' : '—'));
+      const statsHidden = !(currentUser && currentUser.id === playerId) && p.hide_stats;
+      set('phKD', statsHidden ? 'скрыто' : (kd ? kd.toFixed(2) : '—'));
+      set('phAVG', statsHidden ? '—' : avg);
+      set('phKills', statsHidden ? '—' : kills);
+      set('phDeaths', statsHidden ? '—' : deaths);
+      set('phWR', statsHidden ? '—' : (p.matches_played ? wr + '%' : '—'));
+      set('phMatches', statsHidden ? '—' : (p.matches_played || 0));
 
       // Дивизион (текущий) + история
       const teamDiv = p.team_members?.[0]?.teams?.division_id;
@@ -14480,7 +14604,9 @@
       const mapWrEl = document.getElementById('phMapWr');
       if (mapWrEl) {
         const ms = p.map_stats; // ожидается { Dune: {w, l}, ... }
-        if (ms && typeof ms === 'object' && Object.keys(ms).length) {
+        if (statsHidden) {
+          mapWrEl.innerHTML = '<div class="ph-empty-mini">Статистика скрыта игроком</div>';
+        } else if (ms && typeof ms === 'object' && Object.keys(ms).length) {
           mapWrEl.innerHTML = Object.entries(ms).map(([map, v]) => {
             const w = Number(v.w || 0), l = Number(v.l || 0), tot = w + l;
             const pct = tot ? Math.round(w / tot * 100) : 0;
@@ -14631,7 +14757,7 @@
               <div style="font-size: 11px; color: var(--muted); font-weight: 700; min-width: 24px;">#${idx + 1}</div>
               <div style="width: 38px; height: 38px; border-radius: 50%; background: ${color}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">${initials}</div>
               <div style="flex: 1; min-width: 0;">
-                <div style="font-size: 14px; font-weight: 800;">${p.nick}${p.is_verified ? ' <span style="color: var(--mint); font-size: 11px;">★</span>' : ''}</div>
+                <div style="font-size: 14px; font-weight: 800;">${escHtml(p.nick)}${p.is_verified ? ' <span style="color: var(--mint); font-size: 11px;">★</span>' : ''}</div>
                 <div style="font-size: 11.5px; color: var(--muted); font-weight: 600;">
                   ${p.total_kills || 0} kills
                 </div>
@@ -14698,14 +14824,14 @@
             <div class="iv-from-info">
               <div class="iv-from-name">${team.name || 'Команда'} <span class="th-pill" style="font-size: 10px; padding: 2px 7px;">${team.rank ? '#' + String(team.rank).padStart(2, '0') : 'BETA'}</span></div>
               <div class="iv-from-meta">
-                <span>от <b>${inviter.nick || 'капитан'}</b></span>
+                <span>от <b>${escHtml(inviter.nick || 'капитан')}</b></span>
                 <span>· ${timeAgo}</span>
               </div>
             </div>
           </div>
           <div style="padding: 14px 16px;">
             <div style="font-size: 13px; color: var(--text); font-weight: 600; line-height: 1.55; margin-bottom: 12px;">
-              «${inv.message || 'Тебя зовут в команду как ' + (inv.role || 'игрока')}»
+              «${escHtml(inv.message || 'Тебя зовут в команду как ' + (inv.role || 'игрока'))}»
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button class="ntc-btn primary" onclick="acceptInvite('${inv.id}')">✓ Принять</button>
