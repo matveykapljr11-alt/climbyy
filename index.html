@@ -10306,6 +10306,13 @@
         currentTeam = null;
         applyAuthState();
         applyTeamState();
+        // открыли ссылку-приглашение, но не залогинены — подсказываем
+        try {
+          if (localStorage.getItem('pendingJoinCode') && !window._joinPromptShown) {
+            window._joinPromptShown = true;
+            setTimeout(() => showToast('Войди через Telegram, чтобы вступить в команду по ссылке', 'important', 6000), 700);
+          }
+        } catch (_) {}
         return;
       }
 
@@ -14157,7 +14164,7 @@
         .from('teams')
         .select('id, name, tag, logo_initials, logo_color, logo_url, invite_code')
         .eq('invite_code', code).limit(1);
-      if (error) { console.warn('join lookup error:', error); window._joinProcessing = false; return; }
+      if (error) { showToast('Не удалось проверить ссылку: ' + error.message, 'error', 5000); console.warn('join lookup error:', error); window._joinProcessing = false; return; }
       const team = teamsArr && teamsArr[0];
       if (!team) {
         showToast('Ссылка-приглашение недействительна', 'error');
@@ -14207,18 +14214,25 @@
     if (!supabaseClient || !currentUser) return;
     if (!requireTelegram('вступить в команду')) return;
     try {
-      const { data: memArr, error: memErr } = await supabaseClient
-        .from('team_members').select('id').eq('player_id', currentUser.id).is('left_at', null).limit(1);
-      if (memErr) { showToast('Ошибка проверки: ' + memErr.message, 'error'); return; }
-      if (memArr && memArr.length) { showToast('Ты уже в команде', 'error'); cleanupJoin(); return; }
-
-      const { error } = await supabaseClient.from('team_members')
-        .insert({ team_id: team.id, player_id: currentUser.id, role: 'player' });
-      if (error) { showToast('Ошибка вступления: ' + error.message, 'error'); return; }
-
-      showToast('🎉 Ты вступил в команду ' + team.name + '!', 'success', 4000);
-      if (typeof fireConfetti === 'function') fireConfetti(0.7);
+      let code = team.invite_code;
+      if (!code) { try { code = localStorage.getItem('pendingJoinCode'); } catch (_) {} }
+      const { data, error } = await supabaseClient.rpc('join_team_by_code', { p_code: code });
+      if (error) { showToast('Ошибка вступления: ' + error.message, 'error', 5000); return; }
+      if (!data || !data.ok) {
+        const msg = data?.reason === 'has_team' ? 'Ты уже в команде — сначала покинь её'
+          : data?.reason === 'bad_code' ? 'Ссылка-приглашение недействительна'
+          : data?.reason === 'not_authed' ? 'Сначала войди'
+          : data?.reason === 'no_code' ? 'Код приглашения не найден'
+          : ('Не удалось вступить' + (data?.detail ? ': ' + data.detail : ''));
+        showToast(msg, 'error', 5000); cleanupJoin(); return;
+      }
       cleanupJoin();
+      if (data.already) {
+        showToast('Ты уже в этой команде', 'default');
+      } else {
+        showToast('🎉 Ты вступил в команду ' + (data.name || team.name) + '!', 'success', 4000);
+        if (typeof fireConfetti === 'function') fireConfetti(0.7);
+      }
       await refreshUserState();
       setTimeout(() => goPage('team'), 800);
     } catch (e) { showToast('Ошибка: ' + (e.message || e), 'error'); }
@@ -14891,7 +14905,7 @@
       // Добавляем нужного игрока в команду
       const { error: memberErr } = await supabaseClient
         .from('team_members')
-        .insert({ team_id: inv.team_id, player_id: joiningPlayerId, role: inv.role || 'substitute' });
+        .insert({ team_id: inv.team_id, player_id: joiningPlayerId, role: inv.role || 'substitute', is_captain: false });
       if (memberErr) { showToast('Ошибка: ' + memberErr.message, 'error'); return; }
 
       // Уведомление
