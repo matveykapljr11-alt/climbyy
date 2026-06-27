@@ -13262,11 +13262,12 @@
       // Получаем активный сезон + статус окна регистрации
       const { data: season } = await supabaseClient
         .from('seasons')
-        .select('id, registration_open, reg_closes_at')
+        .select('*')
         .eq('is_active', true)
         .maybeSingle();
 
       // Гейт: регистрация закрыта → новую команду создать нельзя
+      // (registration_open/reg_closes_at появляются в миграции 49; до неё — undefined → считается открытой)
       const regClosed = season && (
         season.registration_open === false ||
         (season.reg_closes_at && new Date(season.reg_closes_at) <= new Date())
