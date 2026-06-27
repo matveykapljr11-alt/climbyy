@@ -7121,6 +7121,7 @@
                 <select id="invRoleSelect" class="input" style="max-width: 160px;">
                   <option value="player">Основа</option>
                   <option value="substitute">Запас</option>
+                  <option value="coach">Тренер</option>
                 </select>
                 <button class="btn btn-primary" onclick="lookupById()" style="white-space: nowrap;">Найти →</button>
               </div>
@@ -10066,8 +10067,9 @@
     } catch (e) { console.warn('loadNextMatch:', e); card.style.display = 'none'; }
   }
 
-  async function openOpponentTeam(name, initials, color) {
+  async function openOpponentTeam(teamId, name, initials, color) {
     window._teamOverride = true;
+    window._teamOverrideId = teamId || null;
     goPage('team');
 
     const page = document.querySelector('[data-page="team"]');
@@ -10086,16 +10088,18 @@
     const heroBack = page.querySelector('.hub-back');
     if (heroBack) heroBack.innerHTML = '← к командам';
 
-    // Подгружаем реальный ростер этой команды из БД
-    if (supabaseClient) {
+    // Подгружаем реальный ростер этой команды из БД — СТРОГО по id (имена ненадёжны: пустые/дубли)
+    let foundTeam = null;
+    if (supabaseClient && teamId) {
       try {
         const { data: team } = await supabaseClient
           .from('teams')
           .select('id, created_by')
-          .eq('name', name)
+          .eq('id', teamId)
           .maybeSingle();
 
         if (team) {
+          foundTeam = team;
           window._teamOverrideId = team.id;
           await loadTeamRoster(team.id);
         }
@@ -10103,9 +10107,14 @@
         console.warn('Не удалось подгрузить ростер:', e);
       }
     }
+    if (!foundTeam) {
+      // команду не нашли — чистим грид, иначе висит старый (свой) состав
+      const grid = document.getElementById('teamRosterGrid');
+      if (grid) grid.innerHTML = '<div style="padding:16px; text-align:center; color:var(--muted); font-weight:700; font-size:13px">Состав недоступен</div>';
+    }
 
-    // Если это моя команда — показываем actions для моей; иначе — actions для чужой
-    const isMyTeam = currentTeam && currentTeam.name === name;
+    // Если это моя команда — actions «моей»; иначе — «чужой». Сравнение по ID, не по имени.
+    const isMyTeam = currentTeam && teamId && currentTeam.id === teamId;
     // прячем все блоки со статой: ростер, история, карты, расписание, ачивки, путь команды
     const sectionsToBlur = [];
     // селекторы блоков для скрытия
@@ -12297,7 +12306,7 @@
       goPage('match');
       return;
     }
-    const playerEl = e.target.closest('.player-card, .role-card, .roster-card, .tb-player');
+    const playerEl = e.target.closest('.player-card, .role-card, .tb-player');
     if (playerEl) {
       applyPlayerData(playerEl);
       goPage('player');
@@ -14055,19 +14064,19 @@
           ${actions}
         </div>`;
     };
-    const emptyCard = (label, icon) => `
-        <div class="roster-card empty-slot" style="opacity:.5; border:1.5px dashed var(--line); cursor:default">
+    const emptyCard = (label, icon, role) => `
+        <div class="roster-card empty-slot" style="opacity:${canManage ? '.8' : '.5'}; border:1.5px dashed ${canManage ? 'var(--accent)' : 'var(--line)'}; cursor:${canManage ? 'pointer' : 'default'}"${canManage ? ` onclick="event.stopPropagation(); inviteForRole('${role}')"` : ''}>
           <div class="rc-avatar" style="background:var(--card-3); color:var(--muted)">${icon}</div>
           <div class="rc-body">
             <div class="rc-name" style="color:var(--muted)">${label}</div>
-            <div class="rc-sub">свободно</div>
+            <div class="rc-sub" style="${canManage ? 'color:var(--accent)' : ''}">${canManage ? '+ пригласить' : 'свободно'}</div>
           </div>
         </div>`;
 
     let rosterHtml = '';
-    for (let i = 0; i < 5; i++) rosterHtml += mains[i] ? filledCard(mains[i], 'Основа') : emptyCard('Основа', '+');
-    for (let i = 0; i < 2; i++) rosterHtml += reserves[i] ? filledCard(reserves[i], 'Резерв') : emptyCard('Резерв', '\u{1F504}');
-    rosterHtml += coachM ? filledCard(coachM, 'Тренер') : emptyCard('Тренер', '\u{1F393}');
+    for (let i = 0; i < 5; i++) rosterHtml += mains[i] ? filledCard(mains[i], 'Основа') : emptyCard('Основа', '+', 'player');
+    for (let i = 0; i < 2; i++) rosterHtml += reserves[i] ? filledCard(reserves[i], 'Резерв') : emptyCard('Резерв', '\u{1F504}', 'substitute');
+    rosterHtml += coachM ? filledCard(coachM, 'Тренер') : emptyCard('Тренер', '\u{1F393}', 'coach');
     grid.innerHTML = rosterHtml;
 
     // Показываем панель приглашения только если я капитан этой команды
@@ -14082,6 +14091,22 @@
 
   // Поиск игрока по нику и отправка приглашения
   // Поиск игрока по ID (standoff_id) → карточка подтверждения
+  function inviteForRole(role) {
+    const sel = document.getElementById('invRoleSelect');
+    if (sel) sel.value = role;
+    const panel = document.getElementById('captainInvitePanel');
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      panel.style.transition = 'box-shadow .3s';
+      panel.style.boxShadow = '0 0 0 4px rgba(227,6,19,0.35)';
+      setTimeout(() => { panel.style.boxShadow = ''; }, 1300);
+    }
+    const input = document.getElementById('invSearchInput');
+    if (input) setTimeout(() => input.focus(), 400);
+    const label = role === 'coach' ? 'тренера' : (role === 'substitute' ? 'в запас' : 'в основу');
+    showToast('Пригласи игрока ' + label + ' — по ID или ссылке', 'default', 2500);
+  }
+
   async function lookupById() {
     if (!supabaseClient || !currentUser || !currentTeam) { showToast('Ошибка состояния', 'error'); return; }
     if (!currentTeam.my_is_captain) { showToast('Только капитан может приглашать', 'error'); return; }
@@ -14623,7 +14648,7 @@
     if (teamEl) {
       if (team) {
         teamEl.textContent = '[' + (team.logo_initials || '') + '] ' + team.name;
-        teamEl.onclick = (e) => { e.preventDefault(); openOpponentTeam(team.name, team.logo_initials, team.logo_color); };
+        teamEl.onclick = (e) => { e.preventDefault(); openOpponentTeam(team.id, team.name, team.logo_initials, team.logo_color); };
       } else { teamEl.textContent = 'без команды'; teamEl.classList.remove('link'); }
     }
     setMeta('phReg', p.created_at ? new Date(p.created_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—');
