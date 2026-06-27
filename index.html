@@ -4529,6 +4529,17 @@
   .sm-vs-info-item b { font-size: 13px; font-weight: 800; }
   /* ростер матча с КД */
   .sm-roster-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .sb-hero { display: flex; align-items: stretch; gap: 8px; background: var(--card-2); border: 1px solid var(--line); border-radius: 16px; padding: 16px 12px; margin-bottom: 14px; }
+  .sb-side { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; min-width: 0; }
+  .sb-logo { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 19px; color: #fff; overflow: hidden; transition: box-shadow .2s; }
+  .sb-tname { font-size: 12.5px; font-weight: 800; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  .sb-score { font-size: 34px; font-weight: 900; line-height: 1; }
+  .sb-mid { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 2px; flex-shrink: 0; }
+  .sb-colon { font-size: 22px; font-weight: 900; color: var(--muted); }
+  .sb-sub { font-size: 9.5px; color: var(--muted); font-weight: 700; text-align: center; line-height: 1.4; }
+  .sb-side.win .sb-score { color: var(--win); }
+  .sb-side.lose .sb-score { color: var(--lose); }
+  .sb-side.win .sb-logo { box-shadow: 0 0 0 2.5px var(--win); }
   .sm-roster-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .sm-roster-logo { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff; }
   .sm-roster-name { font-weight: 800; font-size: 15px; flex: 1; }
@@ -10775,6 +10786,79 @@
     wrap.innerHTML = teamCard(m.teams_a, m.team_a_id) + teamCard(m.teams_b, m.team_b_id);
   }
 
+  // Полноценный скорборд завершённого матча (реальные per-match статы)
+  async function renderScoreboard(m) {
+    const wrap = document.getElementById('smRosters');
+    if (!wrap) return;
+    const aWin = m.winner_id && m.winner_id === m.team_a_id;
+    const bWin = m.winner_id && m.winner_id === m.team_b_id;
+    const logoBox = (t) => `<div class="sb-logo" style="background:${t.logo_url ? 'var(--card-3)' : (t.logo_color || 'var(--accent)')}">${teamLogoInner(t)}</div>`;
+    let dateTxt = '';
+    try { const d = m.completed_at || m.scheduled_at; if (d) dateTxt = new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (_) {}
+
+    const hero = `<div class="sb-hero">
+      <div class="sb-side ${aWin ? 'win' : (bWin ? 'lose' : '')}">
+        ${logoBox(m.teams_a)}
+        <div class="sb-tname">${escHtml(m.teams_a.name || '—')}</div>
+        <div class="sb-score">${m.team_a_score ?? 0}</div>
+      </div>
+      <div class="sb-mid">
+        <div class="sb-colon">:</div>
+        <div class="sb-sub">🏆 Матч завершён${dateTxt ? '<br>' + dateTxt : ''}</div>
+      </div>
+      <div class="sb-side ${bWin ? 'win' : (aWin ? 'lose' : '')}">
+        ${logoBox(m.teams_b)}
+        <div class="sb-tname">${escHtml(m.teams_b.name || '—')}</div>
+        <div class="sb-score">${m.team_b_score ?? 0}</div>
+      </div>
+    </div>`;
+
+    let stats = [];
+    try {
+      const { data } = await supabaseClient
+        .from('player_match_stats')
+        .select('player_id, team_id, kills, deaths, kd, won, profiles:player_id(nick)')
+        .eq('match_id', m.id);
+      stats = data || [];
+    } catch (_) {}
+
+    const teamBlock = (t, tid, win) => {
+      const rows = stats.filter(s => s.team_id === tid).sort((a, b) => Number(b.kd) - Number(a.kd));
+      let body;
+      if (rows.length) {
+        const topKd = Number(rows[0]?.kd) || 0;
+        body = rows.map(s => {
+          const p = s.profiles || {};
+          const isTop = Number(s.kd) === topKd && topKd > 0;
+          return `<div class="sm-rp">
+            <div class="sm-rp-name">${isTop ? '⭐ ' : ''}${escHtml(p.nick || 'player')}</div>
+            <div class="sm-rp-stat">${s.kills}-${s.deaths}<small>K-D</small></div>
+            <div class="sm-rp-stat">${Number(s.kd).toFixed(2)}<small>kd</small></div>
+          </div>`;
+        }).join('');
+      } else {
+        const members = smMembers.filter(x => x.team_id === tid);
+        body = members.map(x => `<div class="sm-rp">
+            <div class="sm-rp-name">${x.is_captain ? '<span class="sm-cap-badge">C</span> ' : ''}${escHtml(x.profiles?.nick || 'player')}</div>
+            <div class="sm-rp-stat">—<small>K-D</small></div>
+            <div class="sm-rp-stat">—<small>kd</small></div>
+          </div>`).join('') || '<div style="padding:14px; text-align:center; color:var(--muted); font-weight:700; font-size:12px">ростер пуст</div>';
+      }
+      return `<div class="sm-roster-card">
+        <div class="sm-roster-head">
+          <div class="sm-roster-logo" style="background:${t.logo_url ? 'var(--card-3)' : (t.logo_color || 'var(--accent)')};overflow:hidden;">${teamLogoInner(t)}</div>
+          <div class="sm-roster-name">${escHtml(t.name || '—')}</div>
+          <div class="sm-roster-kd ${win ? 'pos' : 'neg'}">${win ? 'победа' : 'пораж.'}</div>
+        </div>
+        ${body}
+      </div>`;
+    };
+
+    const note = stats.length ? '' : '<div style="text-align:center; font-size:11px; color:var(--muted); font-weight:600; margin-top:2px; line-height:1.5">Детальная статистика по игрокам не внесена.<br>Капитан: пришли скрин счёта боту в Telegram — он распознает K-D автоматически.</div>';
+
+    wrap.innerHTML = hero + teamBlock(m.teams_a, m.team_a_id, aWin) + teamBlock(m.teams_b, m.team_b_id, bWin) + note;
+  }
+
   function renderSeasonMatch(m, bans) {
     if (!m) return;
     // защита от NULL-связей (teams_a/teams_b могут не подгрузиться)
@@ -10813,9 +10897,11 @@
     document.getElementById('smConfirm').style.display = 'none';
 
     if (m.status === 'completed') {
-      ann.innerHTML = `🏆 <b>${escHtml(m.teams_a.name)}</b> ${m.team_a_score} : ${m.team_b_score} <b>${escHtml(m.teams_b.name)}</b><br>победа ${escHtml(m.winner_id === m.team_a_id ? m.teams_a.name : m.teams_b.name)} · очки: ${m.points_a > 0 ? '+' : ''}${m.points_a} / ${m.points_b > 0 ? '+' : ''}${m.points_b}`;
-      ann.style.display = '';
+      const pa = m.points_a ?? 0, pb = m.points_b ?? 0;
+      ann.innerHTML = `очки сезона: <b>${pa > 0 ? '+' : ''}${pa}</b> / <b>${pb > 0 ? '+' : ''}${pb}</b>`;
+      ann.style.display = (m.points_a != null || m.points_b != null) ? '' : 'none';
       statusLine.textContent = 'Матч завершён.';
+      renderScoreboard(m);
       return;
     }
 
@@ -13173,12 +13259,23 @@
     if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Создаём...'; }
 
     try {
-      // Получаем season_id
+      // Получаем активный сезон + статус окна регистрации
       const { data: season } = await supabaseClient
         .from('seasons')
-        .select('id')
+        .select('id, registration_open, reg_closes_at')
         .eq('is_active', true)
         .maybeSingle();
+
+      // Гейт: регистрация закрыта → новую команду создать нельзя
+      const regClosed = season && (
+        season.registration_open === false ||
+        (season.reg_closes_at && new Date(season.reg_closes_at) <= new Date())
+      );
+      if (regClosed) {
+        showToast('Регистрация команд в этом сезоне закрыта. Дождись набора на следующий сезон.', 'error', 5000);
+        if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Создать команду →'; }
+        return;
+      }
 
       // Создаём команду
       const { data: team, error: createErr } = await supabaseClient
