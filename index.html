@@ -13994,7 +13994,18 @@
       if (pErr) console.warn('roster profiles error:', pErr);
       (profs || []).forEach(p => { profMap[p.id] = p; });
     }
-    (members || []).forEach(m => { m.profile = profMap[m.player_id] || {}; });
+    (members || []).forEach(m => {
+      m.profile = profMap[m.player_id] || {};
+      // если это я, а профиль не подтянулся — берём из currentUser (чтобы не было «??»)
+      if (currentUser && m.player_id === currentUser.id && !m.profile.nick) {
+        m.profile = {
+          ...m.profile,
+          nick: currentUser.nick,
+          avatar_color: currentUser.avatar_color,
+          is_verified: currentUser.is_verified,
+        };
+      }
+    });
 
     if (!members || members.length === 0) {
       grid.innerHTML = `
